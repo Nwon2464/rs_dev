@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import struct
 from collections import defaultdict
 from pathlib import Path
@@ -23,6 +24,9 @@ ROW_SIZE = 24
 PROBABILITY_TOLERANCE = 0.06
 
 FIELDNAMES = [
+    "converter_type",
+    "converter_probability",
+    "converter_probability_source",
     "equipment_bucket",
     "item_group_ids",
     "item_group_names",
@@ -33,6 +37,8 @@ FIELDNAMES = [
     "candidate_index",
     "option_id",
     "option_name",
+    "option_value_arity",
+    "option_display",
     "value_raw",
     "value_0_low16",
     "value_1_high16",
@@ -49,6 +55,14 @@ FIELDNAMES = [
 
 GRADE_NAMES = {7: "유니크", 8: "DX 유니크", 9: "ULT 유니크"}
 
+CONVERTER_TYPE_SPECS = (
+    ("일반 변환기", 0, "normal_probability", "float_a", {7, 8, 9}),
+    ("개량된 변환기", 0, "improved_probability", "float_b", {7, 8, 9}),
+    ("모조 변환기", 1, "normal_probability", "float_a", {7, 8, 9}),
+    ("불타는 변환기", 3, "normal_probability", "float_a", {7, 8, 9}),
+    ("협회 변환기", 2, "normal_probability", "float_a", {8}),
+)
+
 BUCKET_BY_GROUP_IDS = {
     (18, 20, 21, 22, 23, 24, 25, 26, 28, 30, 32, 33, 54, 55, 56, 57, 58, 61, 63, 68, 70, 80, 82): "무기",
     (29,): "피리",
@@ -62,6 +76,8 @@ BUCKET_BY_GROUP_IDS = {
     (7,): "부츠",
     (8,): "목걸이",
 }
+
+DEFAULT_EQUIPMENT = ",".join(dict.fromkeys(BUCKET_BY_GROUP_IDS.values()))
 
 
 def u32(data: bytes, offset: int) -> int:
@@ -238,6 +254,60 @@ def probability_validity(rows: list[dict]) -> dict[int, bool]:
     return result
 
 
+LONG_VALUE_PLACEHOLDER = re.compile(r"\[수치(?:\.(\d+)F)?\]([01])")
+SHORT_VALUE_PLACEHOLDER = re.compile(r"\[(\+?)([01])(?:\.(\d+))?(%?)\]")
+
+
+def option_value_arity(
+    template: str, placeholder: re.Pattern[str], index_group: int
+) -> int:
+    """Return the number of value arguments required by an option template."""
+    indices = [int(match.group(index_group)) for match in placeholder.finditer(template)]
+    if not indices:
+        return 0
+    return 2 if 1 in indices else 1
+
+
+def render_long_display(template: str, value_0: int, value_1: int) -> str:
+    def replace(match: re.Match[str]) -> str:
+        precision = match.group(1)
+        value = (value_0, value_1)[int(match.group(2))]
+        if precision is None:
+            return str(value)
+        digits = int(precision)
+        return f"{value / (10 ** digits):.{digits}f}"
+
+    return LONG_VALUE_PLACEHOLDER.sub(replace, template)
+
+
+def render_short_display(template: str, value_0: int, value_1: int) -> str:
+    def replace(match: re.Match[str]) -> str:
+        sign, index, precision, suffix = match.groups()
+        value = (value_0, value_1)[int(index)]
+        if precision is None:
+            rendered = str(value)
+        else:
+            digits = int(precision)
+            rendered = f"{value / (10 ** digits):.{digits}f}"
+        return f"{sign}{rendered}{suffix}"
+
+    return SHORT_VALUE_PLACEHOLDER.sub(replace, template)
+
+
+def option_display(option: dict, value_0: int, value_1: int) -> tuple[int, str]:
+    """Build a compact display string from an option's declared argument shape."""
+    short_text = option["short_text"]
+    short_arity = option_value_arity(short_text, SHORT_VALUE_PLACEHOLDER, 2)
+    if short_arity:
+        return short_arity, render_short_display(short_text, value_0, value_1)
+
+    description = option["description"]
+    long_arity = option_value_arity(description, LONG_VALUE_PLACEHOLDER, 2)
+    if long_arity:
+        return long_arity, render_long_display(description, value_0, value_1)
+    return 0, option["name"]
+
+
 def collect(
     blocks: list[dict],
     group_names: dict[int, str],
@@ -274,6 +344,10 @@ def collect(
                 )
             slot = row["row_index"] // ROWS_PER_SLOT + 1
             packed = row["packed_value"]
+            value_0 = packed & 0xFFFF
+            value_1 = packed >> 16
+            option = options[option_id]
+            value_arity, display = option_display(option, value_0, value_1)
             output.append(
                 {
                     "equipment_bucket": bucket,
@@ -285,10 +359,12 @@ def collect(
                     "open_slot": slot,
                     "candidate_index": row["candidate_index"],
                     "option_id": option_id,
-                    "option_name": options[option_id]["name"],
+                    "option_name": option["name"],
+                    "option_value_arity": value_arity,
+                    "option_display": display,
                     "value_raw": packed,
-                    "value_0_low16": packed & 0xFFFF,
-                    "value_1_high16": packed >> 16,
+                    "value_0_low16": value_0,
+                    "value_1_high16": value_1,
                     "normal_probability": format(row["normal"], ".6g"),
                     "improved_probability": format(row["improved"], ".6g"),
                     "option_tier": row["tier"],
@@ -311,17 +387,62 @@ def int_set(value: str) -> set[int]:
     return {int(part.strip()) for part in value.split(",") if part.strip()}
 
 
+def classify_converter_rows(rows: list[dict]) -> list[dict]:
+    """Create disjoint converter views from directly observed table axes.
+
+    Association data is restricted to the observed DX Unique table
+    (section_group=2, section_type=8).  Its float_a and float_b values are
+    identical in the current source revision, so float_a is the canonical
+    displayed field.
+    """
+    classified = []
+    for (
+        converter_type,
+        section_group,
+        probability_key,
+        probability_source,
+        allowed_grade_codes,
+    ) in CONVERTER_TYPE_SPECS:
+        for row in rows:
+            if int(row["section_group"]) != section_group:
+                continue
+            if int(row["grade_code"]) not in allowed_grade_codes:
+                continue
+            probability = float(row[probability_key])
+            if probability <= 0.0:
+                continue
+            classified.append(
+                {
+                    **row,
+                    "converter_type": converter_type,
+                    "converter_probability": row[probability_key],
+                    "converter_probability_source": probability_source,
+                }
+            )
+    return classified
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--equipment",
-        default="헬멧,관,벨트",
+        default=DEFAULT_EQUIPMENT,
         help="comma-separated equipment buckets",
     )
     parser.add_argument(
         "--grade-codes",
-        default="7,8,9,11",
+        default="7,8,9",
         help="comma-separated numeric grade codes",
+    )
+    parser.add_argument(
+        "--only-improved",
+        action="store_true",
+        help="keep only rows with a non-zero improved-converter probability",
+    )
+    parser.add_argument(
+        "--classify-converters",
+        action="store_true",
+        help="emit the four confirmed converter views with their active probability field",
     )
     parser.add_argument(
         "--data-dir",
@@ -354,6 +475,10 @@ def main() -> None:
         mapping_basis,
         mapping_confidence,
     )
+    if args.only_improved:
+        rows = [row for row in rows if float(row["improved_probability"]) > 0.0]
+    if args.classify_converters:
+        rows = classify_converter_rows(rows)
     if not rows:
         raise ValueError("the requested filters produced no rows")
 

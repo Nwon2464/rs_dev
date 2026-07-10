@@ -35,6 +35,7 @@ ITEM_HEADER_SIZE = 0x46
 ITEM_RECORD_SIZE = 326
 OPEN_ROW_COUNT_PER_BLOCK = 124
 OPEN_ROW_SIZE = 24
+EXCLUDED_SECTION_TYPES = {11}
 
 EFFECT_IDS = {
     920: "개방 옵션 변환창 생성",
@@ -312,6 +313,7 @@ def parse_open_blocks() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
             read_u32(data, after_values_offset + index * 4)
             for index in range(after_count)
         ]
+        include_block = section_type not in EXCLUDED_SECTION_TYPES
 
         non_empty = 0
         option_ids: list[int] = []
@@ -330,43 +332,45 @@ def parse_open_blocks() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
             row_groups.append(row_group)
             slot_ids.append(slot)
             value_lows.append(value & 0xFFFF)
-            rows.append(
+            if include_block:
+                rows.append(
+                    {
+                        "source_file": "item_option_open.dat",
+                        "block_index": block_index,
+                        "section_type": section_type,
+                        "section_group": section_group,
+                        "file_offset_hex": hex(offset),
+                        "open_slot_candidate": slot,
+                        "convertible_option_id": option_id,
+                        "value_low16": value & 0xFFFF,
+                        "value_high16": value >> 16,
+                        "float_a": round(f32_a, 6),
+                        "float_b": round(f32_b, 6),
+                        "row_group": row_group,
+                        "after_list_option_ids": ",".join(str(value) for value in after_values),
+                        "evidence_level": "confirmed_table_row_unresolved_axis",
+                    }
+                )
+
+        if include_block:
+            blocks.append(
                 {
                     "source_file": "item_option_open.dat",
                     "block_index": block_index,
+                    "header_offset_hex": hex(cursor),
                     "section_type": section_type,
                     "section_group": section_group,
-                    "file_offset_hex": hex(offset),
-                    "open_slot_candidate": slot,
-                    "convertible_option_id": option_id,
-                    "value_low16": value & 0xFFFF,
-                    "value_high16": value >> 16,
-                    "float_a": round(f32_a, 6),
-                    "float_b": round(f32_b, 6),
-                    "row_group": row_group,
-                    "after_list_option_ids": ",".join(str(value) for value in after_values),
-                    "evidence_level": "confirmed_table_row_unresolved_axis",
+                    "non_empty_rows": non_empty,
+                    "slot_values": ",".join(str(v) for v in sorted(set(slot_ids))),
+                    "row_group_values": ",".join(str(v) for v in sorted(set(row_groups))),
+                    "option_id_count": len(set(option_ids)),
+                    "value_low16_min": min(value_lows) if value_lows else "",
+                    "value_low16_max": max(value_lows) if value_lows else "",
+                    "after_list_count": after_count,
+                    "after_list_values": ",".join(str(value) for value in after_values),
+                    "evidence_level": "confirmed_binary_structure_unresolved_axis",
                 }
             )
-
-        blocks.append(
-            {
-                "source_file": "item_option_open.dat",
-                "block_index": block_index,
-                "header_offset_hex": hex(cursor),
-                "section_type": section_type,
-                "section_group": section_group,
-                "non_empty_rows": non_empty,
-                "slot_values": ",".join(str(v) for v in sorted(set(slot_ids))),
-                "row_group_values": ",".join(str(v) for v in sorted(set(row_groups))),
-                "option_id_count": len(set(option_ids)),
-                "value_low16_min": min(value_lows) if value_lows else "",
-                "value_low16_max": max(value_lows) if value_lows else "",
-                "after_list_count": after_count,
-                "after_list_values": ",".join(str(value) for value in after_values),
-                "evidence_level": "confirmed_binary_structure_unresolved_axis",
-            }
-        )
         cursor = after_end
         block_index += 1
     return blocks, rows
@@ -562,8 +566,9 @@ def write_report(
             "",
             "## item_option_open.dat",
             "",
-            f"- Parsed blocks: `{len(open_blocks)}`",
-            f"- Parsed non-empty rows: `{len(open_rows)}`",
+            f"- Retained blocks: `{len(open_blocks)}`",
+            f"- Retained non-empty rows: `{len(open_rows)}`",
+            "- `section_type=11` blocks are intentionally excluded from derived trace outputs.",
             "- These rows are confirmed binary table rows, but their block header axes are not yet linked to Korean converter names.",
             "",
             "Section pairs observed:",

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Red Stone 장비 옵션 탐색기</title>
+  <style>
+    :root { color-scheme:dark; --bg:#10141b; --panel:#18202a; --ink:#f2f5f8; --muted:#8e9aa8; --line:#2f3b49; --shadow:0 16px 44px rgba(0,0,0,.28); }
+    html[data-theme="light"] { color-scheme:light; --bg:#e9edf1; --panel:#f8fafb; --ink:#1d2833; --muted:#71808d; --line:#d3dbe1; --shadow:0 14px 36px rgba(34,48,60,.10); }
+    * { box-sizing:border-box; } body { min-height:100vh; margin:0; display:grid; place-items:center; padding:24px; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(900px,100%); } .heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; } h1 { margin:0; font-size:28px; } .lead { margin:8px 0 28px; color:var(--muted); }.theme-toggle { min-height:38px; padding:7px 12px; border:1px solid var(--line); border-radius:999px; background:var(--panel); color:var(--ink); cursor:pointer; font:700 12px/1.2 inherit; white-space:nowrap; }.theme-toggle:hover { border-color:#59d1c4; }.cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }.card { display:block; min-height:230px; padding:24px; border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow); color:inherit; text-decoration:none; transition:transform .15s ease,border-color .15s ease; }.card:hover { transform:translateY(-3px); border-color:var(--accent); }.card.converter { --accent:#2fb7a8; }.card.instandard { --accent:#a88bce; }.eyebrow { color:var(--accent); font-size:12px; font-weight:800; }.card h2 { margin:8px 0; font-size:21px; }.card p { margin:0; color:var(--muted); }.go { display:inline-block; margin-top:28px; color:var(--accent); font-weight:800; } footer { margin-top:20px; color:var(--muted); font-size:12px; } @media(max-width:640px) { body { padding:16px; }.heading { align-items:stretch; flex-direction:column; }.theme-toggle { align-self:flex-end; }.cards { grid-template-columns:1fr; } h1 { font-size:23px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="heading"><h1>Red Stone 장비 옵션 탐색기</h1><button id="themeToggle" class="theme-toggle" type="button">라이트 모드로 전환</button></div>
+    <p class="lead">확정된 로컬 DAT 조인 데이터를 화면에서 바로 확인합니다.</p>
+    <section class="cards" aria-label="장비 옵션 탐색기">
+      <a class="card converter" href="equipment_open_options_viewer.html">
+        <div class="eyebrow">EQUIPMENT OPEN OPTION CONVERTER</div>
+        <h2>장비 개방 옵션 변환기</h2>
+        <p>장비 종류·변환기·등급·개방 줄에 따른 옵션과 확률을 확인합니다.</p>
+        <span class="go">개방 옵션 변환기 열기 →</span>
+      </a>
+      <a class="card instandard" href="instandard_equipment_viewer.html">
+        <div class="eyebrow">NON-STANDARD EQUIPMENT OPTIONS</div>
+        <h2>비규격 장비 옵션</h2>
+        <p>장비군별 비규격 옵션과 OptionLevel 공통 수치 구간을 확인합니다.</p>
+        <span class="go">비규격 장비 옵션 열기 →</span>
+      </a>
+    </section>
+    <footer>원본: C:\game\Red Stone\Data · 모든 화면은 외부 서버 없이 단일 HTML로 열립니다.</footer>
+  </main>
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      const dark = theme === "dark";
+      themeToggle.textContent = dark ? "라이트 모드로 전환" : "다크 모드로 전환";
+      try { localStorage.setItem("redstone-ui-theme", theme); } catch (_) {}
+    }
+    try {
+      const saved = localStorage.getItem("redstone-ui-theme");
+      if (saved === "dark" || saved === "light") setTheme(saved);
+      else setTheme("dark");
+    } catch (_) { setTheme("dark"); }
+    themeToggle.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+    window.addEventListener("storage", (event) => {
+      if (event.key === "redstone-ui-theme" && (event.newValue === "dark" || event.newValue === "light")) setTheme(event.newValue);
+    });
+  </script>
+</body>
+</html>

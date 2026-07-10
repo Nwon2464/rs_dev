@@ -33,8 +33,9 @@ From `capa.dat` option `958`:
 
 ## item_option_open.dat
 
-- Parsed blocks: `176`
-- Parsed non-empty rows: `7749`
+- Retained blocks: `146`
+- Retained non-empty rows: `5544`
+- `section_type=11` blocks are intentionally excluded from derived trace outputs.
 - These rows are confirmed binary table rows, but their block header axes are not yet linked to Korean converter names.
 
 Section pairs observed:
@@ -46,48 +47,43 @@ Section pairs observed:
 - `9,0` rows=946
 - `9,1` rows=603
 - `9,3` rows=815
-- `11,0` rows=801
-- `11,1` rows=546
-- `11,3` rows=858
 
 Row group values:
-- `1` rows=3433
-- `2` rows=2848
-- `3` rows=1171
-- `4` rows=242
-- `5` rows=55
+- `1` rows=2736
+- `2` rows=2069
+- `3` rows=739
 
 Open slot candidate values:
-- `1` rows=466
-- `2` rows=466
-- `3` rows=466
-- `4` rows=466
-- `5` rows=466
-- `6` rows=466
-- `7` rows=466
-- `8` rows=465
-- `9` rows=438
-- `10` rows=400
-- `11` rows=386
-- `12` rows=371
-- `13` rows=348
-- `14` rows=331
-- `15` rows=311
-- `16` rows=281
-- `17` rows=214
-- `18` rows=195
-- `19` rows=137
-- `20` rows=121
-- `21` rows=108
-- `22` rows=85
-- `23` rows=63
-- `24` rows=55
-- `25` rows=42
-- `26` rows=39
-- `27` rows=36
-- `28` rows=25
-- `29` rows=21
-- `30` rows=14
+- `1` rows=348
+- `2` rows=348
+- `3` rows=348
+- `4` rows=348
+- `5` rows=348
+- `6` rows=348
+- `7` rows=348
+- `8` rows=347
+- `9` rows=328
+- `10` rows=290
+- `11` rows=277
+- `12` rows=267
+- `13` rows=248
+- `14` rows=237
+- `15` rows=216
+- `16` rows=192
+- `17` rows=150
+- `18` rows=141
+- `19` rows=85
+- `20` rows=77
+- `21` rows=62
+- `22` rows=50
+- `23` rows=34
+- `24` rows=30
+- `25` rows=23
+- `26` rows=19
+- `27` rows=17
+- `28` rows=10
+- `29` rows=5
+- `30` rows=2
 - `31` rows=1
 
 ## UI Text Evidence
