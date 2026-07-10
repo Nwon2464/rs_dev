@@ -1,0 +1,52 @@
+record_index,file_offset_hex,string_offset,text,nearby_effect_ids,nearby_effect_offsets,classification
+51669,0x1010584,218,개방 옵션 변환기,920,0x10106f8,converter_item_name_or_context
+52910,0x10731da,244,개선된 개방 옵션 변환기,935,0x1073368,converter_item_name_or_context
+53031,0x107cbf0,30,개방 옵션 변환기[E],920,0x107cca8,converter_item_name_or_context
+53036,0x107d24e,49,개선된 개방 옵션 변환기[E],935,0x107d319,converter_item_name_or_context
+53225,0x108c2fc,266,모조 개방 옵션 변환기,954,0x108c4a0,converter_item_name_or_context
+53225,0x108c2fc,288,변환기,954,0x108c4a0,converter_item_name_or_context
+53251,0x108e418,260,모조 개방 옵션 변환기[E],954,0x108e5b6,converter_item_name_or_context
+53335,0x1094f10,69,"노련한 연마 기술을 가진 장인의 비전이 담긴 패키지. 상자를 열면 '향상된 휴대용 개방 도구함 2개', '개선된 휴대용 개방 도구함 3개', 'ULT 연마 슬롯 재가공 도구함 3개', '개방 옵션 변환기 10개' 를 획득할 수 있다",,,converter_item_name_or_context
+53340,0x109556e,0,"낱 도구함 5개', '개방 옵션 변환기 5개' 를 획득할 수 있다",,,converter_item_name_or_context
+53708,0x10b2a0e,203,장인의 찬란한 변환기 묶음,,,converter_item_name_or_context
+53712,0x10b2f26,105,숙련된 개방 변환 기술을 가진 장인의 비결이 담긴 패키지. 상자를 열면 '개선된 개방 옵션 변환기 5개'를 획득할 수 있다,,,converter_item_name_or_context
+53712,0x10b2f26,224,장인의 화려한 변환기 묶음,,,converter_item_name_or_context
+53716,0x10b343e,126,숙련된 개방 변환 기술을 가진 장인의 비결이 담긴 패키지. 상자를 열면 '개방 옵션 변환기 5개'를 획득할 수 있다.,,,converter_item_name_or_context
+54010,0x10caaa2,24,개방 옵션 변환기[협회],966,0x10cab54,excluded_association
+54029,0x10cc2d4,56,모조 개방 옵션 변환기[거래불가],954,0x10cc3a6,converter_item_name_or_context
+55609,0x1149edc,174,"노련한 연마 기술을 가진 장인의 비전이 담긴 패키지. 상자를 열면 '만능 휴대용 개방 도구함', '향상된 휴대용 개방 도구함', '개선된 개방 옵션 변환기', 'ULT",,,converter_item_name_or_context
+55614,0x114a53a,0,"노련한 연마 기술을 가진 장인의 비전이 담긴 패키지. 상자를 열면 '만능 휴대용 개방 도구함', '향상된 휴대용 개방 도구함', '개선된 개방 옵션 변환기', 'ULT 연마 슬롯 재가공 도구함', '개선된 휴대용 개방 도구함', 등의 아이템 중 한 가지를 획득할 수 있다 <c:LTRED>※거래 불가, 은행 보관 불가<n>",,,converter_item_name_or_context
+55619,0x114ab98,0,"옵션 변환기', 'ULT 연마 슬롯 재가공 도구함', '개선된 휴대용 개방 도구함', 등의 아이템 중 한 가지를 획득할 수 있다",,,converter_item_name_or_context
+55623,0x114b0b0,21,"노련한 연마 기술을 가진 장인의 비전이 담긴 패키지. 상자를 열면 '만능 휴대용 개방 도구함', '향상된 휴대용 개방 도구함', '개선된 개방 옵션 변환기', 'ULT 연마 슬롯 재가공 도구함', '개선된 휴대용 개방 도구함', 등의 아이템 중 한 가지를 획득할 수 있다 <c:LTRED>※거래 불가, 은행 보관 불가<n>",,,converter_item_name_or_context
+57910,0x120110a,270,개방 옵션 변환기,,,converter_item_name_or_context
+57911,0x1201250,12,개방 옵션 변환기,,,converter_item_name_or_context
+57911,0x1201250,80,개방 옵션 변환기,,,converter_item_name_or_context
+57911,0x1201250,148,개방 옵션 변환기,,,converter_item_name_or_context
+57911,0x1201250,216,개방 옵션 변환기,,,converter_item_name_or_context
+57911,0x1201250,284,개선된 개방 옵션 변환기,,,converter_item_name_or_context
+57912,0x1201396,26,개선된 개방 옵션 변환기,,,converter_item_name_or_context
+57912,0x1201396,94,개선된 개방 옵션 변환기,,,converter_item_name_or_context
+57912,0x1201396,162,개선된 개방 옵션 변환기,,,converter_item_name_or_context
+57912,0x1201396,230,개선된 개방 옵션 변환기,,,converter_item_name_or_context
+57928,0x12027f6,114,장인의 찬란한 변환기 묶음,,,converter_item_name_or_context
+57928,0x12027f6,182,장인의 화려한 변환기 묶음,,,converter_item_name_or_context
+57928,0x12027f6,250,개방 옵션 변환기[E],,,converter_item_name_or_context
+57929,0x120293c,0,개방 옵션 변환기[E],,,converter_item_name_or_context
+57929,0x120293c,60,개방 옵션 변환기[E],,,converter_item_name_or_context
+57929,0x120293c,128,개방 옵션 변환기[E],,,converter_item_name_or_context
+57929,0x120293c,196,개방 옵션 변환기[E],,,converter_item_name_or_context
+57929,0x120293c,264,개선된 개방 옵션 변환기[E],,,converter_item_name_or_context
+57930,0x1202a82,6,개선된 개방 옵션 변환기[E],,,converter_item_name_or_context
+57930,0x1202a82,74,개선된 개방 옵션 변환기[E],,,converter_item_name_or_context
+57930,0x1202a82,142,개선된 개방 옵션 변환기[E],,,converter_item_name_or_context
+57930,0x1202a82,210,개선된 개방 옵션 변환기[E],,,converter_item_name_or_context
+57930,0x1202a82,278,모조 개방 옵션 변환기,,,converter_item_name_or_context
+57931,0x1202bc8,20,모조 개방 옵션 변환기,,,converter_item_name_or_context
+57931,0x1202bc8,88,모조 개방 옵션 변환기,,,converter_item_name_or_context
+57931,0x1202bc8,156,모조 개방 옵션 변환기,,,converter_item_name_or_context
+57931,0x1202bc8,224,모조 개방 옵션 변환기,,,converter_item_name_or_context
+57931,0x1202bc8,292,모조 개방 옵션 변환기[,,,converter_item_name_or_context
+57932,0x1202d0e,34,모조 개방 옵션 변환기[E],,,converter_item_name_or_context
+57932,0x1202d0e,102,모조 개방 옵션 변환기[E],,,converter_item_name_or_context
+57932,0x1202d0e,170,모조 개방 옵션 변환기[E],,,converter_item_name_or_context
+57932,0x1202d0e,238,모조 개방 옵션 변환기[E],,,converter_item_name_or_context
