@@ -187,6 +187,11 @@ function candidateValues(option: InstandardOption): string[] {
   return [...new Set(option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values.map((vector) => renderValue(template, vector))))];
 }
 
+function tierCandidateValues(option: InstandardOption, tier: Tier): string[] {
+  const template = displayTemplate(option);
+  return [...new Set(tier.roll_values.map((vector) => renderValue(template, vector)))];
+}
+
 function rangeLabel(option: InstandardOption): string {
   const vectors = option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values);
   const values = vectors.map((vector) => vector[0]);
@@ -361,7 +366,7 @@ function InstandardOpenViewer({ source, openRows, themeButton }: { source: Sourc
         </section>) : <Empty />}
       </>}
     </main>
-    {target === "instandard" && selectedOption && <Modal title={displayName(selectedOption)} subtitle={`수치 범위: ${rangeLabel(selectedOption)}`} onClose={() => setSelectedOption(null)}><p>활성 티어 {selectedOption.tiers.filter((tier) => tier.enabled).length}개 · 가능한 수치 {candidateValues(selectedOption).length}개</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tier.roll_values.map((vector, index) => <span key={`${tier.raw_tier_index}-${index}`}>{renderValue(displayTemplate(selectedOption), vector)}</span>)}</div></section>)}</div></Modal>}
+    {target === "instandard" && selectedOption && <Modal title={displayName(selectedOption)} subtitle={`수치 범위: ${rangeLabel(selectedOption)}`} onClose={() => setSelectedOption(null)}><p>활성 티어 {selectedOption.tiers.filter((tier) => tier.enabled).length}개 · 가능한 수치 {candidateValues(selectedOption).length}개</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tierCandidateValues(selectedOption, tier).map((value) => <span key={`${tier.raw_tier_index}-${value}`}>{value}</span>)}</div></section>)}</div></Modal>}
   </>;
 }
 
