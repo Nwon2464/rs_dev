@@ -12,6 +12,7 @@ from rs_dev import instandard_options as instandard_collector
 from rs_dev import open_options as open_collector
 from rs_dev.models import (
     InstandardDataset,
+    InstandardOpenOptionRow,
     InstandardRenderRow,
     InstandardTierCsvRow,
     OpenOptionOutputRow,
@@ -53,6 +54,74 @@ def test_open_option_binary_parse_result_is_model_validated() -> None:
     blocks = open_collector.parse_blocks(ROOT / "data/raw/item_option_open.dat")
     assert len(blocks) == 176
     assert sum(len(block["rows"]) for block in blocks) == 7749
+    assert {block["section_type"] for block in blocks} >= {7, 8, 9, 11}
+
+
+def test_instandard_weapon_burning_slot4_section_type_11_is_preserved() -> None:
+    path = open_collector.DEFAULT_DATA_DIR / "item_option_open.dat"
+    if not path.is_file():
+        pytest.skip(f"local DAT is unavailable: {path}")
+
+    weapon_group_ids = (
+        18,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        28,
+        30,
+        32,
+        33,
+        54,
+        55,
+        56,
+        57,
+        58,
+        61,
+        63,
+        68,
+        70,
+        80,
+        82,
+    )
+    matches = [
+        block
+        for block in open_collector.parse_blocks(path)
+        if block["section_type"] == 11
+        and block["section_group"] == 3
+        and block["group_ids"] == weapon_group_ids
+    ]
+    assert len(matches) == 1
+
+    slot4 = [
+        row for row in matches[0]["rows"] if row["row_index"] // 31 + 1 == 4
+    ]
+    assert len(slot4) == 30
+    assert [row["candidate_index"] for row in slot4] == list(range(1, 31))
+
+    expected = (
+        (460, (127, 152, 182)),
+        (201, (60, 70, 80)),
+        (704, (5, 6, 7)),
+        (706, (7, 8, 9)),
+        (724, (14, 18, 22)),
+        (464, (17, 20, 23)),
+        (752, (12, 14, 16)),
+        (754, (6, 8, 10)),
+        (755, (80, 96, 115)),
+        (472, (40, 45, 50)),
+    )
+    for index, (option_id, values) in enumerate(expected):
+        rows = slot4[index * 3 : index * 3 + 3]
+        assert tuple(row["option_id"] for row in rows) == (option_id,) * 3
+        assert tuple(row["packed_value"] & 0xFFFF for row in rows) == values
+        assert tuple(row["packed_value"] >> 16 for row in rows) == (0, 0, 0)
+        assert tuple(row["normal"] for row in rows) == pytest.approx((8, 1.5, 0.5))
+        assert tuple(row["improved"] for row in rows) == (0, 0, 0)
+        assert tuple(row["tier"] for row in rows) == (3, 4, 5)
 
 
 def test_display_value_transformations() -> None:
@@ -136,6 +205,7 @@ def test_supplemental_options_are_validated_on_necklace() -> None:
 def test_output_model_field_order_matches_frozen_csv_schemas() -> None:
     expectations = {
         "data/processed/equipment_converter_type_options.csv": OpenOptionOutputRow,
+        "data/processed/instandard_open_option_rows.csv": InstandardOpenOptionRow,
         "data/processed/instandard_equipment_tiers.csv": InstandardTierCsvRow,
         "data/processed/instandard_equipment_render_rows.csv": InstandardRenderRow,
     }

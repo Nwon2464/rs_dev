@@ -91,7 +91,7 @@ def parse_blocks(path: Path) -> list[dict]:
         header_size = 32 if block_index == 0 else 8
         if cursor + header_size > len(data):
             raise ValueError(f"truncated block header at {cursor:#x}")
-        grade_code = u32(data, cursor + (24 if block_index == 0 else 0))
+        section_type = u32(data, cursor + (24 if block_index == 0 else 0))
         section_group = u32(data, cursor + (28 if block_index == 0 else 4))
         rows_offset = cursor + header_size
         rows_end = rows_offset + ROWS_PER_BLOCK * ROW_SIZE
@@ -109,9 +109,10 @@ def parse_blocks(path: Path) -> list[dict]:
         rows = []
         for row_index in range(ROWS_PER_BLOCK):
             offset = rows_offset + row_index * ROW_SIZE
-            values = struct.unpack_from("<IIIffI", data, offset)
-            if not any(values):
+            raw_row = data[offset : offset + ROW_SIZE]
+            if raw_row == bytes(ROW_SIZE):
                 continue
+            values = struct.unpack("<IIIffI", raw_row)
             candidate_index, option_id, packed_value, normal, improved, tier = values
             rows.append(
                 {
@@ -128,7 +129,7 @@ def parse_blocks(path: Path) -> list[dict]:
 
         block = {
             "block_index": block_index,
-            "grade_code": grade_code,
+            "section_type": section_type,
             "section_group": section_group,
             "group_ids": group_ids,
             "rows": rows,
@@ -243,7 +244,7 @@ def collect(
                 f"block {block['block_index']} has unknown equipment signature: {group_ids}"
             )
         bucket = BUCKET_BY_GROUP_IDS[group_ids]
-        if bucket not in equipment or block["grade_code"] not in grade_codes:
+        if bucket not in equipment or block["section_type"] not in grade_codes:
             continue
 
         validity = probability_validity(block["rows"])
@@ -264,8 +265,9 @@ def collect(
                     "equipment_bucket": bucket,
                     "item_group_ids": ",".join(map(str, group_ids)),
                     "item_group_names": ",".join(group_names[value] for value in group_ids),
-                    "grade_code": block["grade_code"],
-                    "grade_name": GRADE_NAMES.get(block["grade_code"], ""),
+                    # Keep the established CSV schema for section types 7/8/9.
+                    "grade_code": block["section_type"],
+                    "grade_name": GRADE_NAMES.get(block["section_type"], ""),
                     "section_group": block["section_group"],
                     "open_slot": slot,
                     "candidate_index": row["candidate_index"],

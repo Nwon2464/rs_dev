@@ -1,5 +1,7 @@
 # rs_dev
 
+데미지 역추적 실험: [damage_experiment/README.md](damage_experiment/README.md)
+
 ## 설치
 
 ```bash

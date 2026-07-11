@@ -24,7 +24,7 @@ class OpenOptionParsedRow(Model):
 
 class OpenOptionBlock(Model):
     block_index: int = Field(ge=0)
-    grade_code: int
+    section_type: int
     section_group: int = Field(ge=0)
     group_ids: tuple[int, ...]
     rows: list[OpenOptionParsedRow]
@@ -81,3 +81,54 @@ class OpenOptionOutputRow(Model):
         if any(values) and not all(values):
             raise ValueError("converter classification fields must be set together")
         return self
+
+
+class InstandardOpenOptionRow(Model):
+    item_group_id: int = Field(ge=0)
+    item_group_name: str
+    bucket_signature_index: int = Field(ge=1)
+    bucket_group_ids: str
+    bucket_group_names: str
+    converter_type: Literal["일반", "개량", "모조", "불타는"]
+    mapping_status: Literal["screen_confirmed", "structural_candidate"]
+    section_type: int
+    section_group: int
+    open_slot: int = Field(ge=1, le=4)
+    candidate_index: int = Field(ge=1)
+    option_id: int = Field(ge=0)
+    option_name: str
+    option_value_arity: int = Field(ge=0, le=2)
+    option_display: str
+    value_raw: int = Field(ge=0, le=0xFFFFFFFF)
+    value_0_low16: int = Field(ge=0, le=0xFFFF)
+    value_1_high16: int = Field(ge=0, le=0xFFFF)
+    option_tier: int = Field(ge=0)
+    probability: str
+    probability_source: Literal["float_a", "float_b"]
+    slot_probability_sum: str
+    probability_sum_valid: Literal["true", "false"]
+    source_file_name: Literal["item_option_open.dat"]
+    source_block_index: int = Field(ge=0)
+    source_file_offset: str
+
+    @field_validator("probability", "slot_probability_sum")
+    @classmethod
+    def probability_value_is_numeric(cls, value: str) -> str:
+        number = float(value)
+        if not 0 <= number <= 100.06:
+            raise ValueError("probability value must be between 0 and 100.06")
+        return value
+
+    @field_validator("section_type")
+    @classmethod
+    def section_type_is_11(cls, value: int) -> int:
+        if value != 11:
+            raise ValueError("section_type must be 11")
+        return value
+
+    @field_validator("section_group")
+    @classmethod
+    def section_group_is_supported(cls, value: int) -> int:
+        if value not in {0, 1, 3}:
+            raise ValueError("section_group must be 0, 1, or 3")
+        return value
