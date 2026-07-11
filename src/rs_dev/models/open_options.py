@@ -24,7 +24,7 @@ class OpenOptionParsedRow(Model):
 
 class OpenOptionBlock(Model):
     block_index: int = Field(ge=0)
-    grade_code: int
+    section_type: int
     section_group: int = Field(ge=0)
     group_ids: tuple[int, ...]
     rows: list[OpenOptionParsedRow]
