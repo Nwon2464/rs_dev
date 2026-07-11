@@ -2,6 +2,11 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { Icon } from "./components/Icon";
 import { equipmentIconId, featureIconId } from "./components/iconMap";
+import {
+  loadLanguage,
+  saveLanguage,
+  type Language,
+} from "./i18n";
 import "./styles.css";
 
 type Roll = [number, number, number];
@@ -220,6 +225,9 @@ function App() {
   const requestedMode = params.get("mode");
   const instandardMode: InstandardMode | null = requestedMode === "option" || requestedMode === "open" || requestedMode === "tier" ? requestedMode : null;
   const [theme, setTheme] = useState<Theme>(() => localStorage.getItem("redstone-ui-theme") === "dark" ? "dark" : "light");
+  const [language, setLanguage] = useState<Language>(
+    () => loadLanguage(localStorage),
+  );
   const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[] } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -227,6 +235,11 @@ function App() {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("redstone-ui-theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    saveLanguage(localStorage, language);
+  }, [language]);
 
   useEffect(() => {
     let cancelled = false;
@@ -252,13 +265,43 @@ function App() {
     return () => { cancelled = true; };
   }, []);
 
+  const languageSelector = (
+    <div
+      className="language-selector"
+      role="group"
+      aria-label="언어 선택"
+    >
+      <button
+        type="button"
+        className={language === "ko" ? "active" : ""}
+        aria-pressed={language === "ko"}
+        onClick={() => setLanguage("ko")}
+      >
+        한국어
+      </button>
+      <button
+        type="button"
+        className={language === "ja" ? "active" : ""}
+        aria-pressed={language === "ja"}
+        onClick={() => setLanguage("ja")}
+      >
+        日本語
+      </button>
+    </div>
+  );
   const themeButton = <button className="theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☾ 라이트 모드" : "☀ 다크 모드"}</button>;
-  if (view === "home") return <Home themeButton={themeButton} />;
-  if (loadError) return <><Header title="데이터를 불러올 수 없습니다" description={loadError} themeButton={themeButton} /><main><Empty /></main></>;
-  if (!resources) return <><Header title="데이터 불러오는 중" description="옵션 데이터를 준비하고 있습니다." themeButton={themeButton} /><main><div className="empty">불러오는 중…</div></main></>;
-  if (view === "open") return <OpenViewer rows={resources.openRows} themeButton={themeButton} />;
-  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} themeButton={themeButton} />;
-  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} themeButton={themeButton} />;
+  const headerControls = (
+    <>
+      {languageSelector}
+      {themeButton}
+    </>
+  );
+  if (view === "home") return <Home themeButton={headerControls} />;
+  if (loadError) return <><Header title="데이터를 불러올 수 없습니다" description={loadError} themeButton={headerControls} /><main><Empty /></main></>;
+  if (!resources) return <><Header title="데이터 불러오는 중" description="옵션 데이터를 준비하고 있습니다." themeButton={headerControls} /><main><div className="empty">불러오는 중…</div></main></>;
+  if (view === "open") return <OpenViewer rows={resources.openRows} themeButton={headerControls} />;
+  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} themeButton={headerControls} />;
+  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} themeButton={headerControls} />;
   return null;
 }
 

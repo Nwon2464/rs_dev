@@ -5,6 +5,12 @@ from .instandard_options import (
     InstandardRenderRow,
     InstandardTierCsvRow,
 )
+from .japanese_llt import (
+    JapaneseLltRecord,
+    JapaneseOptionAuditReport,
+    JapaneseOptionAuditSummary,
+    JapaneseOptionMapping,
+)
 from .open_options import (
     InstandardOpenOptionRow,
     OpenOptionBlock,
@@ -17,6 +23,10 @@ __all__ = [
     "InstandardRenderRow",
     "InstandardTierCsvRow",
     "InstandardOpenOptionRow",
+    "JapaneseLltRecord",
+    "JapaneseOptionAuditReport",
+    "JapaneseOptionAuditSummary",
+    "JapaneseOptionMapping",
     "OpenOptionBlock",
     "OpenOptionOutputRow",
     "OpenOptionParsedRow",
