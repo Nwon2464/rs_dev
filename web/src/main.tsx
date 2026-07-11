@@ -100,6 +100,16 @@ type InstandardOpenOptionRow = {
 };
 
 const converterOrder = new Map(["일반 변환기", "개량된 변환기", "모조 변환기", "불타는 변환기", "협회 변환기"].map((name, index) => [name, index]));
+const openEquipmentIconAliases: Record<string, string> = {
+  "귀걸이/망토": "귀걸이",
+  "장갑/팔찌": "장갑",
+  "전용 갑옷": "공용 갑옷",
+  "무기": "한 손 검",
+};
+
+function openEquipmentIconId(equipmentName: string): string {
+  return equipmentIconId[equipmentName] ?? equipmentIconId[openEquipmentIconAliases[equipmentName]] ?? "feature-open-option";
+}
 
 function parseCsv(value: string): Record<string, string>[] {
   const table: string[][] = [];
@@ -244,7 +254,6 @@ function App() {
 
   const themeButton = <button className="theme" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "☾ 라이트 모드" : "☀ 다크 모드"}</button>;
   if (view === "home") return <Home themeButton={themeButton} />;
-  if (view === "instandard" && !instandardMode) return <InstandardLanding themeButton={themeButton} />;
   if (loadError) return <><Header title="데이터를 불러올 수 없습니다" description={loadError} themeButton={themeButton} /><main><Empty /></main></>;
   if (!resources) return <><Header title="데이터 불러오는 중" description="옵션 데이터를 준비하고 있습니다." themeButton={themeButton} /><main><div className="empty">불러오는 중…</div></main></>;
   if (view === "open") return <OpenViewer rows={resources.openRows} themeButton={themeButton} />;
@@ -258,7 +267,7 @@ function Header({ title, description, themeButton, home = true }: { title: strin
 }
 
 function Home({ themeButton }: { themeButton: ReactNode }) {
-  return <><Header title="Red Stone 장비 옵션 탐색기" description="확인할 옵션 시스템을 선택하세요." themeButton={themeButton} home={false} /><main className="home-main"><section className="viewer-cards"><a href="?view=open"><span>01</span><h2>장비 개방 옵션</h2><p>장비·변환기·등급·개방 줄별 후보와 확률을 확인합니다.</p><b>개방 옵션 보기 →</b></a><a href="?view=instandard"><span>02</span><h2>비규격 장비 옵션</h2><p>장비별 옵션 수치 범위와 가능한 값을 확인합니다.</p><b>비규격 옵션 보기 →</b></a></section></main></>;
+  return <><Header title="Red Stone 장비 옵션 탐색기" description="확인할 옵션 시스템을 선택하세요." themeButton={themeButton} home={false} /><main className="home-main"><div className="home-landing-stack"><a className="home-open-card feature-card--open" href="?view=open"><div className="home-wide-card-copy"><Icon className="app-icon" id="feature-open-option" size={38} /><div><h2>일반 장비 개방 옵션</h2><p>장비·변환기·등급·개방 줄별 후보와 확률을 확인합니다.</p></div></div><b>일반 장비 개방 옵션 보기 →</b></a><section className="home-instandard-panel" aria-labelledby="home-instandard-title"><div className="home-instandard-heading"><Icon className="app-icon" id="feature-instandard-option" size={38} /><div><h2 id="home-instandard-title">비규격 장비 옵션</h2><p>비규격 옵션, 비규격 개방옵션, 티어별 옵션을 탐색합니다.</p></div></div><div className="instandard-feature-cards home-instandard-feature-cards">{instandardModes.map((item) => <a className={`instandard-feature-card home-instandard-feature-card feature-card--${item.className}`} href={`?view=instandard&mode=${item.mode}`} key={item.mode}><Icon className="app-icon" id={featureIconId[item.title]} size={38} /><h2>{item.title}</h2><p>{item.description}</p><b>조회하기 →</b></a>)}</div></section></div></main></>;
 }
 
 const instandardModes: { mode: InstandardMode; title: string; description: string; className: string }[] = [
@@ -266,10 +275,6 @@ const instandardModes: { mode: InstandardMode; title: string; description: strin
   { mode: "open", title: "비규격 개방옵션", description: "변환기와 개방 줄별 원본 후보 및 확률을 확인합니다.", className: "open" },
   { mode: "tier", title: "티어별 옵션", description: "티어를 기준으로 장비와 옵션을 탐색합니다.", className: "tier" },
 ];
-
-function InstandardLanding({ themeButton }: { themeButton: ReactNode }) {
-  return <><Header title="비규격 장비 옵션" description="확인할 기능을 선택하세요." themeButton={themeButton} /><main className="instandard-landing"><section className="instandard-feature-cards" aria-label="비규격 장비 기능 선택">{instandardModes.map((item) => <a className={`instandard-feature-card feature-card--${item.className}`} href={`?view=instandard&mode=${item.mode}`} key={item.mode}><Icon className="app-icon" id={featureIconId[item.title]} size={38} /><h2>{item.title}</h2><p>{item.description}</p><b>조회하기 →</b></a>)}</section></main></>;
-}
 
 function InstandardModeTabs({ mode }: { mode: InstandardMode }) {
   return <nav className="instandard-mode-tabs" aria-label="비규격 장비 기능">{instandardModes.map((item) => <a className={`mode-tab mode-tab--${item.className} ${mode === item.mode ? "active" : ""}`} href={`?view=instandard&mode=${item.mode}`} aria-current={mode === item.mode ? "page" : undefined} key={item.mode}><Icon className="app-icon" id={featureIconId[item.title]} size={18} />{item.title}</a>)}</nav>;
@@ -516,7 +521,6 @@ function OpenViewer({ rows, themeButton }: { rows: OpenOptionRow[]; themeButton:
   const tags = useMemo(() => ["ALL", ...[...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot)).flatMap((row) => row.tags))].sort((a, b) => a.localeCompare(b, "ko"))], [equipment, converter, grade, effectiveLines.join("|"), rows]);
   const [tag, setTag] = useState("ALL");
   const [query, setQuery] = useState("");
-  const [selectedRow, setSelectedRow] = useState<OpenOptionRow | null>(null);
   const gradeLabel = (code: string) => `${code} · ${rows.find((row) => row.grade_code === code && row.grade_name)?.grade_name || "명칭 미확정"}`;
   const filtered = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
@@ -528,7 +532,7 @@ function OpenViewer({ rows, themeButton }: { rows: OpenOptionRow[]; themeButton:
   function changeConverter(value: string) { const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === value).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
   function toggleLine(value: string) { if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null); else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b))); setTag("ALL"); }
 
-  return <><Header title="장비 개방 옵션 · 변환기별" description="변환기 종류별 확률 필드를 분리한 원본 DAT 직접 조인 결과입니다." themeButton={themeButton} /><main><section className="selection-panel open-panel"><FilterGroup number="1" title="장비 선택">{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}>◇ {value}</Chip>)}</FilterGroup><FilterGroup number="2" title="변환기 선택">{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{value}</Chip>)}</FilterGroup><FilterGroup number="3" title="아이템 등급">{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setTag("ALL"); }}>{gradeLabel(value)}</Chip>)}</FilterGroup><FilterGroup number="4" title="개방 줄"><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{value}번째 개방 줄</Chip>)}</FilterGroup><FilterGroup number="5" title="태그 필터">{tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? "전체 태그" : value}</Chip>)}</FilterGroup></section><Context breadcrumb={`${equipment} › ${converter} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? "전체 개방 줄" : effectiveLines.map((line) => `${line}번째`).join(" · ")} › ${tag === "ALL" ? "전체 태그" : tag}`} query={query} onQuery={setQuery} placeholder="현재 목록에서 옵션 검색" /><ResultsHead title="개방 옵션 후보" description="행을 누르면 원본 데이터와 적용 확률을 확인할 수 있습니다." count={filtered.length} />{filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}><SectionHead title={`${line}번째 개방 줄`} count={`${groups.get(line)?.length ?? 0}개 후보`} /><div className="table-wrap"><table className="open-table"><thead><tr><th>옵션 효과</th><th>옵션명 / 태그</th><th>단계</th><th>변환 확률</th><th>후보</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => <tr key={`${row.option_id}-${row.option_tier}-${row.candidate_index}-${index}`} onClick={() => setSelectedRow(row)} tabIndex={0}><td><strong>◇ {row.option_display}</strong></td><td>{row.option_display_name}<small>{row.tags.join(" / ")}</small></td><td><span className="tier">{row.option_tier}단계</span></td><td><b className="probability">{row.converter_probability}%</b></td><td>{row.candidate_index}</td></tr>)}</tbody></table></div></section>) : <Empty />}</main>{selectedRow && <Modal title={selectedRow.option_display_name} subtitle={selectedRow.option_display} onClose={() => setSelectedRow(null)}><dl className="details"><Detail label="장비" value={selectedRow.equipment_bucket} /><Detail label="변환기" value={selectedRow.converter_type} /><Detail label="등급" value={gradeLabel(selectedRow.grade_code)} /><Detail label="개방 줄" value={`${selectedRow.open_slot}번째`} /><Detail label="태그" value={selectedRow.tags.join(" / ")} /><Detail label="변환 확률" value={`${selectedRow.converter_probability}% (${selectedRow.converter_probability_source})`} /><Detail label="옵션 ID" value={selectedRow.option_id} /><Detail label="원본 값" value={selectedRow.value_raw} /></dl></Modal>}</>;
+  return <><Header title="일반 장비 개방 옵션 · 변환기별" description="변환기 종류별 확률 필드를 분리한 원본 DAT 직접 조인 결과입니다." themeButton={themeButton} /><main className="open-viewer-mode"><section className="selection-panel open-panel"><FilterGroup number="1" title="장비 선택">{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}><span className="open-equipment-chip"><Icon className="app-icon" id={openEquipmentIconId(value)} size={18} />{value}</span></Chip>)}</FilterGroup><FilterGroup number="2" title="변환기 선택">{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{value}</Chip>)}</FilterGroup><FilterGroup number="3" title="아이템 등급">{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setTag("ALL"); }}>{gradeLabel(value)}</Chip>)}</FilterGroup><FilterGroup number="4" title="개방 줄"><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{value}번째 개방 줄</Chip>)}</FilterGroup><FilterGroup number="5" title="태그 필터">{tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? "전체 태그" : value}</Chip>)}</FilterGroup></section><Context breadcrumb={`${equipment} › ${converter} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? "전체 개방 줄" : effectiveLines.map((line) => `${line}번째`).join(" · ")} › ${tag === "ALL" ? "전체 태그" : tag}`} query={query} onQuery={setQuery} placeholder="현재 목록에서 옵션 검색" /><ResultsHead title="일반 장비 개방 옵션 후보" description="현재 조건에서 가능한 옵션과 적용 확률입니다." count={filtered.length} />{filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}><SectionHead title={`${line}번째 개방 줄`} count={`${groups.get(line)?.length ?? 0}개 후보`} /><div className="table-wrap"><table className="open-table"><thead><tr><th>옵션 효과</th><th>옵션명 / 태그</th><th>단계</th><th>변환 확률</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => <tr key={`${row.option_id}-${row.option_tier}-${row.candidate_index}-${index}`}><td><strong>{row.option_display}</strong></td><td>{row.option_display_name}<small>{row.tags.join(" / ")}</small></td><td><span className="tier">{row.option_tier}단계</span></td><td><b className="probability">{row.converter_probability}%</b></td></tr>)}</tbody></table></div></section>) : <Empty />}</main></>;
 }
 
 function FilterGroup({ number, title, children, className = "" }: { number: string; title: string; children: ReactNode; className?: string }) { return <section className={`filter-group ${className}`}><h2><span>{number}</span>{title}</h2><div className="chip-grid">{children}</div></section>; }
@@ -537,7 +541,6 @@ function Context({ breadcrumb, query, onQuery, placeholder, hideSearch = false }
 function ResultsHead({ title, description, count }: { title: string; description: string; count: number }) { return <section className="results-head"><div><h2>{title}</h2><p>{description}</p></div><b>{count.toLocaleString()}개</b></section>; }
 function SectionHead({ title, count }: { title: string; count: string }) { return <div className="option-section-head"><h3>{title}</h3><span>{count}</span></div>; }
 function Empty() { return <div className="empty">조건에 맞는 옵션이 없습니다.</div>; }
-function Detail({ label, value }: { label: string; value: string }) { return <div><dt>{label}</dt><dd>{value}</dd></div>; }
 
 function Modal({ title, subtitle, children, onClose }: { title: string; subtitle: string; children: ReactNode; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
