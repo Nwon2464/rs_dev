@@ -180,7 +180,6 @@ def main() -> None:
                 "shifted_option_ids": shifted_ids,
                 "raw_csv_rows": len(raw_rows),
                 "pre_render_csv_rows": len(pre_render_rows),
-                "html_rendering_checked": False,
             },
             ensure_ascii=False,
             indent=2,

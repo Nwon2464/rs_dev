@@ -1,8 +1,9 @@
 # 0단계 출력 회귀 기준
 
 `baselines/output_baseline.json`은 리팩터링 직전 커밋
-`682594c104f8989bd164d95aeec4cca9e71cbb34`의 추적 중인 CSV·JSON·HTML
-출력을 기록한다.
+`682594c104f8989bd164d95aeec4cca9e71cbb34`의 추적 중인 CSV·JSON과
+현재 유지하는 데이터 출력을 기록한다. 웹 최종 산출물은 `web/dist/`이며
+`npm run build`로 별도 검증한다.
 
 다음 명령으로 기준 파일의 바이트 단위 동일성, CSV 행·열 수, 주요 데이터
 건수를 함께 검사한다.

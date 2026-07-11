@@ -19,14 +19,7 @@
     "data/processed/trace_item_option_open_blocks.csv": {"sha256": "5cdf3f0067837050718181b5cedda9524fbc1bcde358d09b0c34316cd3208944", "bytes": 19635, "data_rows": 146, "columns": 14},
     "data/processed/trace_item_option_open_rows.csv": {"sha256": "90f2a466c76c2ee02fc493de3facf08951ec9ca057839a9dd6c3278c20940591", "bytes": 581551, "data_rows": 5544, "columns": 14},
     "data/processed/trace_raw_data_folder_hits.csv": {"sha256": "8da6c45daaa31caecc418bd4546a6e387d1c632db196fe84c81db5f1960f08c8", "bytes": 1544, "data_rows": 14, "columns": 5},
-    "data/processed/trace_textdata2_converter_ui.csv": {"sha256": "58111c64620b80a881d8f6570df32e0d49ea35149e446f042671b89fb9abf88f", "bytes": 486, "data_rows": 3, "columns": 6},
-    "equipment_open_options_viewer.html": {"sha256": "14109b2f04549ab5501cd1a0f1a125029e8aae5c7440f066c127bd133f73cfe1", "bytes": 7225833},
-    "equipment_options_viewer.html": {"sha256": "a788be557ba8d4d980bc2e902e45895ac9477e41a6a60a506e333d2c35a9a109", "bytes": 10909348},
-    "helmet_modified_converter_options_viewer.html": {"sha256": "1eb859ee3c51f3e3c2b80c337416cb684017ca5a049f88027f928eb808b9b3fa", "bytes": 299277},
-    "helmet_options_viewer.html": {"sha256": "a51792615b95d3284019765727ae03202f25154b1335387ec894afba4bb25a5c", "bytes": 12877},
-    "index.html": {"sha256": "4378c94354b37c2da3614c99ecbafc17f68c2752a9c0a4046b27dc11df0a1f9a", "bytes": 4371},
-    "instandard_equipment_viewer.html": {"sha256": "f320cd5235584fed2b9b4565d9d8086d5c4bb2e01daefacc3ee011ad1a9237d1", "bytes": 3152302},
-    "preview.html": {"sha256": "3f02cffdf03e17dd5aa9310efe25de7fa167c55674963580a5d62656466ff257", "bytes": 41632}
+    "data/processed/trace_textdata2_converter_ui.csv": {"sha256": "58111c64620b80a881d8f6570df32e0d49ea35149e446f042671b89fb9abf88f", "bytes": 486, "data_rows": 3, "columns": 6}
   },
   "key_counts": {
     "instandard_equipment_groups": 34,

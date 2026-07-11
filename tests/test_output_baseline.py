@@ -97,6 +97,17 @@ class OutputBaselineTest(unittest.TestCase):
         }
         self.assertEqual(expected, actual)
 
+    def test_react_public_data_matches_processed_outputs(self) -> None:
+        for name in (
+            "instandard_equipment.json",
+            "equipment_converter_type_options.csv",
+        ):
+            with self.subTest(name=name):
+                processed = ROOT / "data" / "processed" / name
+                public = ROOT / "web" / "public" / "data" / name
+                self.assertTrue(public.is_file(), f"missing React public data: {name}")
+                self.assertEqual(sha256(processed.read_bytes()), sha256(public.read_bytes()))
+
 
 if __name__ == "__main__":
     unittest.main()

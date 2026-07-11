@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-import collect_equipment_open_options as open_collector
-import collect_instandard_equipment as instandard_collector
+from rs_dev import instandard_options as instandard_collector
+from rs_dev import open_options as open_collector
 from rs_dev.models import (
     InstandardDataset,
     InstandardRenderRow,
