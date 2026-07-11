@@ -109,9 +109,10 @@ def parse_blocks(path: Path) -> list[dict]:
         rows = []
         for row_index in range(ROWS_PER_BLOCK):
             offset = rows_offset + row_index * ROW_SIZE
-            values = struct.unpack_from("<IIIffI", data, offset)
-            if not any(values):
+            raw_row = data[offset : offset + ROW_SIZE]
+            if raw_row == bytes(ROW_SIZE):
                 continue
+            values = struct.unpack("<IIIffI", raw_row)
             candidate_index, option_id, packed_value, normal, improved, tier = values
             rows.append(
                 {

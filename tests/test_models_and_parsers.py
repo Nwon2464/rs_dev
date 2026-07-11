@@ -12,6 +12,7 @@ from rs_dev import instandard_options as instandard_collector
 from rs_dev import open_options as open_collector
 from rs_dev.models import (
     InstandardDataset,
+    InstandardOpenOptionRow,
     InstandardRenderRow,
     InstandardTierCsvRow,
     OpenOptionOutputRow,
@@ -204,6 +205,7 @@ def test_supplemental_options_are_validated_on_necklace() -> None:
 def test_output_model_field_order_matches_frozen_csv_schemas() -> None:
     expectations = {
         "data/processed/equipment_converter_type_options.csv": OpenOptionOutputRow,
+        "data/processed/instandard_open_option_rows.csv": InstandardOpenOptionRow,
         "data/processed/instandard_equipment_tiers.csv": InstandardTierCsvRow,
         "data/processed/instandard_equipment_render_rows.csv": InstandardRenderRow,
     }
