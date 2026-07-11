@@ -116,7 +116,10 @@ function prepareOpenRows(csv: string, source: SourceDataset): OpenOptionRow[] {
     option_display_name: raw.option_name.endsWith("P") ? raw.option_name.slice(0, -1) : raw.option_name,
     tags: knownTags.get(raw.option_id) ?? inferredTags(raw.option_name),
   })) as OpenOptionRow[];
-  if (rows.length !== 8008) throw new Error(`개방 옵션 행 수가 예상과 다릅니다: ${rows.length}`);
+  const requiredFields = ["converter_type", "equipment_bucket", "grade_code", "open_slot", "option_id", "option_display", "converter_probability"] as const;
+  if (!rows.length || rows.some((row) => requiredFields.some((field) => !row[field]?.trim()))) {
+    throw new Error("개방 옵션 데이터에 필수 필드가 없거나 비어 있습니다.");
+  }
   return rows;
 }
 
