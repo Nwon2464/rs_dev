@@ -75,14 +75,27 @@ def main() -> None:
             raise ValueError(f"observed glove value missing for option {option_id}")
 
     required_ui_terms = (
-        "공통 수치 구간",
-        "게임의 공식 티어 명칭으로 확정하지 않았습니다",
-        "group.group_index",
-        "raw_tier_index",
+        "옵션 분류",
+        "가능 수치",
+        "candidateValues(option)",
+        "value-chip",
+        "수치 범위",
+        "rangeLabel(option)",
+        "candidateDialog",
+        "range-button",
     )
     missing_terms = [term for term in required_ui_terms if term not in pages["instandard"]]
     if missing_terms:
         raise ValueError(f"missing rendering terms: {missing_terms}")
+    hidden_ui_terms = (
+        "공통 수치 구간",
+        'id="groupFilters"',
+        "OptionLevel",
+        "후보 수치",
+    )
+    exposed_terms = [term for term in hidden_ui_terms if term in pages["instandard"]]
+    if exposed_terms:
+        raise ValueError(f"internal terms exposed in user UI: {exposed_terms}")
 
     print(
         json.dumps(
