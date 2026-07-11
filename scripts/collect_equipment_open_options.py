@@ -11,10 +11,17 @@ import argparse
 import csv
 import re
 import struct
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from rs_dev.parsers import parse_capa, parse_item_groups, u32
+from rs_dev.models import OpenOptionBlock, OpenOptionOutputRow
+
+
 DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
 DEFAULT_OUTPUT = ROOT / "data" / "processed" / "equipment_open_options_test.csv"
 
@@ -80,97 +87,6 @@ BUCKET_BY_GROUP_IDS = {
 DEFAULT_EQUIPMENT = ",".join(dict.fromkeys(BUCKET_BY_GROUP_IDS.values()))
 
 
-def u32(data: bytes, offset: int) -> int:
-    return struct.unpack_from("<I", data, offset)[0]
-
-
-def read_cp949_string(
-    data: bytes, offset: int, *, allow_empty: bool = False
-) -> tuple[str, int]:
-    if offset + 4 > len(data):
-        raise ValueError(f"truncated CP949 string length at {offset:#x}")
-    length = u32(data, offset)
-    end = offset + 4 + length
-    if end > len(data):
-        raise ValueError(f"invalid CP949 string at {offset:#x}")
-    if length == 0:
-        if allow_empty:
-            return "", end
-        raise ValueError(f"empty CP949 string at {offset:#x}")
-    if data[end - 1] != 0:
-        raise ValueError(f"unterminated CP949 string at {offset:#x}")
-    return data[offset + 4 : end - 1].decode("cp949"), end
-
-
-def parse_simple_game_text(path: Path) -> dict[int, str]:
-    data = path.read_bytes()
-    count = u32(data, 0x78F)
-    if count != 84:
-        raise ValueError(f"expected 84 item groups at 0x78f, found {count}")
-    cursor = 0x793
-    groups: dict[int, str] = {}
-    for expected_id in range(count):
-        group_id = u32(data, cursor)
-        if group_id != expected_id:
-            raise ValueError(
-                f"item group sequence mismatch at {cursor:#x}: "
-                f"expected {expected_id}, found {group_id}"
-            )
-        name, cursor = read_cp949_string(data, cursor + 4)
-        groups[group_id] = name
-    return groups
-
-
-def parse_capa_record_at(data: bytes, offset: int, expected_id: int) -> dict | None:
-    if offset + 32 > len(data) or u32(data, offset) != expected_id:
-        return None
-    try:
-        name, cursor = read_cp949_string(data, offset + 32)
-        description, cursor = read_cp949_string(data, cursor, allow_empty=True)
-        short_text, _ = read_cp949_string(data, cursor, allow_empty=True)
-    except (UnicodeDecodeError, ValueError):
-        return None
-    return {
-        "option_id": expected_id,
-        "name": name,
-        "description": description,
-        "short_text": short_text,
-        "record_offset": offset,
-    }
-
-
-def parse_option_dictionary(path: Path) -> dict[int, dict]:
-    """Parse the capa records in physical ID order, beginning with ID zero."""
-    data = path.read_bytes()
-    record_count = u32(data, 0x10)
-    first_record_offset = 0x25D
-    records: dict[int, dict] = {}
-    cursor = first_record_offset
-
-    for expected_id in range(record_count):
-        if expected_id == 0:
-            record = parse_capa_record_at(data, cursor, expected_id)
-        else:
-            needle = struct.pack("<I", expected_id)
-            candidate = data.find(needle, cursor + 33)
-            record = None
-            while candidate >= 0:
-                record = parse_capa_record_at(data, candidate, expected_id)
-                if record is not None:
-                    cursor = candidate
-                    break
-                candidate = data.find(needle, candidate + 1)
-        if record is None:
-            raise ValueError(
-                f"capa.dat sequential parse stopped at option_id={expected_id}"
-            )
-        records[expected_id] = record
-
-    if list(records) != list(range(record_count)):
-        raise ValueError("capa.dat option IDs are not contiguous from zero")
-    return records
-
-
 def parse_blocks(path: Path) -> list[dict]:
     data = path.read_bytes()
     blocks = []
@@ -215,15 +131,15 @@ def parse_blocks(path: Path) -> list[dict]:
                 }
             )
 
-        blocks.append(
-            {
-                "block_index": block_index,
-                "grade_code": grade_code,
-                "section_group": section_group,
-                "group_ids": group_ids,
-                "rows": rows,
-            }
-        )
+        block = {
+            "block_index": block_index,
+            "grade_code": grade_code,
+            "section_group": section_group,
+            "group_ids": group_ids,
+            "rows": rows,
+        }
+        OpenOptionBlock.model_validate(block)
+        blocks.append(block)
         cursor = groups_end
         block_index += 1
 
@@ -462,14 +378,16 @@ def main() -> None:
     if missing:
         raise FileNotFoundError("required source file(s) missing: " + ", ".join(missing))
 
-    group_names = parse_simple_game_text(required["simpleGameText.dat"])
+    group_names = parse_item_groups(
+        required["simpleGameText.dat"], expected_count=84
+    )
     mapping_basis = "simpleGameText.dat item_group_id + capa.dat option_id"
     mapping_confidence = "high_direct_local_join"
 
     rows = collect(
         parse_blocks(required["item_option_open.dat"]),
         group_names,
-        parse_option_dictionary(required["capa.dat"]),
+        parse_capa(required["capa.dat"]),
         comma_set(args.equipment),
         int_set(args.grade_codes),
         mapping_basis,
@@ -481,6 +399,11 @@ def main() -> None:
         rows = classify_converter_rows(rows)
     if not rows:
         raise ValueError("the requested filters produced no rows")
+
+    if list(OpenOptionOutputRow.model_fields) != FIELDNAMES:
+        raise ValueError("open-option output model field order differs from CSV schema")
+    for row in rows:
+        OpenOptionOutputRow.model_validate(row)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8-sig", newline="") as handle:

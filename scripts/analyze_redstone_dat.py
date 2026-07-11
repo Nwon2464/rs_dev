@@ -7,11 +7,17 @@ import csv
 import json
 import math
 import struct
+import sys
 from collections import Counter
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from rs_dev.parsers import u32 as read_u32
+
+
 RAW = ROOT / "data" / "raw"
 OUT = ROOT / "data" / "processed"
 
@@ -21,10 +27,6 @@ OPEN = RAW / "item_option_open.dat"
 
 ROW_COUNT_PER_BLOCK = 124
 OPEN_ROW_SIZE = 24
-
-
-def read_u32(data: bytes, offset: int) -> int:
-    return struct.unpack_from("<I", data, offset)[0]
 
 
 def read_i32(data: bytes, offset: int) -> int:

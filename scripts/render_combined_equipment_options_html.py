@@ -4,9 +4,9 @@
 from __future__ import annotations
 
 import csv
-import json
 from pathlib import Path
 
+from html_rendering import json_for_script, substitute_once
 import render_equipment_options_html as open_options
 import render_instandard_equipment_html as instandard_options
 
@@ -54,13 +54,17 @@ def main() -> None:
         open_rows = list(csv.DictReader(handle))
     if not open_rows:
         raise ValueError(f"no rows found in {OPEN_CSV}")
+    for row in open_rows:
+        open_options.OpenOptionOutputRow.model_validate(row)
+    open_options.add_tags(open_rows)
     instandard = instandard_options.build_render_dataset()
-    open_html = open_options.TEMPLATE.replace(
-        "__EMBEDDED_DATA__", json.dumps(open_rows, ensure_ascii=False, separators=(",", ":"))
-    )
+    open_html = open_options.render_html(open_rows)
     instandard_html = instandard_options.render_html(instandard)
-    pages = json.dumps({"open": open_html, "instandard": instandard_html}, ensure_ascii=False)
-    OUTPUT.write_text(SHELL.replace("__EMBEDDED_PAGES__", pages.replace("</", "<\\/")), encoding="utf-8")
+    pages = json_for_script({"open": open_html, "instandard": instandard_html})
+    html = substitute_once(
+        SHELL, "__EMBEDDED_PAGES__", pages, label="combined viewer embedded pages"
+    )
+    OUTPUT.write_text(html, encoding="utf-8")
     print(f"wrote combined viewer ({len(open_rows)} open-option rows, {len(instandard['equipment'])} non-standard equipment groups)")
 
 

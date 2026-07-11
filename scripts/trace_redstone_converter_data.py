@@ -11,6 +11,7 @@ import csv
 import json
 import re
 import struct
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,11 @@ except ImportError:  # pragma: no cover - optional local dependency
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from rs_dev.parsers import u32 as read_u32
+
+
 DATA = Path("/mnt/c/game/Red Stone/Data")
 OUT = ROOT / "data" / "processed"
 
@@ -55,10 +61,6 @@ SEARCH_TERMS = [
     "약화된 개방옵션",
     "개방 옵션 변경",
 ]
-
-
-def read_u32(data: bytes, offset: int) -> int:
-    return struct.unpack_from("<I", data, offset)[0]
 
 
 def read_i32(data: bytes, offset: int) -> int:

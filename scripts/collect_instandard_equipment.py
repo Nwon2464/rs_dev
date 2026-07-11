@@ -14,12 +14,23 @@ import hashlib
 import json
 import re
 import struct
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from rs_dev.parsers import parse_capa, parse_item_groups
+from rs_dev.models import (
+    InstandardDataset,
+    InstandardRenderRow,
+    InstandardTierCsvRow,
+)
+
+
 DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
 DEFAULT_MARKDOWN = ROOT / "비규격.md"
 DEFAULT_JSON = ROOT / "data" / "processed" / "instandard_equipment.json"
@@ -130,99 +141,12 @@ class MessagePackDecoder:
         return result
 
 
-def u32(data: bytes, offset: int) -> int:
-    return struct.unpack_from("<I", data, offset)[0]
-
-
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def read_cp949_string(
-    data: bytes, offset: int, *, allow_empty: bool = False
-) -> tuple[str, int]:
-    if offset + 4 > len(data):
-        raise ValueError(f"truncated string length at {offset:#x}")
-    size = u32(data, offset)
-    end = offset + 4 + size
-    if end > len(data):
-        raise ValueError(f"truncated string at {offset:#x}")
-    if size == 0:
-        if allow_empty:
-            return "", end
-        raise ValueError(f"empty string at {offset:#x}")
-    if data[end - 1] != 0:
-        raise ValueError(f"unterminated string at {offset:#x}")
-    return data[offset + 4 : end - 1].decode("cp949"), end
-
-
-def parse_item_groups(path: Path) -> dict[int, str]:
-    data = path.read_bytes()
-    count = u32(data, 0x78F)
-    cursor = 0x793
-    groups: dict[int, str] = {}
-    for expected_id in range(count):
-        group_id = u32(data, cursor)
-        if group_id != expected_id:
-            raise ValueError(
-                f"item group mismatch: expected={expected_id}, found={group_id}"
-            )
-        name, cursor = read_cp949_string(data, cursor + 4)
-        groups[group_id] = name
-    return groups
-
-
-def parse_capa_record_at(data: bytes, offset: int, expected_id: int) -> dict | None:
-    if offset + 32 > len(data) or u32(data, offset) != expected_id:
-        return None
-    strings: list[str] = []
-    cursor = offset + 32
-    try:
-        for index in range(3):
-            text, cursor = read_cp949_string(data, cursor, allow_empty=index > 0)
-            strings.append(text)
-    except (UnicodeDecodeError, ValueError):
-        return None
-    help_text = ""
-    try:
-        help_text, _ = read_cp949_string(data, cursor, allow_empty=True)
-    except (UnicodeDecodeError, ValueError):
-        pass
-    return {
-        "option_id": expected_id,
-        "name": strings[0],
-        "description": strings[1],
-        "short_text": strings[2],
-        "help_text": help_text,
-        "record_offset": offset,
-    }
-
-
-def parse_capa(path: Path) -> dict[int, dict]:
-    """Parse capa.dat in its physical, contiguous option-id order."""
-    data = path.read_bytes()
-    count = u32(data, 0x10)
-    cursor = 0x25D
-    records: dict[int, dict] = {}
-    for expected_id in range(count):
-        candidate = cursor if expected_id == 0 else data.find(
-            struct.pack("<I", expected_id), cursor + 33
-        )
-        record = None
-        while candidate >= 0:
-            record = parse_capa_record_at(data, candidate, expected_id)
-            if record is not None:
-                cursor = candidate
-                break
-            candidate = data.find(struct.pack("<I", expected_id), candidate + 1)
-        if record is None:
-            raise ValueError(f"capa.dat parse stopped at option_id={expected_id}")
-        records[expected_id] = record
-    return records
 
 
 def compact_rolls(values: list[int]) -> str:
@@ -377,7 +301,7 @@ def build_dataset(data_dir: Path) -> dict[str, Any]:
             for tier in option["tiers"]
         )
     ]
-    return {
+    dataset = {
         "schema_version": 2,
         "generator": "scripts/collect_instandard_equipment.py",
         "source": {
@@ -413,6 +337,8 @@ def build_dataset(data_dir: Path) -> dict[str, Any]:
         "mechanics_capa": mechanics,
         "supplemental_assignments": SUPPLEMENTAL_ASSIGNMENT_EVIDENCE,
     }
+    InstandardDataset.model_validate(dataset)
+    return dataset
 
 
 def write_csv(path: Path, dataset: dict[str, Any]) -> None:
@@ -461,8 +387,13 @@ def write_csv(path: Path, dataset: dict[str, Any]) -> None:
                     }
                 )
     path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = list(rows[0])
+    if list(InstandardTierCsvRow.model_fields) != fieldnames:
+        raise ValueError("non-standard tier model field order differs from CSV schema")
+    for row in rows:
+        InstandardTierCsvRow.model_validate(row)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
@@ -548,8 +479,13 @@ def write_render_csv(path: Path, dataset: dict[str, Any]) -> int:
                 rows.append(row)
 
     path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = list(rows[0])
+    if list(InstandardRenderRow.model_fields) != fieldnames:
+        raise ValueError("non-standard render model field order differs from CSV schema")
+    for row in rows:
+        InstandardRenderRow.model_validate(row)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
     return len(rows)
