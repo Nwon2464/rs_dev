@@ -20,6 +20,7 @@ run("python3", [
   "--output",
   "data/processed/equipment_converter_type_options.csv",
 ], root);
+run("python3", ["scripts/export_instandard_open_options.py"], root);
 run("python3", ["scripts/validate_instandard_equipment.py"], root);
 
 const publicData = resolve(webRoot, "public", "data");
@@ -27,6 +28,7 @@ await mkdir(publicData, { recursive: true });
 await Promise.all([
   copyFile(resolve(root, "data/processed/instandard_equipment.json"), resolve(publicData, "instandard_equipment.json")),
   copyFile(resolve(root, "data/processed/equipment_converter_type_options.csv"), resolve(publicData, "equipment_converter_type_options.csv")),
+  copyFile(resolve(root, "data/processed/instandard_open_option_rows.csv"), resolve(publicData, "instandard_open_option_rows.csv")),
 ]);
 
 run(npm, ["run", "build"], webRoot);

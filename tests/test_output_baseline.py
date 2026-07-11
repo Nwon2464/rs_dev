@@ -101,6 +101,7 @@ class OutputBaselineTest(unittest.TestCase):
         for name in (
             "instandard_equipment.json",
             "equipment_converter_type_options.csv",
+            "instandard_open_option_rows.csv",
         ):
             with self.subTest(name=name):
                 processed = ROOT / "data" / "processed" / name

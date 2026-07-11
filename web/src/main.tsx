@@ -5,8 +5,10 @@ import "./styles.css";
 type Roll = [number, number, number];
 type View = "home" | "instandard" | "open";
 type Theme = "light" | "dark";
+type InstandardTarget = "instandard" | "open";
 
 type Tier = {
+  tier: number;
   raw_tier_index: number;
   option_level_group_index: number | null;
   enabled: boolean;
@@ -66,6 +68,35 @@ type OpenOptionRow = {
   tags: string[];
 };
 
+type InstandardOpenOptionRow = {
+  item_group_id: string;
+  item_group_name: string;
+  bucket_signature_index: string;
+  bucket_group_ids: string;
+  bucket_group_names: string;
+  converter_type: "일반" | "개량" | "모조" | "불타는";
+  mapping_status: "screen_confirmed" | "structural_candidate";
+  section_type: string;
+  section_group: string;
+  open_slot: string;
+  candidate_index: string;
+  option_id: string;
+  option_name: string;
+  option_value_arity: string;
+  option_display: string;
+  value_raw: string;
+  value_0_low16: string;
+  value_1_high16: string;
+  option_tier: string;
+  probability: string;
+  probability_source: string;
+  slot_probability_sum: string;
+  probability_sum_valid: "true" | "false";
+  source_file_name: string;
+  source_block_index: string;
+  source_file_offset: string;
+};
+
 const converterOrder = new Map(["일반 변환기", "개량된 변환기", "모조 변환기", "불타는 변환기", "협회 변환기"].map((name, index) => [name, index]));
 
 function parseCsv(value: string): Record<string, string>[] {
@@ -123,6 +154,15 @@ function prepareOpenRows(csv: string, source: SourceDataset): OpenOptionRow[] {
   return rows;
 }
 
+function prepareInstandardOpenRows(csv: string): InstandardOpenOptionRow[] {
+  const rows = parseCsv(csv) as unknown as InstandardOpenOptionRow[];
+  const requiredFields = ["item_group_id", "converter_type", "mapping_status", "open_slot", "option_id", "option_display", "probability", "option_tier"] as const;
+  if (!rows.length || rows.some((row) => requiredFields.some((field) => !row[field]?.trim()))) {
+    throw new Error("비규격 개방 옵션 데이터에 필수 필드가 없거나 비어 있습니다.");
+  }
+  return rows;
+}
+
 function displayName(option: InstandardOption): string {
   return option.name.endsWith("P") ? option.name.slice(0, -1) : option.name;
 }
@@ -160,7 +200,7 @@ function App() {
   const requested = new URLSearchParams(window.location.search).get("view");
   const view: View = requested === "open" || requested === "instandard" ? requested : "home";
   const [theme, setTheme] = useState<Theme>(() => localStorage.getItem("redstone-ui-theme") === "dark" ? "dark" : "light");
-  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[] } | null>(null);
+  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[] } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -180,8 +220,12 @@ function App() {
         if (!response.ok) throw new Error("개방 옵션 CSV를 읽을 수 없습니다.");
         return response.text();
       }),
-    ]).then(([source, csv]) => {
-      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, source) });
+      fetch(`${base}data/instandard_open_option_rows.csv`).then((response) => {
+        if (!response.ok) throw new Error("비규격 개방 옵션 CSV를 읽을 수 없습니다.");
+        return response.text();
+      }),
+    ]).then(([source, csv, instandardOpenCsv]) => {
+      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, source), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv) });
     }).catch((error: unknown) => {
       if (!cancelled) setLoadError(error instanceof Error ? error.message : "데이터를 읽을 수 없습니다.");
     });
@@ -193,7 +237,7 @@ function App() {
   if (loadError) return <><Header title="데이터를 불러올 수 없습니다" description={loadError} themeButton={themeButton} /><main><Empty /></main></>;
   if (!resources) return <><Header title="데이터 불러오는 중" description="옵션 데이터를 준비하고 있습니다." themeButton={themeButton} /><main><div className="empty">불러오는 중…</div></main></>;
   if (view === "open") return <OpenViewer rows={resources.openRows} themeButton={themeButton} />;
-  if (view === "instandard") return <InstandardViewer source={resources.source} themeButton={themeButton} />;
+  if (view === "instandard") return <InstandardOpenViewer source={resources.source} openRows={resources.instandardOpenRows} themeButton={themeButton} />;
   return null;
 }
 
@@ -205,22 +249,120 @@ function Home({ themeButton }: { themeButton: ReactNode }) {
   return <><Header title="Red Stone 장비 옵션 탐색기" description="확인할 옵션 시스템을 선택하세요." themeButton={themeButton} home={false} /><main className="home-main"><section className="viewer-cards"><a href="?view=open"><span>01</span><h2>장비 개방 옵션</h2><p>장비·변환기·등급·개방 줄별 후보와 확률을 확인합니다.</p><b>개방 옵션 보기 →</b></a><a href="?view=instandard"><span>02</span><h2>비규격 장비 옵션</h2><p>장비별 옵션 수치 범위와 가능한 값을 확인합니다.</p><b>비규격 옵션 보기 →</b></a></section></main></>;
 }
 
-function InstandardViewer({ source, themeButton }: { source: SourceDataset; themeButton: ReactNode }) {
+
+const instandardConverterLabels: Record<InstandardOpenOptionRow["converter_type"], string> = {
+  일반: "일반변환기",
+  개량: "개량변환기",
+  모조: "모조변환기",
+  불타는: "불타는변환기",
+};
+
+function InstandardOpenViewer({ source, openRows, themeButton }: { source: SourceDataset; openRows: InstandardOpenOptionRow[]; themeButton: ReactNode }) {
   const [equipmentName, setEquipmentName] = useState("헬멧");
+  const [target, setTarget] = useState<InstandardTarget>("instandard");
   const [tag, setTag] = useState("ALL");
+  const [converter, setConverter] = useState<InstandardOpenOptionRow["converter_type"]>("일반");
+  const [selectedOpenLines, setSelectedOpenLines] = useState<string[] | null>(null);
   const [query, setQuery] = useState("");
   const [selectedOption, setSelectedOption] = useState<InstandardOption | null>(null);
+  const openLines = ["1", "2", "3", "4"];
   const optionMap = useMemo(() => new Map(source.options.map((option) => [option.option_id, option])), [source]);
   const equipment = source.equipment.find((item) => item.item_group_name === equipmentName) ?? source.equipment[0];
   const options = useMemo(() => equipment.option_ids.map((id) => optionMap.get(id)).filter((option): option is InstandardOption => Boolean(option)), [equipment]);
   const tags = useMemo(() => ["ALL", ...[...new Set(options.flatMap((option) => option.tags))].sort((a, b) => a.localeCompare(b, "ko"))], [options]);
-  const filtered = useMemo(() => {
+  const filteredOptions = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return options.filter((option) => (tag === "ALL" || option.tags.includes(tag)) && (!normalized || [option.name, displayName(option), displayTemplate(option), option.tags.join(" ")].join(" ").toLocaleLowerCase().includes(normalized)));
   }, [options, query, tag]);
+  const equipmentOpenRows = useMemo(() => openRows.filter((row) => Number(row.item_group_id) === equipment.item_group_id), [equipment.item_group_id, openRows]);
+  const converters = useMemo(() => ["일반", "개량", "모조", "불타는"].filter((value) => equipmentOpenRows.some((row) => row.converter_type === value)) as InstandardOpenOptionRow["converter_type"][], [equipmentOpenRows]);
+  const effectiveOpenLines = selectedOpenLines ?? openLines;
+  const filteredOpenRows = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase();
+    return equipmentOpenRows
+      .filter((row) => converter === row.converter_type && effectiveOpenLines.includes(row.open_slot) && (!normalized || [row.option_name, row.option_display, row.option_id].join(" ").toLocaleLowerCase().includes(normalized)))
+      .sort((a, b) => Number(a.open_slot) - Number(b.open_slot) || Number(a.candidate_index) - Number(b.candidate_index));
+  }, [converter, effectiveOpenLines, equipmentOpenRows, query]);
+  const anomaly = filteredOpenRows.find((row) => row.probability_sum_valid === "false");
+  const openGroups = new Map(openLines.map((line) => [line, filteredOpenRows.filter((row) => row.open_slot === line)]));
+  const selectedOpenLineLabel = selectedOpenLines === null ? "ALL" : selectedOpenLines.map((line) => `${line}번째`).join(" · ");
 
-  function changeEquipment(name: string) { setEquipmentName(name); setTag("ALL"); setQuery(""); }
-  return <><Header title="비규격 장비 옵션" description="선택한 장비에 붙을 수 있는 옵션의 수치 범위를 확인하고, 클릭해 가능한 값을 살펴봅니다." themeButton={themeButton} /><main><section className="selection-panel instandard-panel" aria-label="비규격 옵션 탐색 조건"><FilterGroup number="1" title="장비 선택">{source.equipment.map((item) => <Chip key={item.item_group_id} active={equipment.item_group_id === item.item_group_id} onClick={() => changeEquipment(item.item_group_name)}>◇ {item.item_group_name}</Chip>)}</FilterGroup><FilterGroup number="2" title="옵션 분류">{tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? "전체 분류" : value}</Chip>)}</FilterGroup></section><Context breadcrumb={`${equipment.item_group_name} › ${tag === "ALL" ? "전체 분류" : tag}`} query={query} onQuery={setQuery} placeholder="현재 장비군의 옵션 검색" /><ResultsHead title={`${equipment.item_group_name} 비규격 옵션`} description="수치 범위를 클릭하면 실제 가능한 값을 모두 확인할 수 있습니다." count={filtered.length} />{filtered.length ? <section className="option-section"><SectionHead title="등장 가능 옵션" count={`${filtered.length}개 옵션`} /><div className="table-wrap"><table><thead><tr><th>옵션</th><th>수치 범위</th></tr></thead><tbody>{filtered.map((option) => <tr key={option.option_id}><td><strong>◇ {displayName(option)}</strong><small>{option.tags.join(" / ")}</small>{equipment.supplemental_option_ids.includes(option.option_id) && <em>로컬 교차검증 보완</em>}</td><td><button className="range-button" onClick={() => setSelectedOption(option)}><span>{rangeLabel(option)}</span><small>가능 수치 {candidateValues(option).length}개 보기</small></button></td></tr>)}</tbody></table></div></section> : <Empty />}</main>{selectedOption && <Modal title={displayName(selectedOption)} subtitle={`수치 범위: ${rangeLabel(selectedOption)}`} onClose={() => setSelectedOption(null)}><p>가능 수치 {candidateValues(selectedOption).length}개</p><div className="value-list">{candidateValues(selectedOption).map((value) => <span key={value}>{value}</span>)}</div></Modal>}</>;
+  function changeEquipment(name: string) {
+    const nextEquipment = source.equipment.find((item) => item.item_group_name === name);
+    const nextConverters = openRows
+      .filter((row) => Number(row.item_group_id) === nextEquipment?.item_group_id)
+      .map((row) => row.converter_type);
+    setEquipmentName(name);
+    setTag("ALL");
+    if (!nextConverters.includes(converter)) setConverter(nextConverters[0] ?? converter);
+    setSelectedOpenLines(null);
+    setQuery("");
+    setSelectedOption(null);
+  }
+
+  function changeTarget(value: InstandardTarget) {
+    setTarget(value);
+    setSelectedOpenLines(null);
+    setQuery("");
+    setSelectedOption(null);
+  }
+
+  function toggleOpenLine(value: string) {
+    if (value === "ALL") {
+      setSelectedOpenLines(null);
+    } else {
+      const current = selectedOpenLines ?? [];
+      const next = current.includes(value)
+        ? current.filter((line) => line !== value)
+        : [...current, value].sort((a, b) => Number(a) - Number(b));
+      setSelectedOpenLines(next.length ? next : null);
+    }
+    setQuery("");
+  }
+
+  const formatProbability = (value: string) => Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 8 });
+
+  return <>
+    <Header title="비규격 장비 옵션" description="장비별 비규격 옵션과 개방 옵션 후보를 전환해 확인합니다." themeButton={themeButton} />
+    <main>
+      <section className={`selection-panel instandard-panel ${target === "open" ? "inst-open-panel" : ""}`} aria-label="비규격 옵션 탐색 조건">
+        <FilterGroup number="1" title="장비 선택">
+          {source.equipment.map((item) => <Chip key={item.item_group_id} active={equipment.item_group_id === item.item_group_id} onClick={() => changeEquipment(item.item_group_name)}>◇ {item.item_group_name}</Chip>)}
+        </FilterGroup>
+        <FilterGroup number="2" title="조회 대상">
+          <Chip active={target === "instandard"} onClick={() => changeTarget("instandard")}>비규격 옵션</Chip>
+          <Chip active={target === "open"} onClick={() => changeTarget("open")}>개방 옵션</Chip>
+        </FilterGroup>
+        {target === "instandard" ? <FilterGroup number="3" title="옵션 분류">
+          {tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? "전체 분류" : value}</Chip>)}
+        </FilterGroup> : <>
+          <FilterGroup number="3" title="변환기">
+            {converters.map((value) => <Chip key={value} active={converter === value} onClick={() => { setConverter(value); setQuery(""); }}>{instandardConverterLabels[value]}</Chip>)}
+          </FilterGroup>
+          <FilterGroup number="4" title="개방 줄">
+            <Chip active={selectedOpenLines === null} onClick={() => toggleOpenLine("ALL")}>ALL</Chip>
+            {openLines.map((value) => <Chip key={value} active={selectedOpenLines?.includes(value) ?? false} onClick={() => toggleOpenLine(value)}>{value}</Chip>)}
+          </FilterGroup>
+        </>}
+      </section>
+      {target === "instandard" ? <>
+        <Context breadcrumb={`${equipment.item_group_name} › 비규격 옵션 › ${tag === "ALL" ? "전체 분류" : tag}`} query={query} onQuery={setQuery} placeholder="현재 장비군의 옵션 검색" />
+        <ResultsHead title={`${equipment.item_group_name} 비규격 옵션`} description="수치 범위를 클릭하면 실제 가능한 값을 모두 확인할 수 있습니다." count={filteredOptions.length} />
+        {filteredOptions.length ? <section className="option-section"><SectionHead title="등장 가능 옵션" count={`${filteredOptions.length}개 옵션`} /><div className="table-wrap"><table><thead><tr><th>옵션</th><th>수치 범위</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>◇ {displayName(option)}</strong><small>{option.tags.join(" / ")}</small>{equipment.supplemental_option_ids.includes(option.option_id) && <em>로컬 교차검증 보완</em>}</td><td><button className="range-button" onClick={() => setSelectedOption(option)}><span>{rangeLabel(option)}</span><small>가능 수치 {candidateValues(option).length}개 보기</small></button></td></tr>)}</tbody></table></div></section> : <Empty />}
+      </> : <>
+        <Context breadcrumb={`${equipment.item_group_name} › 개방 옵션 › ${instandardConverterLabels[converter]} › ${selectedOpenLineLabel}`} query={query} onQuery={setQuery} placeholder="현재 개방 옵션 후보 검색" />
+        <ResultsHead title={`${equipment.item_group_name} 개방 옵션 후보`} description="원본 후보 행을 중복 제거 없이 표시합니다." count={filteredOpenRows.length} />
+        {anomaly && <aside className="probability-warning"><strong>확률 합계 이상치</strong><span>원본 후보 확률 합계가 {formatProbability(anomaly.slot_probability_sum)}%입니다. 누락 후보를 보정하거나 100%로 정규화하지 않았습니다.</span></aside>}
+        {filteredOpenRows.length ? openLines.filter((line) => (openGroups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section instandard-open-section" key={line}>
+          <SectionHead title={`${line}번째 개방 줄`} count={`${openGroups.get(line)?.length ?? 0}개 후보`} />
+          <div className="table-wrap"><table className="instandard-open-table"><thead><tr><th>옵션명</th><th>수치</th><th>확률</th><th>내부 티어</th><th>매핑 근거</th></tr></thead><tbody>
+            {openGroups.get(line)?.map((row) => <tr key={`${row.source_block_index}-${row.source_file_offset}`}><td><strong>◇ {row.option_name.endsWith("P") ? row.option_name.slice(0, -1) : row.option_name}</strong><small>option_id {row.option_id} · 후보 {row.candidate_index}</small></td><td>{row.option_display}</td><td><b className="probability">{formatProbability(row.probability)}%</b></td><td><span className="tier">{row.option_tier}</span></td><td><span className={`mapping-badge ${row.mapping_status}`}>{row.mapping_status === "screen_confirmed" ? "화면 확인" : "구조상 후보"}</span></td></tr>)}
+          </tbody></table></div>
+        </section>) : <Empty />}
+      </>}
+    </main>
+    {target === "instandard" && selectedOption && <Modal title={displayName(selectedOption)} subtitle={`수치 범위: ${rangeLabel(selectedOption)}`} onClose={() => setSelectedOption(null)}><p>활성 티어 {selectedOption.tiers.filter((tier) => tier.enabled).length}개 · 가능한 수치 {candidateValues(selectedOption).length}개</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tier.roll_values.map((vector, index) => <span key={`${tier.raw_tier_index}-${index}`}>{renderValue(displayTemplate(selectedOption), vector)}</span>)}</div></section>)}</div></Modal>}
+  </>;
 }
 
 function OpenViewer({ rows, themeButton }: { rows: OpenOptionRow[]; themeButton: ReactNode }) {
@@ -244,7 +386,7 @@ function OpenViewer({ rows, themeButton }: { rows: OpenOptionRow[]; themeButton:
   }, [equipment, converter, grade, effectiveLines.join("|"), tag, query, rows]);
   const groups = new Map(lines.map((line) => [line, filtered.filter((row) => row.open_slot === line)]));
 
-  function changeEquipment(value: string) { const nextConverters = [...new Set(rows.filter((row) => row.equipment_bucket === value).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)); const nextConverter = nextConverters[0]; const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === value && row.converter_type === nextConverter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setEquipment(value); setConverter(nextConverter); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
+  function changeEquipment(value: string) { const nextConverters = [...new Set(rows.filter((row) => row.equipment_bucket === value).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)); const nextConverter = nextConverters.includes(converter) ? converter : nextConverters[0]; const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === value && row.converter_type === nextConverter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setEquipment(value); setConverter(nextConverter); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
   function changeConverter(value: string) { const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === value).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
   function toggleLine(value: string) { if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null); else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b))); setTag("ALL"); }
 
