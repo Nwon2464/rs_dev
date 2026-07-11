@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" fill="none"
+ stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="feature-instandard-option" viewBox="0 0 24 24">
+    <title>비규격 옵션</title>
+    <path d="M12 2.8 19 5.7v5.5c0 4.7-2.7 7.8-7 10-4.3-2.2-7-5.3-7-10V5.7L12 2.8Z"/>
+<path d="m12 7.2 3.2 3.2L12 13.6l-3.2-3.2L12 7.2Z"/>
+  </symbol>
+  <symbol id="feature-open-option" viewBox="0 0 24 24">
+    <title>비규격 개방옵션</title>
+    <path d="m4.5 7.4 7.5-4 7.5 4-7.5 4-7.5-4Z"/>
+<path d="M4.5 7.4v8.8l7.5 4.1 7.5-4.1V7.4"/>
+<path d="M12 11.4v8.9"/>
+<path d="m8.1 5.5 7.7 4.1"/>
+  </symbol>
+  <symbol id="feature-tier-option" viewBox="0 0 24 24">
+    <title>티어별 옵션</title>
+    <path d="m12 3 8 4-8 4-8-4 8-4Z"/>
+<path d="m4 11 8 4 8-4"/>
+<path d="m4 15 8 4 8-4"/>
+  </symbol>
+  <symbol id="ui-home" viewBox="0 0 24 24">
+    <title>메인</title>
+    <path d="m3 10 9-7 9 7"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-7h5v7"/>
+  </symbol>
+  <symbol id="ui-moon" viewBox="0 0 24 24">
+    <title>다크 모드</title>
+    <path d="M20.5 15.2A8.6 8.6 0 0 1 8.8 3.5 8.7 8.7 0 1 0 20.5 15.2Z"/>
+  </symbol>
+  <symbol id="ui-sun" viewBox="0 0 24 24">
+    <title>라이트 모드</title>
+    <circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+  </symbol>
+  <symbol id="ui-guide" viewBox="0 0 24 24">
+    <title>가이드</title>
+    <circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.5 2.2c-.9.5-1.3 1-1.3 2"/><path d="M12 17h.01"/>
+  </symbol>
+  <symbol id="ui-star" viewBox="0 0 24 24">
+    <title>즐겨찾기</title>
+    <path d="m12 2.8 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9L12 2.8Z"/>
+  </symbol>
+  <symbol id="ui-search" viewBox="0 0 24 24">
+    <title>검색</title>
+    <circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>
+  </symbol>
+  <symbol id="ui-close" viewBox="0 0 24 24">
+    <title>닫기</title>
+    <path d="m6 6 12 12M18 6 6 18"/>
+  </symbol>
+  <symbol id="ui-chevron-right" viewBox="0 0 24 24">
+    <title>펼치기</title>
+    <path d="m9 5 7 7-7 7"/>
+  </symbol>
+  <symbol id="ui-chevron-down" viewBox="0 0 24 24">
+    <title>아래</title>
+    <path d="m5 9 7 7 7-7"/>
+  </symbol>
+  <symbol id="ui-check" viewBox="0 0 24 24">
+    <title>선택</title>
+    <path d="m5 12 4 4L19 6"/>
+  </symbol>
+  <symbol id="ui-reset" viewBox="0 0 24 24">
+    <title>초기화</title>
+    <path d="M4 4v6h6"/><path d="M5.8 16.5A8 8 0 1 0 4 10"/>
+  </symbol>
+  <symbol id="ui-filter" viewBox="0 0 24 24">
+    <title>필터</title>
+    <path d="M4 5h16l-6.2 7v5.5l-3.6 1.8V12L4 5Z"/>
+  </symbol>
+  <symbol id="equipment-helmet" viewBox="0 0 24 24">
+    <title>헬멧</title>
+    <path d="M4 13a8 8 0 0 1 16 0v5H4v-5Z"/><path d="M8 18v-5M16 18v-5M4 14h16"/>
+  </symbol>
+  <symbol id="equipment-crown" viewBox="0 0 24 24">
+    <title>관</title>
+    <path d="m4 8 4 4 4-7 4 7 4-4-2 10H6L4 8Z"/><path d="M6 18h12"/>
+  </symbol>
+  <symbol id="equipment-glove" viewBox="0 0 24 24">
+    <title>장갑</title>
+    <path d="M7 11V5.5a1.3 1.3 0 0 1 2.6 0V10M9.6 10V4.5a1.3 1.3 0 0 1 2.6 0V10M12.2 10V5a1.3 1.3 0 0 1 2.6 0v6M14.8 11V7a1.3 1.3 0 0 1 2.6 0v7.5c0 4-2.4 6.5-6.2 6.5S5 18.5 5 15v-3a1.4 1.4 0 0 1 2-1Z"/>
+  </symbol>
+  <symbol id="equipment-bracelet" viewBox="0 0 24 24">
+    <title>팔찌</title>
+    <circle cx="12" cy="12" r="7"/><path d="M7.2 7.2 9 9M15 15l1.8 1.8"/><circle cx="12" cy="5" r="1.2"/>
+  </symbol>
+  <symbol id="equipment-belt" viewBox="0 0 24 24">
+    <title>벨트</title>
+    <path d="M3 8h18v8H3z"/><rect x="9" y="7" width="6" height="10" rx="1"/><path d="M5 11h4M15 11h4"/>
+  </symbol>
+  <symbol id="equipment-boots" viewBox="0 0 24 24">
+    <title>부츠</title>
+    <path d="M8 3h7v10c0 1.5 1.4 2.3 3 3.2 1.1.6 1.5 1.6 1.2 2.8H5.5c-.4-1.9.2-3.2 2.5-4.5V3Z"/><path d="M8 9h7"/>
+  </symbol>
+  <symbol id="equipment-necklace" viewBox="0 0 24 24">
+    <title>목걸이</title>
+    <path d="M5 4c0 6 2.6 10 7 12 4.4-2 7-6 7-12"/><path d="m12 16 2 2-2 3-2-3 2-2Z"/>
+  </symbol>
+  <symbol id="equipment-earring" viewBox="0 0 24 24">
+    <title>귀걸이</title>
+    <path d="M15 4a5 5 0 1 0-3.5 8.5"/><path d="M11.5 12.5 9 17l3 4 3-4-3.5-4.5Z"/>
+  </symbol>
+  <symbol id="equipment-cloak" viewBox="0 0 24 24">
+    <title>망토</title>
+    <path d="m8 4 4-2 4 2 3 17-7-3-7 3L8 4Z"/><path d="M8 4h8M12 5v13"/>
+  </symbol>
+  <symbol id="equipment-armor" viewBox="0 0 24 24">
+    <title>공용 갑옷</title>
+    <path d="m8 3-4 3 2 5 2-2v12h8V9l2 2 2-5-4-3-2 3h-4L8 3Z"/><path d="M8 13h8"/>
+  </symbol>
+  <symbol id="equipment-one-hand-sword" viewBox="0 0 24 24">
+    <title>한 손 검</title>
+    <path d="m14.5 3 2.5 2.5L9 13.5 6.5 11 14.5 3Z"/><path d="m5.5 10 3.5 3.5M4 14l6 6M7 17l-3 3"/>
+  </symbol>
+  <symbol id="equipment-two-hand-sword" viewBox="0 0 24 24">
+    <title>양손 검</title>
+    <path d="m15.5 2 3 3L8 15.5l-3-3L15.5 2Z"/><path d="m4 11 5 5M2.5 15.5l6 6M5.5 18.5 2.5 21.5"/>
+  </symbol>
+  <symbol id="equipment-magic-staff" viewBox="0 0 24 24">
+    <title>마법 지팡이</title>
+    <path d="m15 4-9 17"/><circle cx="16.5" cy="4.5" r="2.5"/><path d="m18.5 2.5 2-1M19 5h3M14.5 2 14 0"/>
+  </symbol>
+  <symbol id="equipment-evil" viewBox="0 0 24 24">
+    <title>이블</title>
+    <circle cx="12" cy="12" r="7"/><path d="m7 7-2-3M17 7l2-3M8.5 12h.01M15.5 12h.01"/><path d="M9 16c2-1.5 4-1.5 6 0"/>
+  </symbol>
+  <symbol id="equipment-mace" viewBox="0 0 24 24">
+    <title>메이스</title>
+    <path d="m8 16 8-8"/><path d="m6 18-2 2M7 17l-3-3"/><path d="m15 4 5 5-4 4-5-5 4-4Z"/><path d="m16 4 1-2M20 8l2-1"/>
+  </symbol>
+  <symbol id="equipment-wing" viewBox="0 0 24 24">
+    <title>날개</title>
+    <path d="M12 19c-1-5-4-8-9-10 1 5 3 8 7 10"/><path d="M12 19c1-5 4-8 9-10-1 5-3 8-7 10"/><path d="M12 6v13"/>
+  </symbol>
+  <symbol id="equipment-dagger" viewBox="0 0 24 24">
+    <title>단도</title>
+    <path d="m15 3 3 3-8 8-3-3 8-8Z"/><path d="m6 10 5 5M8 16l-3 5M4 18l3 3"/>
+  </symbol>
+  <symbol id="equipment-bow" viewBox="0 0 24 24">
+    <title>활</title>
+    <path d="M7 3c7 5 7 13 0 18"/><path d="M7 3v18M7 12h13"/><path d="m17 9 3 3-3 3"/>
+  </symbol>
+  <symbol id="equipment-spear" viewBox="0 0 24 24">
+    <title>창</title>
+    <path d="M5 20 17 8"/><path d="m15 3 6-1-1 6-3-3-2-2Z"/><path d="m4 17 3 3"/>
+  </symbol>
+  <symbol id="equipment-flute" viewBox="0 0 24 24">
+    <title>피리</title>
+    <path d="m4 17 13-13 3 3L7 20 4 17Z"/><circle cx="10" cy="14" r=".7"/><circle cx="13" cy="11" r=".7"/><circle cx="16" cy="8" r=".7"/>
+  </symbol>
+  <symbol id="equipment-sling" viewBox="0 0 24 24">
+    <title>슬링</title>
+    <path d="M8 4c0 6 8 6 8 12"/><path d="M16 4c0 6-8 6-8 12"/><path d="M8 16h8l-1 5H9l-1-5Z"/>
+  </symbol>
+  <symbol id="equipment-wand" viewBox="0 0 24 24">
+    <title>마술봉</title>
+    <path d="m6 20 10-14"/><path d="m18 2 .8 2.2L21 5l-2.2.8L18 8l-.8-2.2L15 5l2.2-.8L18 2Z"/><path d="m8 4 .5 1.5L10 6l-1.5.5L8 8l-.5-1.5L6 6l1.5-.5L8 4Z"/>
+  </symbol>
+  <symbol id="equipment-whip" viewBox="0 0 24 24">
+    <title>채찍</title>
+    <path d="M5 5c9-3 14 2 10 7-2 2-6 1-7 4-.6 1.8.4 3.2 2 4"/><circle cx="5" cy="5" r="2"/>
+  </symbol>
+  <symbol id="equipment-scythe" viewBox="0 0 24 24">
+    <title>낫</title>
+    <path d="M9 21 14 4"/><path d="M14 4c4-2 7 0 8 3-4-1-7 1-9 4"/><path d="m7 17 4 1"/>
+  </symbol>
+  <symbol id="equipment-claw" viewBox="0 0 24 24">
+    <title>손톱무기</title>
+    <path d="M6 20 9 5M10 20l3-16M14 20l4-14"/><path d="M5 20h11"/>
+  </symbol>
+  <symbol id="equipment-book" viewBox="0 0 24 24">
+    <title>책</title>
+    <path d="M3 5c4-1 7 0 9 2v13c-2-2-5-3-9-2V5Z"/><path d="M21 5c-4-1-7 0-9 2v13c2-2 5-3 9-2V5Z"/>
+  </symbol>
+  <symbol id="equipment-broom" viewBox="0 0 24 24">
+    <title>빗자루</title>
+    <path d="m15 3-8 14"/><path d="m5 14 5 3-2 4-6-4 3-3Z"/><path d="m9 17 2 1"/>
+  </symbol>
+  <symbol id="equipment-dual-sword" viewBox="0 0 24 24">
+    <title>쌍검</title>
+    <path d="m6 3 6 6-3 3-6-6 3-3ZM18 3l3 3-6 6-3-3 6-6Z"/><path d="m8 11-5 10M16 11l5 10"/>
+  </symbol>
+  <symbol id="equipment-orb" viewBox="0 0 24 24">
+    <title>양손 구체</title>
+    <circle cx="12" cy="12" r="6"/><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/><path d="m8 8 8 8M16 8l-8 8"/>
+  </symbol>
+  <symbol id="equipment-dual-pistol" viewBox="0 0 24 24">
+    <title>쌍권총</title>
+    <path d="M4 8h8v5H8l-1 7H4l1-7H4V8ZM20 8h-8v5h4l1 7h3l-1-7h1V8Z"/>
+  </symbol>
+  <symbol id="equipment-alchemy-stone" viewBox="0 0 24 24">
+    <title>연금석</title>
+    <path d="m12 2 7 6-2 10-5 4-5-4L5 8l7-6Z"/><path d="m8 9 4-3 4 3-1 6-3 2-3-2-1-6Z"/>
+  </symbol>
+  <symbol id="equipment-fist" viewBox="0 0 24 24">
+    <title>격투무기</title>
+    <path d="M5 10V7a1.5 1.5 0 0 1 3 0v2M8 9V5.5a1.5 1.5 0 0 1 3 0V9M11 9V5a1.5 1.5 0 0 1 3 0v4M14 9V6.5a1.5 1.5 0 0 1 3 0v5c2 0 3 1 3 3 0 4-3 7-7 7H9c-3 0-5-2-5-5v-4c0-1.5 1-2.5 2-2.5Z"/>
+  </symbol>
+  <symbol id="equipment-chain-scythe" viewBox="0 0 24 24">
+    <title>사슬낫</title>
+    <path d="M15 4c4-2 6 0 7 3-4-1-6 1-8 4"/><path d="m14 4-4 12"/><path d="M10 16c-3 0-4 2-3 4"/><circle cx="5" cy="20" r="2"/><path d="M7 20h1"/>
+  </symbol>
+  <symbol id="equipment-cannon" viewBox="0 0 24 24">
+    <title>대포</title>
+    <path d="M4 10h12l4 4-4 3H4v-7Z"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><path d="M7 10 9 6h5l2 4M20 14h2"/>
+  </symbol>
+</svg>
