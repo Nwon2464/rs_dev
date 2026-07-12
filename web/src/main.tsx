@@ -43,6 +43,8 @@ type SourceDataset = {
   options: InstandardOption[];
 };
 
+type JapaneseBaseOptions = Record<string, string>;
+
 type OpenOptionRow = {
   converter_type: string;
   converter_probability: string;
@@ -184,35 +186,46 @@ function displayName(option: InstandardOption): string {
   return option.name.endsWith("P") ? option.name.slice(0, -1) : option.name;
 }
 
-function displayTemplate(option: InstandardOption): string {
-  const template = option.short_text || option.description;
+function displayTemplate(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
+  const koreanTemplate = option.short_text || option.description;
+  const template = language === "ja"
+    ? japaneseBaseOptions[String(option.option_id)] ?? koreanTemplate
+    : koreanTemplate;
   return option.option_id === 922 || option.option_id === 1045
     ? template.replaceAll("[1]", "[0]").replaceAll("[1.1%]", "[0.1%]")
     : template;
 }
 
+function localizedDisplayName(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
+  if (language === "ko") return displayName(option);
+  return displayTemplate(option, language, japaneseBaseOptions)
+    .replace(/\[[+-]?[012](?:\.\d+)?[%％]?\]/g, "…");
+}
+
 function renderValue(template: string, vector: Roll): string {
-  return template.replace(/\[([012])(?:\.(\d+))?([%％])?\]/g, (_, index, digits, suffix) => {
+  return template.replace(/\[([+-]?)([012])(?:\.(\d+))?([%％])?\]/g, (_, sign, index, digits, suffix) => {
     const value = vector[Number(index)];
     const precision = Number(digits || 0);
-    return `${precision ? (value / 10 ** precision).toFixed(precision) : value}${suffix || ""}`;
+    const rendered = precision ? (value / 10 ** precision).toFixed(precision) : String(value);
+    const signed = sign && value >= 0 ? `${sign}${rendered}` : rendered;
+    return `${signed}${suffix || ""}`;
   });
 }
 
-function candidateValues(option: InstandardOption): string[] {
-  const template = displayTemplate(option);
+function candidateValues(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string[] {
+  const template = displayTemplate(option, language, japaneseBaseOptions);
   return [...new Set(option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values.map((vector) => renderValue(template, vector))))];
 }
 
-function tierCandidateValues(option: InstandardOption, tier: Tier): string[] {
-  const template = displayTemplate(option);
+function tierCandidateValues(option: InstandardOption, tier: Tier, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string[] {
+  const template = displayTemplate(option, language, japaneseBaseOptions);
   return [...new Set(tier.roll_values.map((vector) => renderValue(template, vector)))];
 }
 
-function rangeLabel(option: InstandardOption): string {
+function rangeLabel(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
   const vectors = option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values);
   const values = vectors.map((vector) => vector[0]);
-  const template = displayTemplate(option);
+  const template = displayTemplate(option, language, japaneseBaseOptions);
   const minimum = renderValue(template, vectors[values.indexOf(Math.min(...values))]);
   const maximum = renderValue(template, vectors[values.indexOf(Math.max(...values))]);
   return minimum === maximum ? minimum : `${minimum} ~ ${maximum}`;
@@ -228,7 +241,7 @@ function App() {
   const [language, setLanguage] = useState<Language>(
     () => loadLanguage(localStorage),
   );
-  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[] } | null>(null);
+  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[]; japaneseBaseOptions: JapaneseBaseOptions } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -257,8 +270,12 @@ function App() {
         if (!response.ok) throw new Error("비규격 개방옵션 CSV를 읽을 수 없습니다.");
         return response.text();
       }),
-    ]).then(([source, csv, instandardOpenCsv]) => {
-      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, source), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv) });
+      fetch(`${base}data/i18n/ja/base_options.json`).then((response) => {
+        if (!response.ok) throw new Error("일본어 옵션 JSON을 읽을 수 없습니다.");
+        return response.json() as Promise<JapaneseBaseOptions>;
+      }),
+    ]).then(([source, csv, instandardOpenCsv, japaneseBaseOptions]) => {
+      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, source), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv), japaneseBaseOptions });
     }).catch((error: unknown) => {
       if (!cancelled) setLoadError(error instanceof Error ? error.message : "데이터를 읽을 수 없습니다.");
     });
@@ -300,8 +317,8 @@ function App() {
   if (loadError) return <><Header title="데이터를 불러올 수 없습니다" description={loadError} themeButton={headerControls} /><main><Empty /></main></>;
   if (!resources) return <><Header title="데이터 불러오는 중" description="옵션 데이터를 준비하고 있습니다." themeButton={headerControls} /><main><div className="empty">불러오는 중…</div></main></>;
   if (view === "open") return <OpenViewer rows={resources.openRows} themeButton={headerControls} />;
-  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} themeButton={headerControls} />;
-  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} themeButton={headerControls} />;
+  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} themeButton={headerControls} />;
+  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} themeButton={headerControls} />;
   return null;
 }
 
@@ -323,7 +340,7 @@ function InstandardModeTabs({ mode }: { mode: InstandardMode }) {
   return <nav className="instandard-mode-tabs" aria-label="비규격 장비 기능">{instandardModes.map((item) => <a className={`mode-tab mode-tab--${item.className} ${mode === item.mode ? "active" : ""}`} href={`?view=instandard&mode=${item.mode}`} aria-current={mode === item.mode ? "page" : undefined} key={item.mode}><Icon className="app-icon" id={featureIconId[item.title]} size={18} />{item.title}</a>)}</nav>;
 }
 
-function InstandardTierViewer({ source, themeButton }: { source: SourceDataset; themeButton: ReactNode }) {
+function InstandardTierViewer({ source, language, japaneseBaseOptions, themeButton }: { source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; themeButton: ReactNode }) {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [tierTag, setTierTag] = useState("ALL");
   const [tierQuery, setTierQuery] = useState("");
@@ -337,8 +354,8 @@ function InstandardTierViewer({ source, themeButton }: { source: SourceDataset; 
     return tierOptions
       .filter((option) => tierTag === "ALL" || option.tags.includes(tierTag))
       .map((option) => ({ option, equipment: source.equipment.filter((item) => item.option_ids.includes(option.option_id)) }))
-      .filter(({ option, equipment }) => !normalized || [option.name, displayName(option), option.tags.join(" ")].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => item.item_group_name.toLocaleLowerCase().includes(normalized)));
-  }, [selectedTier, source.equipment, tierOptions, tierQuery, tierTag]);
+      .filter(({ option, equipment }) => !normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), option.tags.join(" ")].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => item.item_group_name.toLocaleLowerCase().includes(normalized)));
+  }, [japaneseBaseOptions, language, selectedTier, source.equipment, tierOptions, tierQuery, tierTag]);
 
   function changeTier(tierNumber: number) {
     setSelectedTier(tierNumber);
@@ -378,9 +395,9 @@ function InstandardTierViewer({ source, themeButton }: { source: SourceDataset; 
           const expanded = expandedOptionIds.has(option.option_id);
           const contentId = `tier-option-${option.option_id}`;
           const tierData = option.tiers.find((tier) => tier.enabled && tier.tier === selectedTier)!;
-          const values = tierCandidateValues(option, tierData);
+          const values = tierCandidateValues(option, tierData, language, japaneseBaseOptions);
           return <article className={`tier-option-accordion ${expanded ? "expanded" : ""}`} key={option.option_id}>
-            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{displayName(option)}</strong><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{optionTag}</span>)}</div><span>적용 장비 {equipment.length}개</span><span>가능 수치 {values.length}개</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
+            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{optionTag}</span>)}</div><span>적용 장비 {equipment.length}개</span><span>가능 수치 {values.length}개</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
             {expanded && <section className="tier-option-content" id={contentId}>
               <div className="tier-option-values"><h3>Tier {selectedTier} 가능 수치</h3><div className="value-list">{values.map((value) => <span key={value}>{value}</span>)}</div></div>
               <div className="tier-option-equipment"><h3>적용 장비</h3><div className="tier-applied-equipment-grid">{equipment.map((item) => <div className="tier-applied-equipment" key={item.item_group_id}><Icon className="app-icon" id={equipmentIconId[item.item_group_name] ?? "feature-instandard-option"} size={20} /><span>{item.item_group_name}</span></div>)}</div></div>
@@ -400,7 +417,7 @@ const instandardConverterLabels: Record<InstandardOpenOptionRow["converter_type"
   불타는: "불타는변환기",
 };
 
-function InstandardOpenViewer({ mode, source, openRows, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; themeButton: ReactNode }) {
+function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOptions, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; language: Language; japaneseBaseOptions: JapaneseBaseOptions; themeButton: ReactNode }) {
   const [equipmentName, setEquipmentName] = useState("헬멧");
   const [tag, setTag] = useState("ALL");
   const [converter, setConverter] = useState<InstandardOpenOptionRow["converter_type"]>("일반");
@@ -423,8 +440,8 @@ function InstandardOpenViewer({ mode, source, openRows, themeButton }: { mode: "
   }, [equipmentQuery, source.equipment]);
   const filteredOptions = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
-    return options.filter((option) => (tag === "ALL" || option.tags.includes(tag)) && (!normalized || [option.name, displayName(option), displayTemplate(option), option.tags.join(" ")].join(" ").toLocaleLowerCase().includes(normalized)));
-  }, [options, query, tag]);
+    return options.filter((option) => (tag === "ALL" || option.tags.includes(tag)) && (!normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), option.tags.join(" ")].join(" ").toLocaleLowerCase().includes(normalized)));
+  }, [japaneseBaseOptions, language, options, query, tag]);
   const equipmentOpenRows = useMemo(() => openRows.filter((row) => Number(row.item_group_id) === equipment.item_group_id), [equipment.item_group_id, openRows]);
   const converters = useMemo(() => ["일반", "개량", "모조", "불타는"].filter((value) => equipmentOpenRows.some((row) => row.converter_type === value)) as InstandardOpenOptionRow["converter_type"][], [equipmentOpenRows]);
   const effectiveOpenLines = selectedOpenLines ?? openLines;
@@ -529,7 +546,7 @@ function InstandardOpenViewer({ mode, source, openRows, themeButton }: { mode: "
       {mode === "option" ? <>
         <Context breadcrumb={`${equipment.item_group_name} › 비규격 옵션 › ${tag === "ALL" ? "전체 분류" : tag}`} query={query} onQuery={setQuery} placeholder="현재 장비군의 옵션 검색" hideSearch />
         <ResultsHead title={`${equipment.item_group_name} 비규격 옵션`} description="티어별 수치 보기에서 실제 가능한 값을 모두 확인할 수 있습니다." count={filteredOptions.length} />
-        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>옵션</th><th>분류</th><th>수치 범위</th><th>티어 상세</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{displayName(option)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>로컬 교차검증으로 보완된 옵션</em>}</td><td><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{optionTag}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>티어별 수치 보기</button><small>가능 수치 {candidateValues(option).length}개</small></div></td></tr>)}</tbody></table></div></section> : <Empty />}
+        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>옵션</th><th>분류</th><th>수치 범위</th><th>티어 상세</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>로컬 교차검증으로 보완된 옵션</em>}</td><td><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{optionTag}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option, language, japaneseBaseOptions)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>티어별 수치 보기</button><small>가능 수치 {candidateValues(option, language, japaneseBaseOptions).length}개</small></div></td></tr>)}</tbody></table></div></section> : <Empty />}
       </> : <>
         <Context breadcrumb={`${equipment.item_group_name} › 비규격 개방옵션 › ${instandardConverterLabels[converter]} › ${selectedOpenLineLabel}`} query={query} onQuery={setQuery} placeholder="현재 비규격 개방옵션 후보 검색" />
         <ResultsHead title={`${equipment.item_group_name} 비규격 개방옵션 후보`} description="원본 후보 행을 중복 제거 없이 표시합니다." count={filteredOpenRows.length} />
@@ -547,7 +564,7 @@ function InstandardOpenViewer({ mode, source, openRows, themeButton }: { mode: "
         }) : <Empty />}
       </>}
     </main>
-    {mode === "option" && selectedOption && <Modal title={displayName(selectedOption)} subtitle={`수치 범위: ${rangeLabel(selectedOption)}`} onClose={() => setSelectedOption(null)}><p>활성 티어 {selectedOption.tiers.filter((tier) => tier.enabled).length}개 · 가능한 수치 {candidateValues(selectedOption).length}개</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tierCandidateValues(selectedOption, tier).map((value) => <span key={`${tier.raw_tier_index}-${value}`}>{value}</span>)}</div></section>)}</div></Modal>}
+    {mode === "option" && selectedOption && <Modal title={localizedDisplayName(selectedOption, language, japaneseBaseOptions)} subtitle={`수치 범위: ${rangeLabel(selectedOption, language, japaneseBaseOptions)}`} onClose={() => setSelectedOption(null)}><p>활성 티어 {selectedOption.tiers.filter((tier) => tier.enabled).length}개 · 가능한 수치 {candidateValues(selectedOption, language, japaneseBaseOptions).length}개</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tierCandidateValues(selectedOption, tier, language, japaneseBaseOptions).map((value) => <span key={`${tier.raw_tier_index}-${value}`}>{value}</span>)}</div></section>)}</div></Modal>}
   </>;
 }
 
