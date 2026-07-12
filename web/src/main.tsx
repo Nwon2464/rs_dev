@@ -19,7 +19,6 @@ import {
   formatTierValuesTitle,
   loadLanguage,
   saveLanguage,
-  tagText,
   uiText,
   type Language,
   type UiMessageKey,
@@ -45,6 +44,8 @@ type InstandardOption = {
   description: string;
   short_text: string;
   tags: string[];
+  source_tags: string[];
+  canonical_tags: string[];
   tiers: Tier[];
 };
 
@@ -67,6 +68,12 @@ type ConverterConcept = "normal" | "improved" | "replica" | "burning" | "associa
 type JapaneseOpenMetadata = {
   grades: Record<string, string>;
   converters: Record<ConverterConcept, string>;
+};
+type OptionTagData = {
+  schema_version: number;
+  groups: Record<string, { ko: string; ja: string }>;
+  tags: Record<string, { group: string; labels: Record<Language, string> }>;
+  options: Record<string, { source_tags: string[]; canonical_tags: string[] }>;
 };
 
 type OpenOptionRow = {
@@ -182,31 +189,25 @@ function parseCsv(value: string): Record<string, string>[] {
   return rows.filter((values) => values.length === header.length).map((values) => Object.fromEntries(header.map((name, index) => [name, values[index]])));
 }
 
-function inferredTags(optionName: string): string[] {
-  const tags: string[] = [];
-  const name = optionName.replaceAll(" ", "");
-  if (name.includes("소환수") || name.includes("펫") || name.includes("조련")) tags.push("소환수/펫");
-  if (name.startsWith("vs")) tags.push("대상", "피해");
-  if (name.toLocaleLowerCase().includes("pvp")) tags.push("PvP");
-  if (["힘", "민첩", "건강", "지혜", "지식", "카리스마", "운", "능력치"].some((word) => name.includes(word))) tags.push("스탯");
-  if (["체력", "CP", "마나"].some((word) => name.includes(word))) tags.push("자원");
-  if (name.includes("속도")) tags.push("속도");
-  if (["치명", "강타"].some((word) => name.includes(word))) tags.push("치명타");
-  if (["흡수", "흡혈"].some((word) => name.includes(word))) tags.push("흡수");
-  if (["저항", "방어", "피격", "감소"].some((word) => name.includes(word))) tags.push("방어");
-  if (["공격력", "대미지", "즉사"].some((word) => name.includes(word))) tags.push("피해");
-  if (name.includes("물리")) tags.push("물리");
-  if (name.includes("마법") || name.includes("속성")) tags.push("속성");
-  if (name.includes("착용레벨")) tags.push("착용 조건");
-  return [...new Set(tags.length ? tags : ["기타"])];
+function prepareSourceDataset(source: SourceDataset, optionTags: OptionTagData): SourceDataset {
+  return {
+    ...source,
+    options: source.options.map((option) => {
+      const generated = optionTags.options[String(option.option_id)];
+      return {
+        ...option,
+        source_tags: generated?.source_tags ?? option.tags,
+        canonical_tags: generated?.canonical_tags ?? [],
+      };
+    }),
+  };
 }
 
-function prepareOpenRows(csv: string, source: SourceDataset): OpenOptionRow[] {
-  const knownTags = new Map(source.options.map((option) => [String(option.option_id), option.tags]));
+function prepareOpenRows(csv: string, optionTags: OptionTagData): OpenOptionRow[] {
   const rows = parseCsv(csv).map((raw) => ({
     ...raw,
     option_display_name: raw.option_name.endsWith("P") ? raw.option_name.slice(0, -1) : raw.option_name,
-    tags: knownTags.get(raw.option_id) ?? inferredTags(raw.option_name),
+    tags: optionTags.options[raw.option_id]?.canonical_tags ?? [],
   })) as OpenOptionRow[];
   const requiredFields = ["converter_type", "equipment_bucket", "grade_code", "open_slot", "option_id", "option_display", "converter_probability"] as const;
   if (!rows.length || rows.some((row) => requiredFields.some((field) => !row[field]?.trim()))) {
@@ -246,8 +247,25 @@ function localizedGradeLabel(gradeCode: string, koreanName: string, language: La
   return language === "ja" ? japaneseOpenMetadata.grades[gradeCode] ?? koreanName : koreanName;
 }
 
-function tagSearchText(tags: string[]): string {
-  return tags.flatMap((tag) => [tag, tagText("ja", tag)]).join(" ");
+function tagText(language: Language, tag: string, optionTags: OptionTagData): string {
+  return optionTags.tags[tag]?.labels[language] ?? tag;
+}
+
+function tagSearchText(tags: string[], optionTags: OptionTagData): string {
+  return tags.flatMap((tag) => [tag, tagText("ja", tag, optionTags)]).join(" ");
+}
+
+function matchesSelectedTags(optionTagValues: string[], selectedTags: string[], optionTags: OptionTagData): boolean {
+  const selectedByGroup = new Map<string, string[]>();
+  selectedTags.forEach((tag) => {
+    const group = optionTags.tags[tag]?.group;
+    if (group) selectedByGroup.set(group, [...(selectedByGroup.get(group) ?? []), tag]);
+  });
+  return [...selectedByGroup.values()].every((groupTags) => groupTags.some((tag) => optionTagValues.includes(tag)));
+}
+
+function toggleSelectedTag(selectedTags: string[], tag: string): string[] {
+  return selectedTags.includes(tag) ? selectedTags.filter((value) => value !== tag) : [...selectedTags, tag];
 }
 
 function localizedOptionTemplate(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
@@ -388,7 +406,7 @@ function App() {
   const [language, setLanguage] = useState<Language>(
     () => loadLanguage(localStorage),
   );
-  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[]; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata } | null>(null);
+  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[]; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData } | null>(null);
   const [loadError, setLoadError] = useState<UiMessageKey | null>(null);
 
   useEffect(() => {
@@ -433,8 +451,13 @@ function App() {
         if (!response.ok) throw new Error("error.japaneseOpenMetadata");
         return response.json() as Promise<JapaneseOpenMetadata>;
       }),
-    ]).then(([source, csv, instandardOpenCsv, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata]) => {
-      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, source), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv), japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata });
+      fetch(`${base}data/option_tags.json`).then((response) => {
+        if (!response.ok) throw new Error("error.optionTags");
+        return response.json() as Promise<OptionTagData>;
+      }),
+    ]).then(([rawSource, csv, instandardOpenCsv, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags]) => {
+      const source = prepareSourceDataset(rawSource, optionTags);
+      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, optionTags), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv), japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags });
     }).catch((error: unknown) => {
       if (!cancelled) setLoadError(error instanceof Error && error.message.startsWith("error.") ? error.message as UiMessageKey : "error.unknown");
     });
@@ -475,9 +498,9 @@ function App() {
   if (view === "home") return <Home language={language} themeButton={headerControls} />;
   if (loadError) return <><Header language={language} title={uiText(language, "error.title")} description={uiText(language, loadError)} themeButton={headerControls} /><main><Empty language={language} /></main></>;
   if (!resources) return <><Header language={language} title={uiText(language, "loading.title")} description={uiText(language, "loading.description")} themeButton={headerControls} /><main><div className="empty">{uiText(language, "loading.progress")}</div></main></>;
-  if (view === "open") return <OpenViewer rows={resources.openRows} source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseOpenEquipmentBuckets={resources.japaneseOpenEquipmentBuckets} japaneseOpenMetadata={resources.japaneseOpenMetadata} themeButton={headerControls} />;
-  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} themeButton={headerControls} />;
-  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} japaneseOpenMetadata={resources.japaneseOpenMetadata} themeButton={headerControls} />;
+  if (view === "open") return <OpenViewer rows={resources.openRows} source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseOpenEquipmentBuckets={resources.japaneseOpenEquipmentBuckets} japaneseOpenMetadata={resources.japaneseOpenMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
+  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} optionTags={resources.optionTags} themeButton={headerControls} />;
+  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} japaneseOpenMetadata={resources.japaneseOpenMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
   return null;
 }
 
@@ -499,26 +522,26 @@ function InstandardModeTabs({ mode, language }: { mode: InstandardMode; language
   return <nav className="instandard-mode-tabs" aria-label={uiText(language, "mode.navigation")}>{instandardModes.map((item) => <a className={`mode-tab mode-tab--${item.className} ${mode === item.mode ? "active" : ""}`} href={`?view=instandard&mode=${item.mode}`} aria-current={mode === item.mode ? "page" : undefined} key={item.mode}><Icon className="app-icon" id={featureIconId[item.iconLabel]} size={18} />{uiText(language, item.titleKey)}</a>)}</nav>;
 }
 
-function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseEquipmentGroups, themeButton }: { source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; themeButton: ReactNode }) {
+function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseEquipmentGroups, optionTags, themeButton }: { source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; optionTags: OptionTagData; themeButton: ReactNode }) {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [tierTag, setTierTag] = useState("ALL");
+  const [selectedTierTags, setSelectedTierTags] = useState<string[]>([]);
   const [tierQuery, setTierQuery] = useState("");
   const [expandedOptionIds, setExpandedOptionIds] = useState<Set<number>>(() => new Set());
   const tierNumbers = useMemo(() => [...new Set(source.options.flatMap((option) => option.tiers.filter((tier) => tier.enabled).map((tier) => tier.tier)))].sort((a, b) => a - b), [source.options]);
   const tierOptions = useMemo(() => selectedTier === null ? [] : source.options.filter((option) => option.tiers.some((tier) => tier.enabled && tier.tier === selectedTier)), [selectedTier, source.options]);
-  const tierTags = useMemo(() => ["ALL", ...[...new Set(tierOptions.flatMap((option) => option.tags))].sort((a, b) => a.localeCompare(b, "ko"))], [tierOptions]);
+  const tierTags = useMemo(() => [...new Set(tierOptions.flatMap((option) => option.canonical_tags))].sort((a, b) => a.localeCompare(b, "ko")), [tierOptions]);
   const optionResults = useMemo(() => {
     if (selectedTier === null) return [];
     const normalized = tierQuery.trim().toLocaleLowerCase();
     return tierOptions
-      .filter((option) => tierTag === "ALL" || option.tags.includes(tierTag))
+      .filter((option) => matchesSelectedTags(option.canonical_tags, selectedTierTags, optionTags))
       .map((option) => ({ option, equipment: source.equipment.filter((item) => item.option_ids.includes(option.option_id)) }))
-      .filter(({ option, equipment }) => !normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.tags)].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => [item.item_group_name, localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)].join(" ").toLocaleLowerCase().includes(normalized)));
-  }, [japaneseBaseOptions, japaneseEquipmentGroups, language, selectedTier, source.equipment, tierOptions, tierQuery, tierTag]);
+      .filter(({ option, equipment }) => !normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => [item.item_group_name, localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)].join(" ").toLocaleLowerCase().includes(normalized)));
+  }, [japaneseBaseOptions, japaneseEquipmentGroups, language, optionTags, selectedTier, selectedTierTags, source.equipment, tierOptions, tierQuery]);
 
   function changeTier(tierNumber: number) {
     setSelectedTier(tierNumber);
-    setTierTag("ALL");
+    setSelectedTierTags([]);
     setExpandedOptionIds(new Set());
   }
 
@@ -541,7 +564,7 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
         </FilterGroup>
         {selectedTier !== null && <>
           <FilterGroup className="tier-tag-filter" number="2" title={uiText(language, "filter.optionCategory")}>
-            {tierTags.map((value) => <Chip key={value} active={tierTag === value} onClick={() => setTierTag(value)}>{value === "ALL" ? uiText(language, "common.allCategories") : tagText(language, value)}</Chip>)}
+            <TagFilterChips availableTags={tierTags} selectedTags={selectedTierTags} onChange={setSelectedTierTags} language={language} optionTags={optionTags} allLabelKey="common.allCategories" />
           </FilterGroup>
           <FilterGroup className="tier-search-filter" number="3" title={uiText(language, "common.search")}>
             <div className="panel-search-control"><input value={tierQuery} onChange={(event) => setTierQuery(event.target.value)} placeholder={uiText(language, "filter.equipmentOrOptionSearchPlaceholder")} aria-label={uiText(language, "filter.equipmentOrOptionSearchPlaceholder")} />{tierQuery && <button type="button" onClick={() => setTierQuery("")}>{uiText(language, "common.reset")}</button>}</div>
@@ -556,7 +579,7 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
           const tierData = option.tiers.find((tier) => tier.enabled && tier.tier === selectedTier)!;
           const values = tierCandidateValues(option, tierData, language, japaneseBaseOptions);
           return <article className={`tier-option-accordion ${expanded ? "expanded" : ""}`} key={option.option_id}>
-            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag)}</span>)}</div><span>{formatAppliedEquipmentCount(language, equipment.length)}</span><span>{formatPossibleValueCount(language, values.length)}</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
+            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div><span>{formatAppliedEquipmentCount(language, equipment.length)}</span><span>{formatPossibleValueCount(language, values.length)}</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
             {expanded && <section className="tier-option-content" id={contentId}>
               <div className="tier-option-values"><h3>{formatTierValuesTitle(language, selectedTier)}</h3><div className="value-list">{values.map((value) => <span key={value}>{value}</span>)}</div></div>
               <div className="tier-option-equipment"><h3>{uiText(language, "tier.appliedEquipment")}</h3><div className="tier-applied-equipment-grid">{equipment.map((item) => <div className="tier-applied-equipment" key={item.item_group_id}><Icon className="app-icon" id={equipmentIconId[item.item_group_name] ?? "feature-instandard-option"} size={20} /><span>{localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)}</span></div>)}</div></div>
@@ -569,9 +592,9 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
 }
 
 
-function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenMetadata, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenMetadata: JapaneseOpenMetadata; themeButton: ReactNode }) {
+function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenMetadata, optionTags, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData; themeButton: ReactNode }) {
   const [equipmentName, setEquipmentName] = useState("헬멧");
-  const [tag, setTag] = useState("ALL");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [converter, setConverter] = useState<InstandardOpenOptionRow["converter_type"]>("일반");
   const [selectedOpenLines, setSelectedOpenLines] = useState<string[] | null>(null);
   const [query, setQuery] = useState("");
@@ -586,15 +609,15 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
   const equipment = source.equipment.find((item) => item.item_group_name === equipmentName) ?? source.equipment[0];
   const equipmentDisplayName = localizedEquipmentName(equipment.item_group_id, equipment.item_group_name, language, japaneseEquipmentGroups);
   const options = useMemo(() => equipment.option_ids.map((id) => optionMap.get(id)).filter((option): option is InstandardOption => Boolean(option)), [equipment]);
-  const tags = useMemo(() => ["ALL", ...[...new Set(options.flatMap((option) => option.tags))].sort((a, b) => a.localeCompare(b, "ko"))], [options]);
+  const tags = useMemo(() => [...new Set(options.flatMap((option) => option.canonical_tags))].sort((a, b) => a.localeCompare(b, "ko")), [options]);
   const filteredEquipment = useMemo(() => {
     const normalized = equipmentQuery.trim().toLocaleLowerCase();
     return source.equipment.filter((item) => !normalized || [item.item_group_name, localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)].join(" ").toLocaleLowerCase().includes(normalized));
   }, [equipmentQuery, japaneseEquipmentGroups, language, source.equipment]);
   const filteredOptions = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
-    return options.filter((option) => (tag === "ALL" || option.tags.includes(tag)) && (!normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.tags)].join(" ").toLocaleLowerCase().includes(normalized)));
-  }, [japaneseBaseOptions, language, options, query, tag]);
+    return options.filter((option) => matchesSelectedTags(option.canonical_tags, selectedTags, optionTags) && (!normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized)));
+  }, [japaneseBaseOptions, language, optionTags, options, query, selectedTags]);
   const equipmentOpenRows = useMemo(() => openRows.filter((row) => Number(row.item_group_id) === equipment.item_group_id), [equipment.item_group_id, openRows]);
   const localizedOpenRows = useMemo(() => new Map(equipmentOpenRows.map((row) => [row, localizedInstandardOpenOptionRow(row, optionMap, language, japaneseBaseOptions)])), [equipmentOpenRows, japaneseBaseOptions, language, optionMap]);
   const converters = useMemo(() => ["일반", "개량", "모조", "불타는"].filter((value) => equipmentOpenRows.some((row) => row.converter_type === value)) as InstandardOpenOptionRow["converter_type"][], [equipmentOpenRows]);
@@ -641,7 +664,7 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
       .filter((row) => Number(row.item_group_id) === nextEquipment?.item_group_id)
       .map((row) => row.converter_type);
     setEquipmentName(name);
-    setTag("ALL");
+    setSelectedTags([]);
     closeEquipmentPicker();
     if (!nextConverters.includes(converter)) setConverter(nextConverters[0] ?? converter);
     setSelectedOpenLines(null);
@@ -677,7 +700,7 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
           </div>
         </FilterGroup>
         <FilterGroup className="option-tag-filter" number="2" title={uiText(language, "filter.optionCategory")}>
-          {tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? uiText(language, "common.allCategories") : tagText(language, value)}</Chip>)}
+          <TagFilterChips availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} allLabelKey="common.allCategories" />
         </FilterGroup>
         <FilterGroup className="option-search-filter" number="3" title={uiText(language, "filter.optionSearch")}>
           <div className="panel-search-control"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={uiText(language, "filter.optionSearchPlaceholder")} aria-label={uiText(language, "filter.optionSearch")} />{query && <button type="button" onClick={() => setQuery("")}>{uiText(language, "common.reset")}</button>}</div>
@@ -701,9 +724,9 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
           </FilterGroup>
       </section>}
       {mode === "option" ? <>
-        <Context language={language} breadcrumb={`${equipmentDisplayName} › ${uiText(language, "mode.option.title")} › ${tag === "ALL" ? uiText(language, "common.allCategories") : tagText(language, tag)}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentOptionSearch")} hideSearch />
+        <Context language={language} breadcrumb={`${equipmentDisplayName} › ${uiText(language, "mode.option.title")} › ${selectedTagLabel(selectedTags, language, optionTags, "common.allCategories")}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentOptionSearch")} hideSearch />
         <ResultsHead language={language} title={formatEquipmentOptionTitle(language, equipmentDisplayName)} description={uiText(language, "option.resultsDescription")} count={filteredOptions.length} />
-        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "option.category")}</th><th>{uiText(language, "option.range")}</th><th>{uiText(language, "option.tierDetails")}</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>{uiText(language, "option.supplemental")}</em>}</td><td><div className="option-tag-badges">{option.tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag)}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option, language, japaneseBaseOptions)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>{uiText(language, "option.viewTierValues")}</button><small>{formatPossibleValueCount(language, candidateValues(option, language, japaneseBaseOptions).length)}</small></div></td></tr>)}</tbody></table></div></section> : <Empty language={language} />}
+        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "option.category")}</th><th>{uiText(language, "option.range")}</th><th>{uiText(language, "option.tierDetails")}</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>{uiText(language, "option.supplemental")}</em>}</td><td><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option, language, japaneseBaseOptions)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>{uiText(language, "option.viewTierValues")}</button><small>{formatPossibleValueCount(language, candidateValues(option, language, japaneseBaseOptions).length)}</small></div></td></tr>)}</tbody></table></div></section> : <Empty language={language} />}
       </> : <>
         <Context language={language} breadcrumb={`${equipmentDisplayName} › ${uiText(language, "mode.open.title")} › ${localizedConverterLabel(converter, language, japaneseOpenMetadata)} › ${selectedOpenLineLabel}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentOpenSearch")} />
         <ResultsHead language={language} title={formatEquipmentOpenTitle(language, equipmentDisplayName)} description={uiText(language, "instandardOpen.resultsDescription")} count={filteredOpenRows.length} />
@@ -725,11 +748,11 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
   </>;
 }
 
-function OpenViewer({ rows, source, language, japaneseBaseOptions, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, themeButton }: { rows: OpenOptionRow[]; source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata; themeButton: ReactNode }) {
+function OpenViewer({ rows, source, language, japaneseBaseOptions, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags, themeButton }: { rows: OpenOptionRow[]; source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData; themeButton: ReactNode }) {
   const optionMap = useMemo(() => new Map(source.options.map((option) => [option.option_id, option])), [source.options]);
   const localizedRows = useMemo(() => new Map(rows.map((row) => [row, localizedGeneralOpenOptionRow(row, optionMap, language, japaneseBaseOptions)])), [japaneseBaseOptions, language, optionMap, rows]);
   const equipmentValues = useMemo(() => [...new Set(rows.map((row) => row.equipment_bucket))].sort((a, b) => a.localeCompare(b, "ko")), [rows]);
-  const [equipment, setEquipment] = useState(equipmentValues.includes("헬멧") ? "헬멧" : equipmentValues[0]);
+  const [equipment, setEquipment] = useState(equipmentValues[0]);
   const equipmentDisplayName = localizedOpenEquipmentBucket(equipment, language, japaneseOpenEquipmentBuckets);
   const converters = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)), [equipment, rows]);
   const [converter, setConverter] = useState(converters[0]);
@@ -738,8 +761,8 @@ function OpenViewer({ rows, source, language, japaneseBaseOptions, japaneseOpenE
   const lines = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade).map((row) => row.open_slot))].sort((a, b) => Number(a) - Number(b)), [equipment, converter, grade, rows]);
   const [selectedLines, setSelectedLines] = useState<string[] | null>(null);
   const effectiveLines = selectedLines === null ? lines : selectedLines.filter((line) => lines.includes(line));
-  const tags = useMemo(() => ["ALL", ...[...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot)).flatMap((row) => row.tags))].sort((a, b) => a.localeCompare(b, "ko"))], [equipment, converter, grade, effectiveLines.join("|"), rows]);
-  const [tag, setTag] = useState("ALL");
+  const tags = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot)).flatMap((row) => row.tags))].sort((a, b) => a.localeCompare(b, "ko")), [equipment, converter, grade, effectiveLines.join("|"), rows]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const gradeLabel = (code: string) => {
     const koreanName = rows.find((row) => row.grade_code === code && row.grade_name)?.grade_name || uiText(language, "common.unknownName");
@@ -749,21 +772,30 @@ function OpenViewer({ rows, source, language, japaneseBaseOptions, japaneseOpenE
     const normalized = query.trim().toLocaleLowerCase();
     return rows.filter((row) => {
       const localized = localizedRows.get(row);
-      return row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot) && (tag === "ALL" || row.tags.includes(tag)) && (!normalized || [row.equipment_bucket, localizedOpenEquipmentBucket(row.equipment_bucket, language, japaneseOpenEquipmentBuckets), row.converter_type, localizedConverterLabel(row.converter_type, "ko", japaneseOpenMetadata), localizedConverterLabel(row.converter_type, "ja", japaneseOpenMetadata), row.grade_code, row.grade_name, localizedGradeLabel(row.grade_code, row.grade_name, "ja", japaneseOpenMetadata), row.option_name, row.option_display_name, row.option_display, localized?.title, localized?.display, row.option_id, tagSearchText(row.tags)].join(" ").toLocaleLowerCase().includes(normalized));
+      return row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot) && matchesSelectedTags(row.tags, selectedTags, optionTags) && (!normalized || [row.equipment_bucket, localizedOpenEquipmentBucket(row.equipment_bucket, language, japaneseOpenEquipmentBuckets), row.converter_type, localizedConverterLabel(row.converter_type, "ko", japaneseOpenMetadata), localizedConverterLabel(row.converter_type, "ja", japaneseOpenMetadata), row.grade_code, row.grade_name, localizedGradeLabel(row.grade_code, row.grade_name, "ja", japaneseOpenMetadata), row.option_name, row.option_display_name, row.option_display, localized?.title, localized?.display, row.option_id, tagSearchText(row.tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized));
     }).sort((a, b) => Number(a.open_slot) - Number(b.open_slot) || a.tags[0].localeCompare(b.tags[0], "ko") || a.tags.join("/").localeCompare(b.tags.join("/"), "ko") || Number(a.option_id) - Number(b.option_id) || Number(a.option_tier) - Number(b.option_tier) || Number(a.candidate_index) - Number(b.candidate_index));
-  }, [equipment, converter, grade, effectiveLines.join("|"), japaneseOpenEquipmentBuckets, japaneseOpenMetadata, language, tag, query, localizedRows, rows]);
+  }, [equipment, converter, grade, effectiveLines.join("|"), japaneseOpenEquipmentBuckets, japaneseOpenMetadata, language, optionTags, query, localizedRows, rows, selectedTags]);
   const groups = new Map(lines.map((line) => [line, filtered.filter((row) => row.open_slot === line)]));
 
-  function changeEquipment(value: string) { const nextConverters = [...new Set(rows.filter((row) => row.equipment_bucket === value).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)); const nextConverter = nextConverters.includes(converter) ? converter : nextConverters[0]; const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === value && row.converter_type === nextConverter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setEquipment(value); setConverter(nextConverter); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
-  function changeConverter(value: string) { const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === value).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setTag("ALL"); }
-  function toggleLine(value: string) { if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null); else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b))); setTag("ALL"); }
+  function changeEquipment(value: string) { const nextConverters = [...new Set(rows.filter((row) => row.equipment_bucket === value).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)); const nextConverter = nextConverters.includes(converter) ? converter : nextConverters[0]; const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === value && row.converter_type === nextConverter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setEquipment(value); setConverter(nextConverter); setGrade(nextGrades[0]); setSelectedLines(null); setSelectedTags([]); }
+  function changeConverter(value: string) { const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === value).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setSelectedTags([]); }
+  function toggleLine(value: string) { if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null); else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b))); setSelectedTags([]); }
   const generalConverterLabel = (_displayLanguage: Language, value: string) => localizedConverterLabel(value, language, japaneseOpenMetadata);
 
-  return <><Header language={language} title={uiText(language, "header.open.title")} description={uiText(language, "header.open.description")} themeButton={themeButton} /><main className="open-viewer-mode"><section className="selection-panel open-panel"><FilterGroup number="1" title={uiText(language, "filter.equipment")}>{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}><span className="open-equipment-chip"><Icon className="app-icon" id={openEquipmentIconId(value)} size={18} />{localizedOpenEquipmentBucket(value, language, japaneseOpenEquipmentBuckets)}</span></Chip>)}</FilterGroup><FilterGroup number="2" title={uiText(language, "filter.converterSelection")}>{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{generalConverterLabel(language, value)}</Chip>)}</FilterGroup><FilterGroup number="3" title={uiText(language, "filter.itemGrade")}>{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setTag("ALL"); }}>{gradeLabel(value)}</Chip>)}</FilterGroup><FilterGroup number="4" title={uiText(language, "filter.openSlot")}><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{formatOpenSlot(language, value)}</Chip>)}</FilterGroup><FilterGroup number="5" title={uiText(language, "filter.tags")}>{tags.map((value) => <Chip key={value} active={tag === value} onClick={() => setTag(value)}>{value === "ALL" ? uiText(language, "common.allTags") : tagText(language, value)}</Chip>)}</FilterGroup></section><Context language={language} breadcrumb={`${equipmentDisplayName} › ${generalConverterLabel(language, converter)} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? uiText(language, "common.allOpenSlots") : effectiveLines.map((line) => formatOpenSlot(language, line)).join(" · ")} › ${tag === "ALL" ? uiText(language, "common.allTags") : tagText(language, tag)}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentListSearch")} /><ResultsHead language={language} title={uiText(language, "open.resultsTitle")} description={uiText(language, "open.resultsDescription")} count={filtered.length} />{filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}><SectionHead title={formatOpenSlot(language, line)} count={formatCandidateCount(language, groups.get(line)?.length ?? 0)} /><div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "open.effect")}</th><th>{uiText(language, "open.nameAndTags")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => { const localized = localizedRows.get(row); return <tr key={`${row.option_id}-${row.option_tier}-${row.candidate_index}-${index}`}><td><strong>{localized?.display ?? row.option_display}</strong></td><td>{localized?.title ?? row.option_display_name}<small>{row.tags.map((tag) => tagText(language, tag)).join(" / ")}</small></td><td><span className="tier">{formatTierLevel(language, row.option_tier)}</span></td><td><b className="probability">{row.converter_probability}%</b></td></tr>; })}</tbody></table></div></section>) : <Empty language={language} />}</main></>;
+  return <><Header language={language} title={uiText(language, "header.open.title")} description={uiText(language, "header.open.description")} themeButton={themeButton} /><main className="open-viewer-mode"><section className="selection-panel open-panel"><FilterGroup number="1" title={uiText(language, "filter.equipment")}>{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}><span className="open-equipment-chip"><Icon className="app-icon" id={openEquipmentIconId(value)} size={18} />{localizedOpenEquipmentBucket(value, language, japaneseOpenEquipmentBuckets)}</span></Chip>)}</FilterGroup><FilterGroup number="2" title={uiText(language, "filter.converterSelection")}>{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{generalConverterLabel(language, value)}</Chip>)}</FilterGroup><FilterGroup number="3" title={uiText(language, "filter.itemGrade")}>{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setSelectedTags([]); }}>{gradeLabel(value)}</Chip>)}</FilterGroup><FilterGroup number="4" title={uiText(language, "filter.openSlot")}><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{formatOpenSlot(language, value)}</Chip>)}</FilterGroup><FilterGroup number="5" title={uiText(language, "filter.tags")}><TagFilterChips availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} allLabelKey="common.allTags" /></FilterGroup></section><Context language={language} breadcrumb={`${equipmentDisplayName} › ${generalConverterLabel(language, converter)} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? uiText(language, "common.allOpenSlots") : effectiveLines.map((line) => formatOpenSlot(language, line)).join(" · ")} › ${selectedTagLabel(selectedTags, language, optionTags, "common.allTags")}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentListSearch")} /><ResultsHead language={language} title={uiText(language, "open.resultsTitle")} description={uiText(language, "open.resultsDescription")} count={filtered.length} />{filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}><SectionHead title={formatOpenSlot(language, line)} count={formatCandidateCount(language, groups.get(line)?.length ?? 0)} /><div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "open.effect")}</th><th>{uiText(language, "open.nameAndTags")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => { const localized = localizedRows.get(row); return <tr key={`${row.option_id}-${row.option_tier}-${row.candidate_index}-${index}`}><td><strong>{localized?.display ?? row.option_display}</strong></td><td>{localized?.title ?? row.option_display_name}<small>{row.tags.map((tag) => tagText(language, tag, optionTags)).join(" / ")}</small></td><td><span className="tier">{formatTierLevel(language, row.option_tier)}</span></td><td><b className="probability">{row.converter_probability}%</b></td></tr>; })}</tbody></table></div></section>) : <Empty language={language} />}</main></>;
 }
 
 function FilterGroup({ number, title, children, className = "" }: { number: string; title: string; children: ReactNode; className?: string }) { return <section className={`filter-group ${className}`}><h2><span>{number}</span>{title}</h2><div className="chip-grid">{children}</div></section>; }
 function Chip({ active, children, onClick }: { active: boolean; children: ReactNode; onClick: () => void }) { return <button className={`chip ${active ? "active" : ""}`} aria-pressed={active} onClick={onClick}>{children}</button>; }
+function selectedTagLabel(selectedTags: string[], language: Language, optionTags: OptionTagData, allLabelKey: UiMessageKey): string { return selectedTags.length ? selectedTags.map((tag) => tagText(language, tag, optionTags)).join(" · ") : uiText(language, allLabelKey); }
+function TagFilterChips({ availableTags, selectedTags, onChange, language, optionTags, allLabelKey }: { availableTags: string[]; selectedTags: string[]; onChange: (tags: string[]) => void; language: Language; optionTags: OptionTagData; allLabelKey: UiMessageKey }) {
+  const groups = Object.entries(optionTags.groups).map(([groupId, labels]) => ({
+    groupId,
+    label: labels[language],
+    tags: availableTags.filter((tag) => optionTags.tags[tag]?.group === groupId),
+  })).filter((group) => group.tags.length);
+  return <><Chip active={!selectedTags.length} onClick={() => onChange([])}>{uiText(language, allLabelKey)}</Chip>{groups.map((group) => <div className="tag-filter-group" key={group.groupId}><small>{group.label}</small><div>{group.tags.map((tag) => <Chip key={tag} active={selectedTags.includes(tag)} onClick={() => onChange(toggleSelectedTag(selectedTags, tag))}>{tagText(language, tag, optionTags)}</Chip>)}</div></div>)}</>;
+}
 function Context({ language, breadcrumb, query, onQuery, placeholder, hideSearch = false }: { language: Language; breadcrumb: string; query: string; onQuery: (value: string) => void; placeholder: string; hideSearch?: boolean }) { return <section className={`context-row ${hideSearch ? "breadcrumb-only" : ""}`}><div className="breadcrumb">{uiText(language, "common.currentLocation")} <b>{breadcrumb}</b></div>{!hideSearch && <label className="search"><span className="visually-hidden">{uiText(language, "filter.optionSearch")}</span><input value={query} onChange={(event) => onQuery(event.target.value)} placeholder={placeholder} /></label>}</section>; }
 function ResultsHead({ language, title, description, count }: { language: Language; title: string; description: string; count: number }) { return <section className="results-head"><div><h2>{title}</h2><p>{description}</p></div><b>{formatResultCount(language, count)}</b></section>; }
 function SectionHead({ title, count }: { title: string; count: string }) { return <div className="option-section-head"><h3>{title}</h3><span>{count}</span></div>; }

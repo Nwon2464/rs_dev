@@ -76,6 +76,9 @@
 .selected-equipment-card button { min-height:34px; padding:6px 9px; }
 .option-tag-filter .chip-grid { min-width:0; align-content:flex-start; overflow:visible; }
 .option-tag-filter .chip { max-width:100%; white-space:normal; }
+.tag-filter-group { display:grid; width:100%; gap:5px; padding-top:3px; }
+.tag-filter-group > small { color:var(--muted); font-size:10px; font-weight:800; }
+.tag-filter-group > div { display:flex; flex-wrap:wrap; gap:6px; }
 .option-search-filter .chip-grid,.option-equipment-filter .chip-grid { display:block; }
 .panel-search-control { display:flex; align-items:center; gap:7px; }
 .panel-search-control input { min-width:0; }

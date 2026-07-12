@@ -29,6 +29,7 @@ const KO_UI_MESSAGES = {
   "error.japaneseEquipmentGroups": "일본어 장비 그룹 JSON을 읽을 수 없습니다.",
   "error.japaneseOpenEquipmentBuckets": "일본어 개방옵션 장비 분류 JSON을 읽을 수 없습니다.",
   "error.japaneseOpenMetadata": "일본어 개방옵션 메타데이터 JSON을 읽을 수 없습니다.",
+  "error.optionTags": "옵션 태그 JSON을 읽을 수 없습니다.",
   "error.unknown": "데이터를 읽을 수 없습니다.",
   "home.open.title": "일반 장비 개방 옵션",
   "home.open.description": "장비·변환기·등급·개방 줄별 후보와 확률을 확인합니다.",
@@ -127,6 +128,7 @@ const JA_UI_MESSAGES: Record<UiMessageKey, string> = {
   "error.japaneseEquipmentGroups": "日本語装備グループJSONを読み込めません。",
   "error.japaneseOpenEquipmentBuckets": "日本語解放オプション装備分類JSONを読み込めません。",
   "error.japaneseOpenMetadata": "日本語解放オプションメタデータJSONを読み込めません。",
+  "error.optionTags": "オプションタグJSONを読み込めません。",
   "error.unknown": "データを読み込めません。",
   "home.open.title": "一般装備の解放オプション",
   "home.open.description": "装備・変換器・等級・解放スロット別の候補と確率を確認します。",
@@ -201,42 +203,6 @@ const UI_MESSAGES: Record<Language, Record<UiMessageKey, string>> = {
 
 export function uiText(language: Language, key: UiMessageKey): string {
   return UI_MESSAGES[language][key];
-}
-
-const JAPANESE_TAG_LABELS: Record<string, string> = {
-  CP: "CP",
-  HP: "HP",
-  PvP: "PvP",
-  강타: "強打",
-  기타: "その他",
-  대상: "対象",
-  대지: "大地",
-  물: "水",
-  물리: "物理",
-  바람: "風",
-  방어: "防御",
-  불: "火",
-  빛: "光",
-  "상태 이상": "状態異常",
-  소환수: "召喚獣",
-  "소환수/펫": "召喚獣/ペット",
-  속도: "速度",
-  속성: "属性",
-  스킬: "スキル",
-  스탯: "ステータス",
-  어둠: "闇",
-  자원: "リソース",
-  저항: "抵抗",
-  "착용 조건": "装備条件",
-  출현: "出現",
-  치명타: "致命打",
-  피해: "ダメージ",
-  "한계 돌파": "限界突破",
-  흡수: "吸収",
-};
-
-export function tagText(language: Language, tag: string): string {
-  return language === "ja" ? JAPANESE_TAG_LABELS[tag] ?? tag : tag;
 }
 
 export function formatResultCount(language: Language, count: number): string { return language === "ja" ? `${count.toLocaleString()}件` : `${count.toLocaleString()}개`; }
