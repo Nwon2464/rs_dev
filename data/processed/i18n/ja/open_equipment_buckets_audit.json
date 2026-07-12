@@ -1,0 +1,394 @@
+{
+  "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
+  "equipment_groups_source": "/home/nwon/projects/rs_dev-japanese-ui/web/public/data/i18n/ja/equipment_groups.json",
+  "csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/equipment_converter_type_options.csv",
+  "summary": {
+    "actual_bucket_count": 11,
+    "direct_single_group_count": 8,
+    "composable_multi_group_count": 2,
+    "semantic_category_count": 1,
+    "confirmed_count": 11,
+    "strong_candidate_count": 0,
+    "ambiguous_count": 0,
+    "missing_count": 0,
+    "csv_coverage_complete": true,
+    "duplicate_japanese_names": [],
+    "empty_japanese_name_count": 0,
+    "production_export_eligible": true,
+    "production_export_reasons": []
+  },
+  "results": [
+    {
+      "ko_bucket_name": "공용 갑옷",
+      "group_ids": [
+        16
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "共用鎧",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 16,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "공용 갑옷"
+      ],
+      "constituent_ja_names": [
+        "共用鎧"
+      ],
+      "csv_row_count": 754,
+      "evidence": [
+        "bucket has one constituent item_group_id=16",
+        "section 163 text_id 16 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "관",
+      "group_ids": [
+        1
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "冠",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 1,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "관"
+      ],
+      "constituent_ja_names": [
+        "冠"
+      ],
+      "csv_row_count": 600,
+      "evidence": [
+        "bucket has one constituent item_group_id=1",
+        "section 163 text_id 1 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "귀걸이/망토",
+      "group_ids": [
+        10,
+        11
+      ],
+      "group_count": 2,
+      "strategy": "compose_constituent_names",
+      "ja_candidate": "イヤリング/マント",
+      "source_type": "section_163_constituents",
+      "source_section_id": 163,
+      "source_text_id": null,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "귀걸이",
+        "망토"
+      ],
+      "constituent_ja_names": [
+        "イヤリング",
+        "マント"
+      ],
+      "csv_row_count": 819,
+      "evidence": [
+        "bucket contains two explicit item-group constituents",
+        "Japanese label preserves the same order and separator using only section 163 originals"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "목걸이",
+      "group_ids": [
+        8
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "ネックレス",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 8,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "목걸이"
+      ],
+      "constituent_ja_names": [
+        "ネックレス"
+      ],
+      "csv_row_count": 666,
+      "evidence": [
+        "bucket has one constituent item_group_id=8",
+        "section 163 text_id 8 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "무기",
+      "group_ids": [
+        18,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        28,
+        30,
+        32,
+        33,
+        54,
+        55,
+        56,
+        57,
+        58,
+        61,
+        63,
+        68,
+        70,
+        80,
+        82
+      ],
+      "group_count": 23,
+      "strategy": "verified_semantic_label",
+      "ja_candidate": "武器",
+      "source_type": "japanese_llt_equipment_category_section",
+      "source_section_id": 137,
+      "source_text_id": 0,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "한 손 검",
+        "양손 검",
+        "마법 지팡이",
+        "이빨",
+        "메이스",
+        "날개",
+        "단도",
+        "활",
+        "창",
+        "슬링",
+        "마술봉",
+        "채찍",
+        "낫",
+        "손톱무기",
+        "책",
+        "빗자루",
+        "쌍검",
+        "암영 구체",
+        "쌍권총",
+        "연금석",
+        "격투무기",
+        "사슬닻",
+        "대포"
+      ],
+      "constituent_ja_names": [
+        "片手剣",
+        "両手剣",
+        "杖",
+        "牙",
+        "メイス",
+        "翼",
+        "短剣",
+        "弓",
+        "槍",
+        "スリング",
+        "ワンド",
+        "鞭",
+        "鎌",
+        "爪武器",
+        "本",
+        "ほうき",
+        "双剣",
+        "ダークコア",
+        "二丁拳銃",
+        "錬金石",
+        "格闘武器",
+        "チェインアンカー",
+        "大砲"
+      ],
+      "csv_row_count": 826,
+      "evidence": [
+        "section 137 contains exact semantic hint '武器'",
+        "same-section confirmed equipment-name overlap: ['イヤリング', 'グローブ', 'ネックレス', 'ベルト']",
+        "neighboring records: ['0:武器', '1:盾', '2:鎧', '3:グローブ', '4:ヘルメット類']",
+        "short category-like labels in section: 17/17 (1.000)",
+        "section passed category structure filters: <=128 records, one exact hint, >=0.8 short-label ratio"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "벨트",
+      "group_ids": [
+        6
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "ベルト",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 6,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "벨트"
+      ],
+      "constituent_ja_names": [
+        "ベルト"
+      ],
+      "csv_row_count": 653,
+      "evidence": [
+        "bucket has one constituent item_group_id=6",
+        "section 163 text_id 6 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "부츠",
+      "group_ids": [
+        7
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "ブーツ",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 7,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "부츠"
+      ],
+      "constituent_ja_names": [
+        "ブーツ"
+      ],
+      "csv_row_count": 688,
+      "evidence": [
+        "bucket has one constituent item_group_id=7",
+        "section 163 text_id 7 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "장갑/팔찌",
+      "group_ids": [
+        2,
+        5
+      ],
+      "group_count": 2,
+      "strategy": "compose_constituent_names",
+      "ja_candidate": "グローブ/ブレスレット",
+      "source_type": "section_163_constituents",
+      "source_section_id": 163,
+      "source_text_id": null,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "장갑",
+        "팔찌"
+      ],
+      "constituent_ja_names": [
+        "グローブ",
+        "ブレスレット"
+      ],
+      "csv_row_count": 792,
+      "evidence": [
+        "bucket contains two explicit item-group constituents",
+        "Japanese label preserves the same order and separator using only section 163 originals"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "전용 갑옷",
+      "group_ids": [
+        17
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "専用鎧",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 17,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "전용 갑옷"
+      ],
+      "constituent_ja_names": [
+        "専用鎧"
+      ],
+      "csv_row_count": 682,
+      "evidence": [
+        "bucket has one constituent item_group_id=17",
+        "section 163 text_id 17 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "피리",
+      "group_ids": [
+        29
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "笛",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 29,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "피리"
+      ],
+      "constituent_ja_names": [
+        "笛"
+      ],
+      "csv_row_count": 858,
+      "evidence": [
+        "bucket has one constituent item_group_id=29",
+        "section 163 text_id 29 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    },
+    {
+      "ko_bucket_name": "헬멧",
+      "group_ids": [
+        0
+      ],
+      "group_count": 1,
+      "strategy": "direct_single_group",
+      "ja_candidate": "ヘルメット",
+      "source_type": "section_163_direct_id",
+      "source_section_id": 163,
+      "source_text_id": 0,
+      "source_variant_id": 0,
+      "source_sub_variant_id": 0,
+      "constituent_ko_names": [
+        "헬멧"
+      ],
+      "constituent_ja_names": [
+        "ヘルメット"
+      ],
+      "csv_row_count": 670,
+      "evidence": [
+        "bucket has one constituent item_group_id=0",
+        "section 163 text_id 0 directly supplies the Japanese original"
+      ],
+      "confidence": "high",
+      "status": "confirmed"
+    }
+  ]
+}
