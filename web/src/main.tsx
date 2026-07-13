@@ -62,7 +62,7 @@ function App() {
       ? requestedMode
       : null;
   const [theme, setTheme] = useState<Theme>(() =>
-    localStorage.getItem("redstone-ui-theme") === "dark" ? "dark" : "light",
+    localStorage.getItem("redstone-ui-theme") === "light" ? "light" : "dark",
   );
   const [language, setLanguage] = useState<Language>(() =>
     loadLanguage(localStorage),
@@ -219,8 +219,8 @@ function App() {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
     >
       {theme === "dark"
-        ? `☾ ${uiText(language, "theme.light")}`
-        : `☀ ${uiText(language, "theme.dark")}`}
+        ? `☀ ${uiText(language, "theme.light")}`
+        : `☾ ${uiText(language, "theme.dark")}`}
     </button>
   );
   const headerControls = (

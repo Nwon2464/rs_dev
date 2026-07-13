@@ -153,10 +153,12 @@ export function InstandardOpenViewer({
   ]);
   const selectedOpenLineLabel =
     selectedOpenLines === null
-      ? "ALL"
-      : selectedOpenLines
+      ? uiText(language, "common.allOpenSlots")
+      : selectedOpenLines.length
+        ? selectedOpenLines
           .map((line) => formatOpenSlot(language, line))
-          .join(" · ");
+          .join(" · ")
+        : uiText(language, "common.noOpenSlotsSelected");
 
   function changeEquipment(name: string) {
     const nextEquipment = source.equipment.find(
@@ -180,11 +182,11 @@ export function InstandardOpenViewer({
     if (value === "ALL") {
       setSelectedOpenLines(null);
     } else {
-      const current = selectedOpenLines ?? [];
+      const current = selectedOpenLines ?? openLines;
       const next = current.includes(value)
         ? current.filter((line) => line !== value)
         : [...current, value].sort((a, b) => Number(a) - Number(b));
-      setSelectedOpenLines(next.length ? next : null);
+      setSelectedOpenLines(next);
     }
     setSelectedOpenTags([]);
     setQuery("");
@@ -256,20 +258,30 @@ export function InstandardOpenViewer({
             title={uiText(language, "filter.openSlot")}
           >
             <Chip
-              active={selectedOpenLines === null}
+              active={effectiveOpenLines.length === openLines.length}
               onClick={() => toggleOpenLine("ALL")}
             >
-              ALL
+              ▤ ALL
             </Chip>
             {openLines.map((value) => (
               <Chip
                 key={value}
-                active={selectedOpenLines?.includes(value) ?? false}
+                active={effectiveOpenLines.includes(value)}
                 onClick={() => toggleOpenLine(value)}
               >
-                {value}
+                {formatOpenSlot(language, value)}
               </Chip>
             ))}
+            <Chip
+              active={effectiveOpenLines.length === 0}
+              onClick={() => {
+                setSelectedOpenLines([]);
+                setSelectedOpenTags([]);
+                setQuery("");
+              }}
+            >
+              {uiText(language, "common.clearSelection")}
+            </Chip>
           </FilterGroup>
         </section>
         <TagFilterPanel
@@ -281,14 +293,12 @@ export function InstandardOpenViewer({
         />
         <Context
           language={language}
-          breadcrumb={`${equipmentDisplayName} › ${uiText(
-            language,
-            "mode.open.title",
-          )} › ${localizedConverterLabel(
-            converter,
-            language,
-            openMetadata,
-          )} › ${selectedOpenLineLabel}`}
+          breadcrumb={[
+            equipmentDisplayName,
+            uiText(language, "mode.open.title"),
+            localizedConverterLabel(converter, language, openMetadata),
+            selectedOpenLineLabel,
+          ]}
           query={query}
           onQuery={setQuery}
           placeholder={uiText(language, "filter.currentOpenSearch")}
@@ -317,7 +327,7 @@ export function InstandardOpenViewer({
             optionTags={optionTags}
           />
         ) : (
-          <Empty language={language} />
+          <Empty language={language} onReset={() => { setSelectedOpenLines(null); setSelectedOpenTags([]); setQuery(""); }} />
         )}
       </main>
     </>

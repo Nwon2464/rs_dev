@@ -174,7 +174,7 @@ def build_auxiliary_catalogs(
 
     converter_ko = {
         "normal": "개방옵션변환기",
-        "improved": "개방옵션변환기改",
+        "improved": "개량된 개방옵션변환기",
         "fake": "모조변환기",
         "burning": "불타는변환기",
         "association": "협회변환기",

@@ -6,6 +6,7 @@ import { OptionIdentityCell } from "./common/optionTable/OptionIdentityCell";
 import { OptionTagsCell } from "./common/optionTable/OptionTagsCell";
 import { OptionValueCell } from "./common/optionTable/OptionValueCell";
 import { ProgressBadge } from "./common/optionTable/ProgressBadge";
+import { Context, Empty } from "./common/ExplorerPrimitives";
 import {
   formatCandidateCount,
   formatOpenSlot,
@@ -65,7 +66,7 @@ export function OpenViewer({ rows, language, optionLocales, openEquipmentBuckets
 
   const equipmentLabel = (value: string, displayLanguage: Language = language) => displayLanguage === "ja" ? openEquipmentBuckets[value] ?? value : value;
   const converterLabel = (value: GeneralOpenOptionRow["converter_type"], displayLanguage: Language = language) => openMetadata.converters[value]?.[displayLanguage] ?? value;
-  const gradeLabel = (value: string, displayLanguage: Language = language) => `${value} · ${openMetadata.grades[value]?.[displayLanguage] ?? value}`;
+  const gradeLabel = (value: string, displayLanguage: Language = language) => openMetadata.grades[value]?.[displayLanguage] ?? value;
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
@@ -95,7 +96,7 @@ export function OpenViewer({ rows, language, optionLocales, openEquipmentBuckets
     setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setSelectedTags([]);
   }
   function toggleLine(value: string) {
-    if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null);
+    if (value === "ALL") setSelectedLines(null);
     else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b)));
     setSelectedTags([]);
   }
@@ -107,19 +108,19 @@ export function OpenViewer({ rows, language, optionLocales, openEquipmentBuckets
         <FilterGroup number="1" title={uiText(language, "filter.equipment")}>{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}><span className="open-equipment-chip"><Icon className="app-icon" id={openEquipmentIconId(value)} size={18} />{equipmentLabel(value)}</span></Chip>)}</FilterGroup>
         <FilterGroup number="2" title={uiText(language, "filter.converterSelection")}>{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{converterLabel(value)}</Chip>)}</FilterGroup>
         <FilterGroup number="3" title={uiText(language, "filter.itemGrade")}>{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setSelectedTags([]); }}>{gradeLabel(value)}</Chip>)}</FilterGroup>
-        <FilterGroup number="4" title={uiText(language, "filter.openSlot")}><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{formatOpenSlot(language, value)}</Chip>)}</FilterGroup>
+        <FilterGroup number="4" title={uiText(language, "filter.openSlot")}><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{formatOpenSlot(language, value)}</Chip>)}<Chip active={effectiveLines.length === 0} onClick={() => { setSelectedLines([]); setSelectedTags([]); }}>{uiText(language, "common.clearSelection")}</Chip></FilterGroup>
       </section>
       <TagFilterPanel availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} />
-      <Context language={language} breadcrumb={`${equipmentLabel(equipment)} › ${converterLabel(converter)} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? uiText(language, "common.allOpenSlots") : effectiveLines.map((line) => formatOpenSlot(language, line)).join(" · ")}`} query={query} onQuery={setQuery} />
+      <Context language={language} breadcrumb={[equipmentLabel(equipment), converterLabel(converter), gradeLabel(grade), effectiveLines.length === lines.length ? uiText(language, "common.allOpenSlots") : effectiveLines.length ? effectiveLines.map((line) => formatOpenSlot(language, line)).join(" · ") : uiText(language, "common.noOpenSlotsSelected")]} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentListSearch")} />
       <ResultsHead language={language} count={filtered.length} />
       <SelectedTagChips selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} />
       {filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}>
         <div className="option-section-head"><h3>{formatOpenSlot(language, line)}</h3><span>{formatCandidateCount(language, groups.get(line)?.length ?? 0)}</span></div>
-        <div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "open.effect")}</th><th className="option-category-column">{uiText(language, "option.category")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => {
+        <div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "open.effect")}</th><th className="option-category-column">{uiText(language, "option.category")}</th><th>{uiText(language, "open.level")}</th><th><span className="probability-heading">{uiText(language, "open.converterProbability")}<abbr title={uiText(language, "open.converterProbabilityHelp")}>ⓘ</abbr></span></th></tr></thead><tbody>{groups.get(line)?.map((row, index) => {
           const localized = localizedRows.get(row)!;
           return <tr key={`${row.source_block_index}-${row.candidate_index}-${index}`}><OptionIdentityCell title={localized.title} tags={row.tags} language={language} optionTags={optionTags} /><OptionValueCell value={localized.display} /><OptionTagsCell tags={row.tags} language={language} optionTags={optionTags} /><td><ProgressBadge label={formatTierLevel(language, row.tier)} /></td><td><b className="probability">{row.probability}%</b></td></tr>;
         })}</tbody></table></div>
-      </section>) : <div className="empty">{uiText(language, "common.noResults")}</div>}
+      </section>) : <Empty language={language} onReset={() => { setSelectedLines(null); setSelectedTags([]); setQuery(""); }} />}
     </main>
   </>;
 }
@@ -129,5 +130,4 @@ function Header({ language, title, description, themeButton }: { language: Langu
 }
 function FilterGroup({ number, title, children }: { number: string; title: string; children: ReactNode }) { return <section className="filter-group"><h2><span>{number}</span>{title}</h2><div className="chip-grid">{children}</div></section>; }
 function Chip({ active, children, onClick }: { active: boolean; children: ReactNode; onClick: () => void }) { return <button className={`chip ${active ? "active" : ""}`} aria-pressed={active} onClick={onClick}>{children}</button>; }
-function Context({ language, breadcrumb, query, onQuery }: { language: Language; breadcrumb: string; query: string; onQuery: (value: string) => void }) { return <section className="context-row"><div className="breadcrumb">{uiText(language, "common.currentLocation")} <b>{breadcrumb}</b></div><label className="search"><span className="visually-hidden">{uiText(language, "filter.optionSearch")}</span><input value={query} onChange={(event) => onQuery(event.target.value)} placeholder={uiText(language, "filter.currentListSearch")} /></label></section>; }
 function ResultsHead({ language, count }: { language: Language; count: number }) { return <section className="results-head"><div><h2>{uiText(language, "open.resultsTitle")}</h2><p>{uiText(language, "open.resultsDescription")}</p></div><b>{formatResultCount(language, count)}</b></section>; }

@@ -217,15 +217,16 @@ export function InstandardOptionViewer({
         />
         <Context
           language={language}
-          breadcrumb={`${equipmentDisplayName} › ${uiText(
-            language,
-            "mode.option.title",
-          )} › ${selectedTagLabel(
-            selectedTags,
-            language,
-            optionTags,
-            "common.allCategories",
-          )}`}
+          breadcrumb={[
+            equipmentDisplayName,
+            uiText(language, "mode.option.title"),
+            selectedTagLabel(
+              selectedTags,
+              language,
+              optionTags,
+              "common.allCategories",
+            ),
+          ]}
           query={query}
           onQuery={setQuery}
           placeholder={uiText(language, "filter.currentOptionSearch")}
@@ -254,7 +255,7 @@ export function InstandardOptionViewer({
             onSelect={setSelectedOption}
           />
         ) : (
-          <Empty language={language} />
+          <Empty language={language} onReset={() => { setSelectedTags([]); setQuery(""); }} />
         )}
       </main>
       {selectedOption && (
