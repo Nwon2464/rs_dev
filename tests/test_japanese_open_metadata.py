@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from rs_dev.japanese_open_metadata import (
+from rs_dev.open_options.catalogs.metadata import (
     CONVERTER_SPECS, GRADE_SPECS, build_japanese_open_metadata_audit,
     build_production_open_metadata,
 )

@@ -49,3 +49,16 @@ def test_web_public_outputs_equal_processed_outputs() -> None:
     ]
     for relative in paths:
         assert (ROOT / "data/processed/open_options" / relative).read_bytes() == (ROOT / "web/public/data/open_options" / relative).read_bytes()
+
+
+def test_catalog_audits_are_rebuilt_under_reports() -> None:
+    report_root = ROOT / "data/reports/open_options/catalogs/ja"
+    for name in (
+        "equipment_groups_audit.json",
+        "open_equipment_buckets_audit.json",
+        "open_metadata_audit.json",
+    ):
+        payload = json.loads((report_root / name).read_text(encoding="utf-8"))
+        assert payload["summary"]["production_export_eligible"] is True
+
+    assert not (ROOT / "data/processed/i18n/ja").exists()

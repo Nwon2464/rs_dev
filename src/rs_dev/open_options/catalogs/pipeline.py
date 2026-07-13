@@ -1,46 +1,151 @@
-"""Build auxiliary catalogs from their existing evidence-backed sources."""
+"""Build evidence-backed auxiliary catalogs from raw game data."""
 
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from rs_dev.japanese_equipment_groups import build_production_equipment_groups
-from rs_dev.japanese_open_equipment_buckets import build_production_open_buckets
-from rs_dev.japanese_open_metadata import build_production_open_metadata
 from rs_dev.models import (
     JapaneseEquipmentGroupAuditReport,
     JapaneseOpenEquipmentBucketAuditReport,
     JapaneseOpenMetadataAuditReport,
 )
-from rs_dev.option_tags import (
+from rs_dev.open_options.catalogs.equipment_buckets import (
+    build_japanese_open_bucket_audit,
+    build_production_open_buckets,
+    collect_csv_bucket_counts,
+)
+from rs_dev.open_options.catalogs.equipment_groups import (
+    build_japanese_equipment_group_audit,
+    build_production_equipment_groups,
+    collect_current_ui_groups,
+)
+from rs_dev.open_options.catalogs.metadata import (
+    build_japanese_open_metadata_audit,
+    build_production_open_metadata,
+    collect_usage,
+)
+from rs_dev.open_options.catalogs.option_tags import (
     build_option_tags,
     collect_option_ids,
     load_source_tags,
     write_option_tags,
 )
-from rs_dev.parsers import parse_capa
+from rs_dev.parsers import parse_capa, parse_item_groups, parse_japanese_llt
 
 
 ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
+DEFAULT_LLT = DEFAULT_DATA_DIR / "language/japanese.llt"
 DEFAULT_OUTPUT_ROOT = ROOT / "data/processed/open_options/catalogs"
+DEFAULT_REPORT_ROOT = ROOT / "data/reports/open_options/catalogs/ja"
 DEFAULT_GENERAL_ROWS = ROOT / "data/processed/open_options/general/open_option_rows.csv"
 DEFAULT_INSTANDARD_ROWS = ROOT / "data/processed/open_options/instandard/open_option_rows.csv"
 DEFAULT_INSTANDARD_CATALOG = ROOT / "data/processed/open_options/instandard/catalog.json"
 
 
-def _load_model(path: Path, model: type[Any]) -> Any:
-    return model.model_validate_json(path.read_text(encoding="utf-8"))
+@dataclass(frozen=True)
+class JapaneseCatalogAudits:
+    equipment_groups: JapaneseEquipmentGroupAuditReport
+    equipment_buckets: JapaneseOpenEquipmentBucketAuditReport
+    metadata: JapaneseOpenMetadataAuditReport
 
 
 def _write(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def build_japanese_catalog_audits(
+    *,
+    data_dir: Path = DEFAULT_DATA_DIR,
+    llt_path: Path = DEFAULT_LLT,
+    report_root: Path = DEFAULT_REPORT_ROOT,
+    general_rows_path: Path = DEFAULT_GENERAL_ROWS,
+    instandard_rows_path: Path = DEFAULT_INSTANDARD_ROWS,
+    instandard_catalog_path: Path = DEFAULT_INSTANDARD_CATALOG,
+) -> JapaneseCatalogAudits:
+    """Rebuild all Japanese catalog evidence from raw DAT/LLT sources."""
+    required = (
+        data_dir / "simpleGameText.dat",
+        llt_path,
+        general_rows_path,
+        instandard_rows_path,
+        instandard_catalog_path,
+    )
+    missing = [str(path) for path in required if not path.is_file()]
+    if missing:
+        raise FileNotFoundError(
+            "required Japanese catalog audit source(s) missing: " + ", ".join(missing)
+        )
+
+    records = parse_japanese_llt(llt_path)
+    korean_groups = parse_item_groups(
+        data_dir / "simpleGameText.dat", expected_count=84
+    )
+    current_ui_groups = collect_current_ui_groups(instandard_catalog_path)
+    equipment_report = build_japanese_equipment_group_audit(
+        records,
+        korean_groups,
+        current_ui_groups,
+        japanese_llt_source=str(llt_path),
+        korean_group_source=str(data_dir / "simpleGameText.dat"),
+        current_ui_source=str(instandard_catalog_path),
+    )
+    japanese_groups = build_production_equipment_groups(equipment_report)
+
+    bucket_report = build_japanese_open_bucket_audit(
+        records,
+        korean_groups,
+        japanese_groups,
+        collect_csv_bucket_counts(general_rows_path),
+        japanese_llt_source=str(llt_path),
+        equipment_groups_source="equipment_groups_audit.json",
+        csv_source=str(general_rows_path),
+    )
+
+    grade_usage, converter_usage = collect_usage(
+        general_rows_path, instandard_rows_path
+    )
+    metadata_report = build_japanese_open_metadata_audit(
+        records,
+        grade_usage["grades"],
+        converter_usage["general"],
+        converter_usage["instandard"],
+        {},
+        japanese_llt_source=str(llt_path),
+        general_csv_source=str(general_rows_path),
+        instandard_csv_source=str(instandard_rows_path),
+        current_ui_source="not used by production catalog build",
+    )
+
+    reports = JapaneseCatalogAudits(
+        equipment_groups=equipment_report,
+        equipment_buckets=bucket_report,
+        metadata=metadata_report,
+    )
+    _write(
+        report_root / "equipment_groups_audit.json",
+        equipment_report.model_dump(mode="json"),
+    )
+    _write(
+        report_root / "open_equipment_buckets_audit.json",
+        bucket_report.model_dump(mode="json"),
+    )
+    _write(
+        report_root / "open_metadata_audit.json",
+        metadata_report.model_dump(mode="json"),
+    )
+    return reports
 
 
 def build_auxiliary_catalogs(
+    audits: JapaneseCatalogAudits,
     *,
     data_dir: Path = DEFAULT_DATA_DIR,
     output_root: Path = DEFAULT_OUTPUT_ROOT,
@@ -48,22 +153,10 @@ def build_auxiliary_catalogs(
     instandard_rows_path: Path = DEFAULT_INSTANDARD_ROWS,
     instandard_catalog_path: Path = DEFAULT_INSTANDARD_CATALOG,
 ) -> dict[str, int]:
-    audit_root = ROOT / "data/processed/i18n/ja"
-    equipment_report = _load_model(
-        audit_root / "equipment_groups_audit.json", JapaneseEquipmentGroupAuditReport
-    )
-    bucket_report = _load_model(
-        audit_root / "open_equipment_buckets_audit.json",
-        JapaneseOpenEquipmentBucketAuditReport,
-    )
-    metadata_report = _load_model(
-        audit_root / "open_metadata_audit.json", JapaneseOpenMetadataAuditReport
-    )
-    equipment_groups = build_production_equipment_groups(equipment_report)
-    open_buckets = build_production_open_buckets(bucket_report)
-    japanese_metadata = build_production_open_metadata(metadata_report)
-    if "fake" not in japanese_metadata["converters"] and "replica" in japanese_metadata["converters"]:
-        japanese_metadata["converters"]["fake"] = japanese_metadata["converters"].pop("replica")
+    """Create production catalogs from freshly generated audit objects."""
+    equipment_groups = build_production_equipment_groups(audits.equipment_groups)
+    open_buckets = build_production_open_buckets(audits.equipment_buckets)
+    japanese_metadata = build_production_open_metadata(audits.metadata)
 
     option_ids = collect_option_ids(general_rows_path, instandard_rows_path)
     source_tags = load_source_tags(instandard_catalog_path)

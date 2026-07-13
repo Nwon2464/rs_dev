@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from rs_dev.japanese_open_equipment_buckets import (
+from rs_dev.open_options.catalogs.equipment_buckets import (
     DEFAULT_AUDIT_OUTPUT,
     DEFAULT_PRODUCTION_OUTPUT,
     build_japanese_open_bucket_audit,

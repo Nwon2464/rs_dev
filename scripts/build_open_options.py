@@ -13,7 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from rs_dev.open_options.general.pipeline import DEFAULT_DATA_DIR, build_general_open_options  # noqa: E402
-from rs_dev.open_options.catalogs.pipeline import build_auxiliary_catalogs  # noqa: E402
+from rs_dev.open_options.catalogs.pipeline import (  # noqa: E402
+    build_auxiliary_catalogs,
+    build_japanese_catalog_audits,
+)
 from rs_dev.open_options.locales.pipeline import build_locale_catalogs  # noqa: E402
 from rs_dev.open_options.instandard.pipeline import build_instandard  # noqa: E402
 
@@ -30,7 +33,11 @@ def main() -> None:
     general = build_general_open_options(data_dir=args.data_dir)
     instandard = build_instandard(data_dir=args.data_dir)
     locales = build_locale_catalogs(data_dir=args.data_dir, llt_path=args.llt)
-    catalogs = build_auxiliary_catalogs(data_dir=args.data_dir)
+    catalog_audits = build_japanese_catalog_audits(
+        data_dir=args.data_dir,
+        llt_path=args.llt,
+    )
+    catalogs = build_auxiliary_catalogs(catalog_audits, data_dir=args.data_dir)
     print(
         json.dumps(
             {

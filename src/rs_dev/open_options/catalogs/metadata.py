@@ -16,9 +16,11 @@ from rs_dev.models import (
     JapaneseOpenMetadataAuditSummary,
 )
 
-ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_AUDIT_OUTPUT = ROOT / "data/processed/i18n/ja/open_metadata_audit.json"
-DEFAULT_PRODUCTION_OUTPUT = ROOT / "data/processed/i18n/ja/open_metadata.json"
+ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_AUDIT_OUTPUT = ROOT / "data/reports/open_options/catalogs/ja/open_metadata_audit.json"
+DEFAULT_PRODUCTION_OUTPUT = (
+    ROOT / "data/reports/open_options/catalogs/ja/open_metadata_values.json"
+)
 
 GRADE_SPECS = {
     "7": ("유니크", 12, "ユニーク"),

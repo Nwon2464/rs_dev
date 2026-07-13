@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from rs_dev.japanese_equipment_groups import (
+from rs_dev.open_options.catalogs.equipment_groups import (
     build_japanese_equipment_group_audit,
     build_production_equipment_groups,
 )

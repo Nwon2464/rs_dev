@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from rs_dev.option_tags import (
+from rs_dev.open_options.catalogs.option_tags import (
     GROUPS,
     JAPANESE_LABELS,
     TAG_GROUPS,

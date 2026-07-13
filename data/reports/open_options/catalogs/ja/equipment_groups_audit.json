@@ -1,7 +1,7 @@
 {
   "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
   "korean_group_source": "/mnt/c/game/Red Stone/Data/simpleGameText.dat",
-  "current_ui_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/instandard_equipment.json",
+  "current_ui_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/instandard/catalog.json",
   "likely_section_id": 163,
   "summary": {
     "section_count": 171,

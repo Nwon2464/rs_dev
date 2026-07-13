@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from rs_dev.japanese_open_equipment_buckets import (
+from rs_dev.open_options.catalogs.equipment_buckets import (
     build_japanese_open_bucket_audit,
     build_production_open_buckets,
 )

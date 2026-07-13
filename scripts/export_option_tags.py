@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from rs_dev.option_tags import (
+from rs_dev.open_options.catalogs.option_tags import (
     DEFAULT_CAPA,
     DEFAULT_GENERAL_OPEN_CSV,
     DEFAULT_INSTANDARD_OPEN_CSV,

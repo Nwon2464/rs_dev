@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_SOURCE_JSON = ROOT / "data/processed/open_options/instandard/catalog.json"
 DEFAULT_GENERAL_OPEN_CSV = ROOT / "data/processed/open_options/general/open_option_rows.csv"
 DEFAULT_INSTANDARD_OPEN_CSV = ROOT / "data/processed/open_options/instandard/open_option_rows.csv"

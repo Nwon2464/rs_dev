@@ -1,8 +1,8 @@
 {
   "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
-  "general_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/web/public/data/equipment_converter_type_options.csv",
-  "instandard_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/web/public/data/instandard_open_option_rows.csv",
-  "current_ui_source": "/home/nwon/projects/rs_dev-japanese-ui/web/src/i18n/index.ts",
+  "general_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/general/open_option_rows.csv",
+  "instandard_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/instandard/open_option_rows.csv",
+  "current_ui_source": "not used by production catalog build",
   "summary": {
     "section_count": 171,
     "grade_count": 3,
@@ -110,8 +110,8 @@
       ],
       "confidence": "high",
       "status": "confirmed_direct",
-      "current_ui_value": "解放オプション変換器",
-      "ui_comparison": "exact_match"
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
     },
     {
       "category": "converter",
@@ -136,12 +136,12 @@
       ],
       "confidence": "high",
       "status": "confirmed_direct",
-      "current_ui_value": "解放オプション変換器改",
-      "ui_comparison": "spacing_or_punctuation_difference"
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
     },
     {
       "category": "converter",
-      "internal_key": "replica",
+      "internal_key": "fake",
       "ko_label": "모조 변환기 / 모조",
       "ja_candidate": "レプリカ解放オプション変換器",
       "section_id": 67,
@@ -162,8 +162,8 @@
       ],
       "confidence": "high",
       "status": "confirmed_direct",
-      "current_ui_value": "レプリカ解放オプション変換器",
-      "ui_comparison": "exact_match"
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
     },
     {
       "category": "converter",
@@ -188,8 +188,8 @@
       ],
       "confidence": "high",
       "status": "confirmed_direct",
-      "current_ui_value": "燃える変換器",
-      "ui_comparison": "wording_difference"
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
     },
     {
       "category": "converter",
@@ -214,8 +214,8 @@
       ],
       "confidence": "high",
       "status": "confirmed_direct",
-      "current_ui_value": "協会変換器",
-      "ui_comparison": "wording_difference"
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
     }
   ]
 }

@@ -14,15 +14,16 @@ from rs_dev.models import (
     JapaneseOpenEquipmentBucketAuditRow,
     JapaneseOpenEquipmentBucketAuditSummary,
 )
-from rs_dev.open_options import BUCKET_BY_GROUP_IDS
+from rs_dev.open_options.common.group_mapping import BUCKET_BY_GROUP_IDS
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_AUDIT_OUTPUT = (
     ROOT
     / "data"
-    / "processed"
-    / "i18n"
+    / "reports"
+    / "open_options"
+    / "catalogs"
     / "ja"
     / "open_equipment_buckets_audit.json"
 )
@@ -30,8 +31,8 @@ DEFAULT_PRODUCTION_OUTPUT = (
     ROOT
     / "data"
     / "processed"
-    / "i18n"
-    / "ja"
+    / "open_options"
+    / "catalogs"
     / "open_equipment_buckets.json"
 )
 

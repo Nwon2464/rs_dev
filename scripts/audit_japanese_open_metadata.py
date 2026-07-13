@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from rs_dev.japanese_open_metadata import (
+from rs_dev.open_options.catalogs.metadata import (
     DEFAULT_AUDIT_OUTPUT, DEFAULT_PRODUCTION_OUTPUT,
     build_japanese_open_metadata_audit, build_production_open_metadata,
     collect_current_ui_values, collect_usage, write_json,

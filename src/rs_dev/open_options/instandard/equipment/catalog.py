@@ -13,7 +13,7 @@ from rs_dev.models.instandard_equipment import (
     InstandardTierRoll,
     ParsedInstandardEquip,
 )
-from rs_dev.option_tags import canonical_tags
+from rs_dev.open_options.catalogs.option_tags import canonical_tags
 
 
 def build_catalog(

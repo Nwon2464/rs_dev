@@ -17,12 +17,12 @@ from rs_dev.models import (
 )
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_AUDIT_OUTPUT = (
-    ROOT / "data" / "processed" / "i18n" / "ja" / "equipment_groups_audit.json"
+    ROOT / "data" / "reports" / "open_options" / "catalogs" / "ja" / "equipment_groups_audit.json"
 )
 DEFAULT_PRODUCTION_OUTPUT = (
-    ROOT / "data" / "processed" / "i18n" / "ja" / "equipment_groups.json"
+    ROOT / "data" / "processed" / "open_options" / "catalogs" / "equipment_groups.json"
 )
 
 SEARCH_HINTS = (
