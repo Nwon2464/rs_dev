@@ -1,7 +1,0 @@
-source_file,option_id,record_offset_hex,category_or_type,texts,evidence_level
-capa.dat,920,0x23f87,30,개방옵션변환창생성 | 개방옵션 변환창 생성 | 개방 옵션 변환창 생성,confirmed_effect_record
-capa.dat,935,0x24aaf,30,개방옵션변환창생성2 | 개선된 개방 옵션 변환창 생성 | 개선된 개방 옵션 변환창 생성,confirmed_effect_record
-capa.dat,954,0x25abf,30,개방옵션변환창생성3 | 약화된 개방옵션 변환창 생성 | 약화된 개방 옵션 변환창 생성,confirmed_effect_record
-capa.dat,958,0x25d04,3,"아이템슬롯연마개방및옵션최댓값변환 | 아이템 [고정수치]0 슬롯 연마 및 [고정수치]1 슬롯을 [고정수치]2%의 확률로 개방, [고정수치]3 대상의 아이템만 사용가능 | <c:LTYELLOW>[F0]<n>슬롯 연마와 <c:LTYELLOW>[F1]<n>슬롯을 <c:LTYELLOW>[F2%]<n> 확률로 개방 | NX 변환 가능, 연마 수치보다 개방 수치가 높은 경우, 아이템 사용이 되지 않는다 고정수치 3 : 0(무기) , 1(보조무기), 2(갑옷), 3(장갑), 4(헬멧), 5(귀걸이/망토), 6(목걸이), 7(벨트), 8(신발), 9(반지) -> 0~9 이외의 값 입력시 아이템이 사용되지 않습니다. 아이템 랜덤 생성 수치를 최대치로 바꾼다",confirmed_effect_record
-capa.dat,966,0x2654b,30,개방옵션변환창생성4 | 협회 전용 개방옵션 변환창 생성 | 협회 전용 개방 옵션 변환창 생성,confirmed_effect_record
-capa.dat,1020,0x28cf4,30,개방옵션변환창생성5 | 향상된 개방 옵션 변환창 생성 | 향상된 개방 옵션 변환창 생성,confirmed_effect_record

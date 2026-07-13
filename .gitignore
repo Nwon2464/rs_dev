@@ -3,3 +3,6 @@ __pycache__/
 
 .venv/
 *.egg-info/
+
+web/tsconfig.tsbuildinfo
+data/intermediate/open_options/

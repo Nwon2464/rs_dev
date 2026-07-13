@@ -1,0 +1,34 @@
+{
+  "valid": true,
+  "row_audit": {
+    "option_id_count": 108,
+    "locales": {
+      "ko": {
+        "template_count": 1075,
+        "missing_option_ids": [],
+        "unsupported_placeholders": [],
+        "render_failures": []
+      },
+      "ja": {
+        "template_count": 1053,
+        "missing_option_ids": [],
+        "unsupported_placeholders": [],
+        "render_failures": []
+      }
+    },
+    "valid": true
+  },
+  "instandard_catalog_audit": {
+    "locales": {
+      "ko": {
+        "missing_option_ids": [],
+        "render_failures": []
+      },
+      "ja": {
+        "missing_option_ids": [],
+        "render_failures": []
+      }
+    },
+    "valid": true
+  }
+}

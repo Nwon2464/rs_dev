@@ -1,0 +1,1530 @@
+{
+  "schema_version": 1,
+  "groups": {
+    "resource": {
+      "ko": "자원",
+      "ja": "リソース"
+    },
+    "effect": {
+      "ko": "효과",
+      "ja": "効果"
+    },
+    "damage_type": {
+      "ko": "피해 유형",
+      "ja": "ダメージタイプ"
+    },
+    "element": {
+      "ko": "속성 원소",
+      "ja": "属性元素"
+    },
+    "target": {
+      "ko": "대상",
+      "ja": "対象"
+    },
+    "condition": {
+      "ko": "조건",
+      "ja": "条件"
+    }
+  },
+  "tags": {
+    "HP": {
+      "group": "resource",
+      "labels": {
+        "ko": "HP",
+        "ja": "HP"
+      }
+    },
+    "CP": {
+      "group": "resource",
+      "labels": {
+        "ko": "CP",
+        "ja": "CP"
+      }
+    },
+    "스탯": {
+      "group": "effect",
+      "labels": {
+        "ko": "스탯",
+        "ja": "ステータス"
+      }
+    },
+    "공격력": {
+      "group": "effect",
+      "labels": {
+        "ko": "공격력",
+        "ja": "攻撃力"
+      }
+    },
+    "주는 피해": {
+      "group": "effect",
+      "labels": {
+        "ko": "주는 피해",
+        "ja": "与ダメージ"
+      }
+    },
+    "받는 피해": {
+      "group": "effect",
+      "labels": {
+        "ko": "받는 피해",
+        "ja": "被ダメージ"
+      }
+    },
+    "드롭": {
+      "group": "effect",
+      "labels": {
+        "ko": "드롭",
+        "ja": "ドロップ"
+      }
+    },
+    "방어": {
+      "group": "effect",
+      "labels": {
+        "ko": "방어",
+        "ja": "防御"
+      }
+    },
+    "저항": {
+      "group": "effect",
+      "labels": {
+        "ko": "저항",
+        "ja": "抵抗"
+      }
+    },
+    "흡수": {
+      "group": "effect",
+      "labels": {
+        "ko": "흡수",
+        "ja": "吸収"
+      }
+    },
+    "속도": {
+      "group": "effect",
+      "labels": {
+        "ko": "속도",
+        "ja": "速度"
+      }
+    },
+    "스킬": {
+      "group": "effect",
+      "labels": {
+        "ko": "스킬",
+        "ja": "スキル"
+      }
+    },
+    "명중": {
+      "group": "effect",
+      "labels": {
+        "ko": "명중",
+        "ja": "命中"
+      }
+    },
+    "회피": {
+      "group": "effect",
+      "labels": {
+        "ko": "회피",
+        "ja": "回避"
+      }
+    },
+    "치명타": {
+      "group": "effect",
+      "labels": {
+        "ko": "치명타",
+        "ja": "致命打"
+      }
+    },
+    "강타": {
+      "group": "effect",
+      "labels": {
+        "ko": "강타",
+        "ja": "強打"
+      }
+    },
+    "상태 이상": {
+      "group": "effect",
+      "labels": {
+        "ko": "상태 이상",
+        "ja": "状態異常"
+      }
+    },
+    "한계 돌파": {
+      "group": "effect",
+      "labels": {
+        "ko": "한계 돌파",
+        "ja": "限界突破"
+      }
+    },
+    "즉사": {
+      "group": "effect",
+      "labels": {
+        "ko": "즉사",
+        "ja": "即死"
+      }
+    },
+    "무시": {
+      "group": "effect",
+      "labels": {
+        "ko": "무시",
+        "ja": "無視"
+      }
+    },
+    "물리": {
+      "group": "damage_type",
+      "labels": {
+        "ko": "물리",
+        "ja": "物理"
+      }
+    },
+    "마법": {
+      "group": "damage_type",
+      "labels": {
+        "ko": "마법",
+        "ja": "魔法"
+      }
+    },
+    "속성": {
+      "group": "damage_type",
+      "labels": {
+        "ko": "속성",
+        "ja": "属性"
+      }
+    },
+    "불": {
+      "group": "element",
+      "labels": {
+        "ko": "불",
+        "ja": "火"
+      }
+    },
+    "물": {
+      "group": "element",
+      "labels": {
+        "ko": "물",
+        "ja": "水"
+      }
+    },
+    "바람": {
+      "group": "element",
+      "labels": {
+        "ko": "바람",
+        "ja": "風"
+      }
+    },
+    "대지": {
+      "group": "element",
+      "labels": {
+        "ko": "대지",
+        "ja": "大地"
+      }
+    },
+    "빛": {
+      "group": "element",
+      "labels": {
+        "ko": "빛",
+        "ja": "光"
+      }
+    },
+    "어둠": {
+      "group": "element",
+      "labels": {
+        "ko": "어둠",
+        "ja": "闇"
+      }
+    },
+    "PvP": {
+      "group": "target",
+      "labels": {
+        "ko": "PvP",
+        "ja": "PvP"
+      }
+    },
+    "소환수/펫": {
+      "group": "target",
+      "labels": {
+        "ko": "소환수/펫",
+        "ja": "召喚獣/ペット"
+      }
+    },
+    "인간형": {
+      "group": "target",
+      "labels": {
+        "ko": "인간형",
+        "ja": "人間型"
+      }
+    },
+    "동물형": {
+      "group": "target",
+      "labels": {
+        "ko": "동물형",
+        "ja": "動物型"
+      }
+    },
+    "신수형": {
+      "group": "target",
+      "labels": {
+        "ko": "신수형",
+        "ja": "神獣型"
+      }
+    },
+    "악마형": {
+      "group": "target",
+      "labels": {
+        "ko": "악마형",
+        "ja": "悪魔型"
+      }
+    },
+    "언데드형": {
+      "group": "target",
+      "labels": {
+        "ko": "언데드형",
+        "ja": "アンデッド型"
+      }
+    },
+    "착용 조건": {
+      "group": "condition",
+      "labels": {
+        "ko": "착용 조건",
+        "ja": "装備条件"
+      }
+    },
+    "레벨 비례": {
+      "group": "condition",
+      "labels": {
+        "ko": "레벨 비례",
+        "ja": "レベル比例"
+      }
+    }
+  },
+  "options": {
+    "0": {
+      "source_tags": [
+        "방어",
+        "물리"
+      ],
+      "canonical_tags": [
+        "방어",
+        "물리"
+      ]
+    },
+    "37": {
+      "source_tags": [],
+      "canonical_tags": [
+        "즉사"
+      ]
+    },
+    "54": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "인간형"
+      ]
+    },
+    "55": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "동물형"
+      ]
+    },
+    "56": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "신수형"
+      ]
+    },
+    "59": {
+      "source_tags": [
+        "속도",
+        "HP",
+        "CP"
+      ],
+      "canonical_tags": [
+        "HP",
+        "CP",
+        "속도"
+      ]
+    },
+    "63": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "64": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "65": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "66": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "67": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "68": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "69": {
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "70": {
+      "source_tags": [
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "치명타",
+        "물리"
+      ]
+    },
+    "72": {
+      "source_tags": [
+        "물리"
+      ],
+      "canonical_tags": [
+        "명중",
+        "물리"
+      ]
+    },
+    "73": {
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ]
+    },
+    "74": {
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ]
+    },
+    "75": {
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ]
+    },
+    "76": {
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ]
+    },
+    "77": {
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ]
+    },
+    "78": {
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ]
+    },
+    "79": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "불"
+      ]
+    },
+    "80": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "대지"
+      ]
+    },
+    "81": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "바람"
+      ]
+    },
+    "82": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "물"
+      ]
+    },
+    "83": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "빛"
+      ]
+    },
+    "84": {
+      "source_tags": [
+        "저항",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "어둠"
+      ]
+    },
+    "86": {
+      "source_tags": [
+        "저항",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "마법",
+        "속성"
+      ]
+    },
+    "87": {
+      "source_tags": [
+        "저항",
+        "치명타"
+      ],
+      "canonical_tags": [
+        "저항"
+      ]
+    },
+    "88": {
+      "source_tags": [
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리"
+      ]
+    },
+    "89": {
+      "source_tags": [
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "강타",
+        "물리"
+      ]
+    },
+    "109": {
+      "source_tags": [
+        "스킬"
+      ],
+      "canonical_tags": [
+        "스킬"
+      ]
+    },
+    "110": {
+      "source_tags": [
+        "물리"
+      ],
+      "canonical_tags": [
+        "회피",
+        "물리"
+      ]
+    },
+    "188": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "저항",
+        "불"
+      ]
+    },
+    "189": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "저항",
+        "물"
+      ]
+    },
+    "190": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "저항",
+        "바람"
+      ]
+    },
+    "191": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "저항",
+        "대지"
+      ]
+    },
+    "192": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "저항",
+        "빛"
+      ]
+    },
+    "193": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "저항",
+        "어둠"
+      ]
+    },
+    "194": {
+      "source_tags": [
+        "피해",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "마법"
+      ]
+    },
+    "195": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "불"
+      ]
+    },
+    "196": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "물"
+      ]
+    },
+    "197": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "바람"
+      ]
+    },
+    "198": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "대지"
+      ]
+    },
+    "199": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "빛"
+      ]
+    },
+    "200": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "어둠"
+      ]
+    },
+    "201": {
+      "source_tags": [
+        "피해",
+        "속성"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "마법"
+      ]
+    },
+    "260": {
+      "source_tags": [],
+      "canonical_tags": [
+        "CP"
+      ]
+    },
+    "302": {
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ]
+    },
+    "327": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯"
+      ]
+    },
+    "351": {
+      "source_tags": [
+        "방어",
+        "물리"
+      ],
+      "canonical_tags": [
+        "방어",
+        "물리"
+      ]
+    },
+    "352": {
+      "source_tags": [
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP"
+      ]
+    },
+    "353": {
+      "source_tags": [
+        "CP"
+      ],
+      "canonical_tags": [
+        "CP"
+      ]
+    },
+    "460": {
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ]
+    },
+    "461": {
+      "source_tags": [
+        "치명타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "치명타",
+        "마법"
+      ]
+    },
+    "462": {
+      "source_tags": [
+        "강타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "강타",
+        "물리"
+      ]
+    },
+    "463": {
+      "source_tags": [
+        "피해",
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리"
+      ]
+    },
+    "464": {
+      "source_tags": [
+        "피해",
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리"
+      ]
+    },
+    "466": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "치명타",
+        "물리"
+      ]
+    },
+    "472": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "PvP"
+      ]
+    },
+    "473": {
+      "source_tags": [],
+      "canonical_tags": [
+        "방어",
+        "PvP"
+      ]
+    },
+    "574": {
+      "source_tags": [
+        "속도",
+        "스킬"
+      ],
+      "canonical_tags": [
+        "속도",
+        "스킬"
+      ]
+    },
+    "578": {
+      "source_tags": [
+        "출현"
+      ],
+      "canonical_tags": [
+        "드롭"
+      ]
+    },
+    "579": {
+      "source_tags": [
+        "출현"
+      ],
+      "canonical_tags": [
+        "드롭"
+      ]
+    },
+    "611": {
+      "source_tags": [],
+      "canonical_tags": [
+        "소환수/펫"
+      ]
+    },
+    "623": {
+      "source_tags": [
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리"
+      ]
+    },
+    "651": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "악마형",
+        "언데드형"
+      ]
+    },
+    "652": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "동물형",
+        "신수형"
+      ]
+    },
+    "653": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "악마형",
+        "언데드형"
+      ]
+    },
+    "654": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "동물형",
+        "신수형"
+      ]
+    },
+    "657": {
+      "source_tags": [
+        "방어",
+        "저항"
+      ],
+      "canonical_tags": [
+        "받는 피해",
+        "방어"
+      ]
+    },
+    "673": {
+      "source_tags": [
+        "소환수",
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯",
+        "소환수/펫"
+      ]
+    },
+    "682": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "소환수/펫"
+      ]
+    },
+    "683": {
+      "source_tags": [
+        "소환수",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리",
+        "소환수/펫"
+      ]
+    },
+    "685": {
+      "source_tags": [],
+      "canonical_tags": [
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ]
+    },
+    "686": {
+      "source_tags": [],
+      "canonical_tags": [
+        "치명타",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "688": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ]
+    },
+    "690": {
+      "source_tags": [],
+      "canonical_tags": [
+        "강타",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "691": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "소환수/펫"
+      ]
+    },
+    "695": {
+      "source_tags": [
+        "소환수",
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP",
+        "소환수/펫"
+      ]
+    },
+    "703": {
+      "source_tags": [
+        "피해",
+        "물리",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리"
+      ]
+    },
+    "704": {
+      "source_tags": [
+        "피해",
+        "물리",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리"
+      ]
+    },
+    "705": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "마법"
+      ]
+    },
+    "706": {
+      "source_tags": [
+        "피해",
+        "속성",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "마법"
+      ]
+    },
+    "716": {
+      "source_tags": [
+        "소환수",
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ]
+    },
+    "717": {
+      "source_tags": [
+        "소환수",
+        "속성"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "719": {
+      "source_tags": [
+        "소환수",
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상",
+        "소환수/펫"
+      ]
+    },
+    "721": {
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ]
+    },
+    "722": {
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ]
+    },
+    "723": {
+      "source_tags": [
+        "강타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "강타",
+        "마법"
+      ]
+    },
+    "724": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력"
+      ]
+    },
+    "725": {
+      "source_tags": [
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP"
+      ]
+    },
+    "727": {
+      "source_tags": [
+        "저항",
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯",
+        "저항"
+      ]
+    },
+    "728": {
+      "source_tags": [
+        "저항",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "무시",
+        "속성"
+      ]
+    },
+    "729": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "인간형"
+      ]
+    },
+    "730": {
+      "source_tags": [],
+      "canonical_tags": [
+        "CP"
+      ]
+    },
+    "732": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "속성"
+      ]
+    },
+    "736": {
+      "source_tags": [],
+      "canonical_tags": [
+        "착용 조건"
+      ]
+    },
+    "745": {
+      "source_tags": [
+        "소환수",
+        "치명타"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ]
+    },
+    "752": {
+      "source_tags": [
+        "피해",
+        "치명타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "마법"
+      ]
+    },
+    "754": {
+      "source_tags": [
+        "피해",
+        "강타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "마법"
+      ]
+    },
+    "755": {
+      "source_tags": [
+        "피해",
+        "강타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "물리"
+      ]
+    },
+    "787": {
+      "source_tags": [],
+      "canonical_tags": [
+        "흡수",
+        "무시",
+        "속성",
+        "소환수/펫"
+      ]
+    },
+    "789": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "흡수",
+        "마법",
+        "속성"
+      ]
+    },
+    "796": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "797": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "798": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "799": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "800": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "801": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "802": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ]
+    },
+    "803": {
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "주는 피해",
+        "흡수"
+      ]
+    },
+    "804": {
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "주는 피해",
+        "흡수",
+        "마법"
+      ]
+    },
+    "832": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "언데드형"
+      ]
+    },
+    "833": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "인간형"
+      ]
+    },
+    "834": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "악마형"
+      ]
+    },
+    "835": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "동물형"
+      ]
+    },
+    "836": {
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "신수형"
+      ]
+    },
+    "869": {
+      "source_tags": [],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ]
+    },
+    "921": {
+      "source_tags": [],
+      "canonical_tags": [
+        "흡수",
+        "무시",
+        "속성"
+      ]
+    },
+    "922": {
+      "source_tags": [
+        "피해",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리",
+        "마법"
+      ]
+    },
+    "923": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "924": {
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ]
+    },
+    "925": {
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "소환수/펫"
+      ]
+    },
+    "926": {
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "927": {
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ]
+    },
+    "928": {
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ]
+    },
+    "929": {
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "소환수/펫"
+      ]
+    },
+    "1026": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "1027": {
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "마법",
+        "소환수/펫"
+      ]
+    },
+    "1045": {
+      "source_tags": [
+        "피해",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리",
+        "마법"
+      ]
+    },
+    "1068": {
+      "source_tags": [
+        "CP"
+      ],
+      "canonical_tags": [
+        "CP"
+      ]
+    }
+  }
+}

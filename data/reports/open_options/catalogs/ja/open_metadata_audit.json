@@ -1,0 +1,221 @@
+{
+  "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
+  "general_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/general/open_option_rows.csv",
+  "instandard_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/instandard/open_option_rows.csv",
+  "current_ui_source": "not used by production catalog build",
+  "summary": {
+    "section_count": 171,
+    "grade_count": 3,
+    "converter_count": 5,
+    "confirmed_count": 8,
+    "strong_candidate_count": 0,
+    "ambiguous_count": 0,
+    "missing_count": 0,
+    "production_export_eligible": true,
+    "production_export_reasons": []
+  },
+  "results": [
+    {
+      "category": "grade",
+      "internal_key": "7",
+      "ko_label": "유니크",
+      "ja_candidate": "ユニーク",
+      "section_id": 66,
+      "text_id": 12,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": null,
+      "description_text_id": null,
+      "description": null,
+      "usage_counts": {
+        "general": 1830
+      },
+      "evidence": [
+        "section 66 text_id 9-14 is a contiguous item-grade enum: ノーマル, ノーマル DX, ノーマル ULT, ユニーク, DX ユニーク, ULT ユニーク",
+        "grade codes 7-9 preserve the same three-label order at text_id 12-14 (offset +5)"
+      ],
+      "confidence": "high",
+      "status": "confirmed_structural",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "grade",
+      "internal_key": "8",
+      "ko_label": "DX 유니크",
+      "ja_candidate": "DX ユニーク",
+      "section_id": 66,
+      "text_id": 13,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": null,
+      "description_text_id": null,
+      "description": null,
+      "usage_counts": {
+        "general": 2868
+      },
+      "evidence": [
+        "section 66 text_id 9-14 is a contiguous item-grade enum: ノーマル, ノーマル DX, ノーマル ULT, ユニーク, DX ユニーク, ULT ユニーク",
+        "grade codes 7-9 preserve the same three-label order at text_id 12-14 (offset +5)"
+      ],
+      "confidence": "high",
+      "status": "confirmed_structural",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "grade",
+      "internal_key": "9",
+      "ko_label": "ULT 유니크",
+      "ja_candidate": "ULT ユニーク",
+      "section_id": 66,
+      "text_id": 14,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": null,
+      "description_text_id": null,
+      "description": null,
+      "usage_counts": {
+        "general": 3310
+      },
+      "evidence": [
+        "section 66 text_id 9-14 is a contiguous item-grade enum: ノーマル, ノーマル DX, ノーマル ULT, ユニーク, DX ユニーク, ULT ユニーク",
+        "grade codes 7-9 preserve the same three-label order at text_id 12-14 (offset +5)"
+      ],
+      "confidence": "high",
+      "status": "confirmed_structural",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "converter",
+      "internal_key": "normal",
+      "ko_label": "일반 변환기 / 일반",
+      "ja_candidate": "解放オプション変換器",
+      "section_id": 67,
+      "text_id": 12501,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": 68,
+      "description_text_id": 12501,
+      "description": "アイテムの性能に干渉できる神秘的な魔法の力が込められている。解放済みのアイテムに使用すると、アイテムの解放オプションをランダムに変換できる。\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ Nxユニーク以外のアイテム、遺物、リング、補助武器、投擲機、爪は変換不可。<n>\n<c:LTRED>※ 壊れたアイテムは変換不可。<n>",
+      "usage_counts": {
+        "general": 2464,
+        "instandard": 3260
+      },
+      "evidence": [
+        "section 67 text_id 12501 is the item name",
+        "section 68 uses the same text_id and describes this converter's behavior",
+        "variant/sub_variant are consistently 0/0"
+      ],
+      "confidence": "high",
+      "status": "confirmed_direct",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "converter",
+      "internal_key": "improved",
+      "ko_label": "개량된 변환기 / 개량",
+      "ja_candidate": "解放オプション変換器・改",
+      "section_id": 67,
+      "text_id": 12785,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": 68,
+      "description_text_id": 12785,
+      "description": "解放オプション変換器の改良版で、アイテムの性能により干渉できる神秘的な魔法の力が込められている。解放済みのアイテムに使用すると、アイテムの解放オプションをランダムに変換できる。一部のオプションが50％高い確率で出現する。\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ Nxユニーク以外のアイテム、遺物、リング、補助武器、投擲機、爪は変換不可。<n>\n<c:LTRED>※ 壊れたアイテムは変換不可。<n>",
+      "usage_counts": {
+        "general": 2464,
+        "instandard": 3260
+      },
+      "evidence": [
+        "section 67 text_id 12785 is the item name",
+        "section 68 uses the same text_id and describes this converter's behavior",
+        "variant/sub_variant are consistently 0/0"
+      ],
+      "confidence": "high",
+      "status": "confirmed_direct",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "converter",
+      "internal_key": "fake",
+      "ko_label": "모조 변환기 / 모조",
+      "ja_candidate": "レプリカ解放オプション変換器",
+      "section_id": 67,
+      "text_id": 12859,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": 68,
+      "description_text_id": 12859,
+      "description": "アイテムの性能に少々干渉できる神秘的な力が込められている。解放済みのアイテムに使用すると、アイテムの解放オプションをランダムに変換できる。\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ Nxユニーク以外のアイテム、遺物、リング、補助武器、投擲機、爪は変換不可。<n>\n<c:LTRED>※ 壊れたアイテムは変換不可。<n>",
+      "usage_counts": {
+        "general": 1530,
+        "instandard": 2341
+      },
+      "evidence": [
+        "section 67 text_id 12859 is the item name",
+        "section 68 uses the same text_id and describes this converter's behavior",
+        "variant/sub_variant are consistently 0/0"
+      ],
+      "confidence": "high",
+      "status": "confirmed_direct",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "converter",
+      "internal_key": "burning",
+      "ko_label": "불타는 변환기 / 불타는",
+      "ja_candidate": "灼熱の解放オプション変換器",
+      "section_id": 67,
+      "text_id": 13498,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": 68,
+      "description_text_id": 13498,
+      "description": "以前の解放オプション変換器にRED STONEの力がさらに込められている装置。解放済みのアイテムに使用すると、アイテムの解放オプションをランダムに変換できる。やや実験的だが、通常の解放オプション変換器や解放オプション変換器・改よりは良い結果が期待できる。\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ Nxユニーク以外のアイテム、遺物、リング、補助武器、投擲機、爪は変換不可。<n>\n<c:LTRED>※ 壊れたアイテムは変換不可。<n>\n<c:LTRED>※ ULT等級以外のアイテムは変換不可。<n>",
+      "usage_counts": {
+        "general": 815,
+        "instandard": 3338
+      },
+      "evidence": [
+        "section 67 text_id 13498 is the item name",
+        "section 68 uses the same text_id and describes this converter's behavior",
+        "variant/sub_variant are consistently 0/0"
+      ],
+      "confidence": "high",
+      "status": "confirmed_direct",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    },
+    {
+      "category": "converter",
+      "internal_key": "association",
+      "ko_label": "협회 변환기",
+      "ja_candidate": "解放オプション変換器[協会]",
+      "section_id": 67,
+      "text_id": 13039,
+      "variant_id": 0,
+      "sub_variant_id": 0,
+      "description_section_id": 68,
+      "description_text_id": 13039,
+      "description": "協会装備の性能に干渉できる神秘的な魔法の力が込められている。解放済みの協会装備に使用すると、装備の解放オプションをランダムに変換できる。\n\n<c:GOLDYELLOW>冒険家協会のコイン商人に販売すると、多次元の結晶を返してもらうことができる。<n>\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ 協会装備のNxユニーク以外のアイテムは変換不可。<n>\n<c:LTRED>※ 他のキャラクターと取引不可。<n>",
+      "usage_counts": {
+        "general": 735,
+        "instandard": 0
+      },
+      "evidence": [
+        "section 67 text_id 13039 is the item name",
+        "section 68 uses the same text_id and describes this converter's behavior",
+        "variant/sub_variant are consistently 0/0"
+      ],
+      "confidence": "high",
+      "status": "confirmed_direct",
+      "current_ui_value": null,
+      "ui_comparison": "no_current_ui_value"
+    }
+  ]
+}

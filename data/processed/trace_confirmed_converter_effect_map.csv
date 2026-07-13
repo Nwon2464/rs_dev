@@ -1,6 +1,0 @@
-effect_id,effect_label_from_capa,capa_record_offset_hex,capa_text,decoded_item_dat_names,decoded_item_dat_effect_offsets,status
-920,개방 옵션 변환창 생성,0x23f87,개방옵션변환창생성 | 개방옵션 변환창 생성 | 개방 옵션 변환창 생성,개방 옵션 변환기; 개방 옵션 변환기[E],0x10106f8; 0x107cca8,confirmed_name_and_effect
-935,개선된 개방 옵션 변환창 생성,0x24aaf,개방옵션변환창생성2 | 개선된 개방 옵션 변환창 생성 | 개선된 개방 옵션 변환창 생성,개선된 개방 옵션 변환기; 개선된 개방 옵션 변환기[E],0x1073368; 0x107d319,confirmed_name_and_effect
-954,약화된 개방 옵션 변환창 생성,0x25abf,개방옵션변환창생성3 | 약화된 개방옵션 변환창 생성 | 약화된 개방 옵션 변환창 생성,모조 개방 옵션 변환기; 모조 개방 옵션 변환기[E]; 모조 개방 옵션 변환기[거래불가],0x108c4a0; 0x108e5b6; 0x10cc3a6,confirmed_name_and_effect
-966,협회 전용 개방 옵션 변환창 생성,0x2654b,개방옵션변환창생성4 | 협회 전용 개방옵션 변환창 생성 | 협회 전용 개방 옵션 변환창 생성,개방 옵션 변환기[협회],0x10cab54,confirmed_name_and_effect
-1020,향상된 개방 옵션 변환창 생성,0x28cf4,개방옵션변환창생성5 | 향상된 개방 옵션 변환창 생성 | 향상된 개방 옵션 변환창 생성,,,effect_only_no_decoded_item_name_found
