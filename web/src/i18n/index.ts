@@ -87,13 +87,12 @@ const KO_UI_MESSAGES = {
   "open.resultsDescription": "현재 조건에서 가능한 옵션과 적용 확률입니다.",
   "open.effect": "효과",
   "open.nameAndTags": "옵션명 / 태그",
-  "open.level": "단계",
+  "open.level": "LV",
   "open.converterProbability": "변환 확률",
   "instandardOpen.resultsDescription": "원본 후보 행을 중복 제거 없이 표시합니다.",
   "instandardOpen.optionName": "옵션명",
   "instandardOpen.value": "효과",
   "instandardOpen.probability": "확률",
-  "instandardOpen.internalTier": "내부 티어",
   "warning.incompleteData": "데이터 불완전",
 } as const;
 
@@ -186,13 +185,12 @@ const JA_UI_MESSAGES: Record<UiMessageKey, string> = {
   "open.resultsDescription": "現在の条件で利用可能なオプションと確率です。",
   "open.effect": "効果",
   "open.nameAndTags": "オプション名 / タグ",
-  "open.level": "段階",
+  "open.level": "LV",
   "open.converterProbability": "変換確率",
   "instandardOpen.resultsDescription": "元の候補行を重複除去せず表示します。",
   "instandardOpen.optionName": "オプション名",
   "instandardOpen.value": "効果",
   "instandardOpen.probability": "確率",
-  "instandardOpen.internalTier": "内部ティア",
   "warning.incompleteData": "データ不完全",
 };
 
@@ -217,7 +215,7 @@ export function formatEquipmentOptionTitle(language: Language, equipment: string
 export function formatEquipmentOpenTitle(language: Language, equipment: string): string { return language === "ja" ? `${equipment}・非規格解放オプション候補` : `${equipment} 비규격 개방옵션 후보`; }
 export function formatRangeSubtitle(language: Language, range: string): string { return language === "ja" ? `数値範囲: ${range}` : `수치 범위: ${range}`; }
 export function formatActiveTierSummary(language: Language, tiers: number, values: number): string { return language === "ja" ? `有効ティア ${tiers}件・数値候補 ${values}件` : `활성 티어 ${tiers}개 · 가능한 수치 ${values}개`; }
-export function formatTierLevel(language: Language, tier: string): string { return language === "ja" ? `${tier}段階` : `${tier}단계`; }
+export function formatTierLevel(_language: Language, tier: string): string { return `LV${tier}`; }
 export function formatIncompleteWarningTitle(language: Language, slot: string): string { return `${formatOpenSlot(language, slot)} ${uiText(language, "warning.incompleteData")}`; }
 export function formatIncompleteWarning(language: Language, sum: string, missing: string): string[] {
   return language === "ja"

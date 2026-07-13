@@ -6,6 +6,7 @@ import {
   formatIncompleteWarning,
   formatIncompleteWarningTitle,
   formatOpenSlot,
+  formatTierLevel,
   uiText,
   type Language,
 } from "../../i18n";
@@ -79,7 +80,7 @@ export function InstandardOpenTable({
                   <th>{uiText(language, "instandardOpen.optionName")}</th>
                   <th>{uiText(language, "instandardOpen.value")}</th>
                   <th className="option-category-column">{uiText(language, "option.category")}</th>
-                  <th>{uiText(language, "instandardOpen.internalTier")}</th>
+                  <th>{uiText(language, "open.level")}</th>
                   <th>{uiText(language, "instandardOpen.probability")}</th>
                 </tr>
               </thead>
@@ -102,7 +103,7 @@ export function InstandardOpenTable({
                         language={language}
                         optionTags={optionTags}
                       />
-                      <td><ProgressBadge label={row.tier} /></td>
+                      <td><ProgressBadge label={formatTierLevel(language, row.tier)} /></td>
                       <td><b className="probability">{formatProbability(row.probability)}%</b></td>
                     </tr>
                   );

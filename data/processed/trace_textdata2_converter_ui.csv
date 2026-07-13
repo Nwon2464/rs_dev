@@ -1,4 +1,0 @@
-source_file,string_index,offset_hex,matched_term,text,evidence_level
-textData2.dat,903,0x61c2,개방 옵션 변경,해당 아이템은 개방 옵션 변경을 진행 할 수 없습니다.,confirmed_ui_text
-textData2.dat,921,0x6429,개방 옵션 변환기,<c:LTRED>- 불타는 / 모조 / 협회 개방 옵션 변환기의 옵션이 적용된 장비에는 잠금 사용 불가<n>,confirmed_ui_text
-textData2.dat,2001,0xd6e3,개방 옵션 변경,개방 옵션 변경,confirmed_ui_text

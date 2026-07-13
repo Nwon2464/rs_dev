@@ -62,3 +62,19 @@ def test_catalog_audits_are_rebuilt_under_reports() -> None:
         assert payload["summary"]["production_export_eligible"] is True
 
     assert not (ROOT / "data/processed/i18n/ja").exists()
+
+
+def test_option_tag_audit_has_complete_evidence() -> None:
+    payload = json.loads(
+        (
+            ROOT
+            / "data/reports/open_options/catalogs/option_tags_audit.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert payload["summary"]["option_count"] == 132
+    assert payload["summary"]["untagged_count"] == 0
+    assert payload["summary"]["untagged_option_ids"] == []
+    for option in payload["options"].values():
+        assert option["canonical_tags"]
+        assert set(option["canonical_tags"]) == set(option["evidence"])
+        assert all(option["evidence"][tag] for tag in option["canonical_tags"])

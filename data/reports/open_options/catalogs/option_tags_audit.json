@@ -1,0 +1,3228 @@
+{
+  "schema_version": 1,
+  "summary": {
+    "option_count": 132,
+    "canonical_tag_count": 38,
+    "untagged_count": 0,
+    "untagged_option_ids": [],
+    "tag_counts": {
+      "HP": 7,
+      "CP": 5,
+      "스탯": 18,
+      "공격력": 18,
+      "주는 피해": 25,
+      "받는 피해": 8,
+      "드롭": 2,
+      "방어": 10,
+      "저항": 27,
+      "흡수": 5,
+      "속도": 9,
+      "스킬": 2,
+      "명중": 1,
+      "회피": 1,
+      "치명타": 13,
+      "강타": 7,
+      "상태 이상": 6,
+      "한계 돌파": 6,
+      "즉사": 1,
+      "무시": 3,
+      "물리": 34,
+      "마법": 28,
+      "속성": 19,
+      "불": 3,
+      "물": 3,
+      "바람": 3,
+      "대지": 3,
+      "빛": 3,
+      "어둠": 3,
+      "PvP": 2,
+      "소환수/펫": 24,
+      "인간형": 3,
+      "동물형": 4,
+      "신수형": 4,
+      "악마형": 3,
+      "언데드형": 3,
+      "착용 조건": 1,
+      "레벨 비례": 7
+    }
+  },
+  "options": {
+    "0": {
+      "source_text": {
+        "name": "방어력증가",
+        "description": "방어력 +[수치]0",
+        "short_text": "방어력 +[0]"
+      },
+      "source_tags": [
+        "방어",
+        "물리"
+      ],
+      "canonical_tags": [
+        "방어",
+        "물리"
+      ],
+      "evidence": {
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "source_tag:물리"
+        ]
+      }
+    },
+    "37": {
+      "source_text": {
+        "name": "즉사",
+        "description": "적 즉사 확률(％) +[수치]0％",
+        "short_text": "적 즉사 확률(％) +[0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "즉사"
+      ],
+      "evidence": {
+        "즉사": [
+          "text:즉사"
+        ]
+      }
+    },
+    "54": {
+      "source_text": {
+        "name": "vs인간형_물리대미지증가P",
+        "description": "vs 인간 물리 대미지 증가 [수치]0％",
+        "short_text": "vs 인간 물리 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "인간형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "인간형": [
+          "text:인간형/인간계",
+          "text:vs 인간"
+        ]
+      }
+    },
+    "55": {
+      "source_text": {
+        "name": "vs동물형_물리대미지증가P",
+        "description": "vs 동물 물리 대미지 증가 [수치]0％",
+        "short_text": "vs 동물 물리 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "동물형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "동물형": [
+          "text:동물형/동물계",
+          "text:vs 동물"
+        ]
+      }
+    },
+    "56": {
+      "source_text": {
+        "name": "vs신수형_물리대미지증가P",
+        "description": "vs 신수 물리 대미지 증가 [수치]0％",
+        "short_text": "vs 신수 물리 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "신수형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "신수형": [
+          "text:신수형/신수계",
+          "text:vs 신수"
+        ]
+      }
+    },
+    "59": {
+      "source_text": {
+        "name": "물약에의한회복속도증가",
+        "description": "물약 회복 속도 증가 [수치]0％",
+        "short_text": "물약 회복 속도 증가 [0%]"
+      },
+      "source_tags": [
+        "속도",
+        "HP",
+        "CP"
+      ],
+      "canonical_tags": [
+        "HP",
+        "CP",
+        "속도"
+      ],
+      "evidence": {
+        "HP": [
+          "source_tag:HP"
+        ],
+        "CP": [
+          "source_tag:CP"
+        ],
+        "속도": [
+          "source_tag:속도",
+          "text:속도"
+        ]
+      }
+    },
+    "63": {
+      "source_text": {
+        "name": "힘상승",
+        "description": "힘 +[수치]0",
+        "short_text": "힘 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "64": {
+      "source_text": {
+        "name": "지혜상승",
+        "description": "지혜 +[수치]0",
+        "short_text": "지혜 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "65": {
+      "source_text": {
+        "name": "지식상승",
+        "description": "지식 +[수치]0",
+        "short_text": "지식 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "66": {
+      "source_text": {
+        "name": "건강상승",
+        "description": "건강 +[수치]0",
+        "short_text": "건강 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "67": {
+      "source_text": {
+        "name": "민첩성상승",
+        "description": "민첩성 +[수치]0",
+        "short_text": "민첩성 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "68": {
+      "source_text": {
+        "name": "카리스마상승",
+        "description": "카리스마 +[수치]0",
+        "short_text": "카리스마 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "69": {
+      "source_text": {
+        "name": "행운상승",
+        "description": "운 +[수치]0",
+        "short_text": "운 +[0]"
+      },
+      "source_tags": [
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ]
+      }
+    },
+    "70": {
+      "source_text": {
+        "name": "치명타발생확률",
+        "description": "물리 치명타 확률(％) +[수치]0",
+        "short_text": "물리 치명타 확률(％) +[0%]"
+      },
+      "source_tags": [
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "72": {
+      "source_text": {
+        "name": "명중률증가",
+        "description": "물리 명중률 +[수치]0％",
+        "short_text": "물리 명중률 +[0%]"
+      },
+      "source_tags": [
+        "물리"
+      ],
+      "canonical_tags": [
+        "명중",
+        "물리"
+      ],
+      "evidence": {
+        "명중": [
+          "text:명중"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "73": {
+      "source_text": {
+        "name": "집중력증가",
+        "description": "집중력 +[수치]0",
+        "short_text": "집중력 +[0]"
+      },
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ],
+      "evidence": {
+        "속도": [
+          "source_tag:속도"
+        ]
+      }
+    },
+    "74": {
+      "source_text": {
+        "name": "공격속도증가",
+        "description": "공격 속도 증가 [수치]0％",
+        "short_text": "공격 속도 증가 [0%]"
+      },
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ],
+      "evidence": {
+        "속도": [
+          "source_tag:속도",
+          "text:속도"
+        ]
+      }
+    },
+    "75": {
+      "source_text": {
+        "name": "저주상태에대한저항",
+        "description": "저주 저항(％) +[수치]0％",
+        "short_text": "저주 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "source_tag:상태 이상"
+        ]
+      }
+    },
+    "76": {
+      "source_text": {
+        "name": "저하상태에대한저항",
+        "description": "저하 저항(％) +[수치]0％",
+        "short_text": "저하 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "source_tag:상태 이상"
+        ]
+      }
+    },
+    "77": {
+      "source_text": {
+        "name": "이상상태에대한저항",
+        "description": "이상 저항(％) +[수치]0％",
+        "short_text": "이상 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "source_tag:상태 이상"
+        ]
+      }
+    },
+    "78": {
+      "source_text": {
+        "name": "모든상태이상에대한저항",
+        "description": "모든 상태 저항(％) +[수치]0％",
+        "short_text": "모든 상태 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "source_tag:상태 이상",
+          "text:상태 이상"
+        ]
+      }
+    },
+    "79": {
+      "source_text": {
+        "name": "불저항",
+        "description": "불 속성 저항(％) +[수치]0％",
+        "short_text": "불 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "불"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "불": [
+          "source_tag:불"
+        ]
+      }
+    },
+    "80": {
+      "source_text": {
+        "name": "대지저항",
+        "description": "대지 속성 저항(％) +[수치]0％",
+        "short_text": "대지 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "대지"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "대지": [
+          "source_tag:대지"
+        ]
+      }
+    },
+    "81": {
+      "source_text": {
+        "name": "바람저항",
+        "description": "바람 속성 저항(％) +[수치]0％",
+        "short_text": "바람 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "바람"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "바람": [
+          "source_tag:바람"
+        ]
+      }
+    },
+    "82": {
+      "source_text": {
+        "name": "물저항",
+        "description": "물 속성 저항(％) +[수치]0％",
+        "short_text": "물 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "물"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "물": [
+          "source_tag:물"
+        ]
+      }
+    },
+    "83": {
+      "source_text": {
+        "name": "빛저항",
+        "description": "빛 속성 저항(％) +[수치]0％",
+        "short_text": "빛 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "빛"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "빛": [
+          "source_tag:빛"
+        ]
+      }
+    },
+    "84": {
+      "source_text": {
+        "name": "어둠저항",
+        "description": "어둠 속성 저항(％) +[수치]0％",
+        "short_text": "어둠 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "저항",
+        "속성",
+        "어둠"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "어둠": [
+          "source_tag:어둠"
+        ]
+      }
+    },
+    "86": {
+      "source_text": {
+        "name": "마법속성공격에대한저항",
+        "description": "모든 속성 저항(％) +[수치]0％",
+        "short_text": "모든 속성 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "마법",
+        "속성"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "속성": [
+          "text:속성"
+        ]
+      }
+    },
+    "87": {
+      "source_text": {
+        "name": "녹백저항",
+        "description": "넉백 저항(％) +[수치]0％",
+        "short_text": "넉백 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항",
+        "치명타"
+      ],
+      "canonical_tags": [
+        "저항"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ]
+      }
+    },
+    "88": {
+      "source_text": {
+        "name": "치명타저항",
+        "description": "물리 치명타 저항(％) 증가 [수치]0％",
+        "short_text": "물리 치명타 저항(％) 증가 [0％]"
+      },
+      "source_tags": [
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "text:물리"
+        ]
+      }
+    },
+    "89": {
+      "source_text": {
+        "name": "결정타저항",
+        "description": "물리 결정타 저항(％) +[수치]0％",
+        "short_text": "물리 결정타 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "강타",
+        "물리"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "물리": [
+          "text:물리"
+        ]
+      }
+    },
+    "109": {
+      "source_text": {
+        "name": "모든스킬레벨증가",
+        "description": "모든 스킬 레벨 +[수치]0",
+        "short_text": "모든 스킬 레벨 +[0]"
+      },
+      "source_tags": [
+        "스킬"
+      ],
+      "canonical_tags": [
+        "스킬"
+      ],
+      "evidence": {
+        "스킬": [
+          "source_tag:스킬",
+          "text:스킬"
+        ]
+      }
+    },
+    "110": {
+      "source_text": {
+        "name": "회피율증가",
+        "description": "물리 회피율(％) +[수치]0％",
+        "short_text": "물리 회피율(％) +[0%]"
+      },
+      "source_tags": [
+        "물리"
+      ],
+      "canonical_tags": [
+        "회피",
+        "물리"
+      ],
+      "evidence": {
+        "회피": [
+          "text:회피"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "188": {
+      "source_text": {
+        "name": "타겟의불저항약화",
+        "description": "적의 불 저항(％) -[수치]0％",
+        "short_text": "적의 불 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "저항",
+        "불"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "불": [
+          "source_tag:불"
+        ]
+      }
+    },
+    "189": {
+      "source_text": {
+        "name": "타겟의물저항약화",
+        "description": "적의 물 저항(％) -[수치]0％",
+        "short_text": "적의 물 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "저항",
+        "물"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "물": [
+          "source_tag:물"
+        ]
+      }
+    },
+    "190": {
+      "source_text": {
+        "name": "타겟의바람저항약화",
+        "description": "적의 바람 저항(％) -[수치]0％",
+        "short_text": "적의 바람 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "저항",
+        "바람"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "바람": [
+          "source_tag:바람"
+        ]
+      }
+    },
+    "191": {
+      "source_text": {
+        "name": "타겟의대지저항약화",
+        "description": "적의 대지 저항(％) -[수치]0％",
+        "short_text": "적의 대지 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "저항",
+        "대지"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "대지": [
+          "source_tag:대지"
+        ]
+      }
+    },
+    "192": {
+      "source_text": {
+        "name": "타겟의빛저항약화",
+        "description": "적의 빛 저항(％) -[수치]0％",
+        "short_text": "적의 빛 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "저항",
+        "빛"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "빛": [
+          "source_tag:빛"
+        ]
+      }
+    },
+    "193": {
+      "source_text": {
+        "name": "타겟의어둠저항약화",
+        "description": "적의 어둠 저항(％) -[수치]0％",
+        "short_text": "적의 어둠 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "저항",
+        "어둠"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "어둠": [
+          "source_tag:어둠"
+        ]
+      }
+    },
+    "194": {
+      "source_text": {
+        "name": "타겟의마법저항약화",
+        "description": "적의 마법 저항(％) -[수치]0％",
+        "short_text": "적의 마법 저항(％) -[0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "마법"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "195": {
+      "source_text": {
+        "name": "불속성공격력강화P",
+        "description": "불 속성 공격력 증가 [수치]0％",
+        "short_text": "불 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "불"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "불"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "불": [
+          "source_tag:불"
+        ]
+      }
+    },
+    "196": {
+      "source_text": {
+        "name": "물속성공격력강화P",
+        "description": "물 속성 공격력 증가 [수치]0％",
+        "short_text": "물 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "물"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "물"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "물": [
+          "source_tag:물"
+        ]
+      }
+    },
+    "197": {
+      "source_text": {
+        "name": "바람속성공격력강화P",
+        "description": "바람 속성 공격력 증가 [수치]0％",
+        "short_text": "바람 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "바람"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "바람"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "바람": [
+          "source_tag:바람"
+        ]
+      }
+    },
+    "198": {
+      "source_text": {
+        "name": "대지속성공격력강화P",
+        "description": "대지 속성 공격력 증가 [수치]0％",
+        "short_text": "대지 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "대지"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "대지"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "대지": [
+          "source_tag:대지"
+        ]
+      }
+    },
+    "199": {
+      "source_text": {
+        "name": "빛속성공격력강화P",
+        "description": "빛 속성 공격력 증가 [수치]0％",
+        "short_text": "빛 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "빛"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "빛"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "빛": [
+          "source_tag:빛"
+        ]
+      }
+    },
+    "200": {
+      "source_text": {
+        "name": "어둠속성공격력강화P",
+        "description": "어둠 속성 공격력 증가 [수치]0％",
+        "short_text": "어둠 속성 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "어둠"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "어둠"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "어둠": [
+          "source_tag:어둠"
+        ]
+      }
+    },
+    "201": {
+      "source_text": {
+        "name": "마법공격력강화P",
+        "description": "마법 공격력 증가 [수치]0％",
+        "short_text": "마법 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "속성"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "마법"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "260": {
+      "source_text": {
+        "name": "챕터5:CP증가부적",
+        "description": "챕터 5 : CP를을 증가 시켜주는 부적",
+        "short_text": "CP [+1]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "CP"
+      ],
+      "evidence": {
+        "CP": [
+          "text:CP/마나"
+        ]
+      }
+    },
+    "302": {
+      "source_text": {
+        "name": "이동속도증가",
+        "description": "이동 속도 증가 [수치]0％",
+        "short_text": "이동 속도 증가 [0%]"
+      },
+      "source_tags": [
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도"
+      ],
+      "evidence": {
+        "속도": [
+          "source_tag:속도",
+          "text:속도"
+        ]
+      }
+    },
+    "327": {
+      "source_text": {
+        "name": "모든능력치증가",
+        "description": "모든 능력치 [수치]0 증가한다.",
+        "short_text": "모든 스탯 [0] 증가"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ]
+      }
+    },
+    "351": {
+      "source_text": {
+        "name": "방어력증가P",
+        "description": "방어력 증가 [수치]0％",
+        "short_text": "방어력 증가 [0%]"
+      },
+      "source_tags": [
+        "방어",
+        "물리"
+      ],
+      "canonical_tags": [
+        "방어",
+        "물리"
+      ],
+      "evidence": {
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "source_tag:물리"
+        ]
+      }
+    },
+    "352": {
+      "source_text": {
+        "name": "최대체력증가P",
+        "description": "최대 HP 증가 [수치]0％",
+        "short_text": "최대 HP 증가 [0%]"
+      },
+      "source_tags": [
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP"
+      ],
+      "evidence": {
+        "HP": [
+          "source_tag:HP",
+          "text:HP/체력"
+        ]
+      }
+    },
+    "353": {
+      "source_text": {
+        "name": "최대CP증가P",
+        "description": "최대 CP 증가 [수치]0％",
+        "short_text": "최대 CP 증가 [0%]"
+      },
+      "source_tags": [
+        "CP"
+      ],
+      "canonical_tags": [
+        "CP"
+      ],
+      "evidence": {
+        "CP": [
+          "source_tag:CP",
+          "text:CP/마나"
+        ]
+      }
+    },
+    "460": {
+      "source_text": {
+        "name": "기본물리공격력증가P",
+        "description": "물리 공격력 증가 [수치]0％",
+        "short_text": "물리 공격력 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "461": {
+      "source_text": {
+        "name": "마법치명타확률증가",
+        "description": "마법 치명타 확률(％) +[수치]0％",
+        "short_text": "마법 치명타 확률(％) +[0%]"
+      },
+      "source_tags": [
+        "치명타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "치명타",
+        "마법"
+      ],
+      "evidence": {
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "462": {
+      "source_text": {
+        "name": "강타확률증가",
+        "description": "물리 강타 확률(％) +[수치]0％",
+        "short_text": "물리 강타 확률(％) +[0%]"
+      },
+      "source_tags": [
+        "강타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "강타",
+        "물리"
+      ],
+      "evidence": {
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "463": {
+      "source_text": {
+        "name": "치명타대미지증가",
+        "description": "물리 치명타 대미지 증가 [수치]0％",
+        "short_text": "물리 치명타 대미지 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "464": {
+      "source_text": {
+        "name": "더블크리티컬대미지증가",
+        "description": "물리 더블 크리티컬 대미지 증가 [수치]0％",
+        "short_text": "물리 더블 크리티컬 대미지 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "466": {
+      "source_text": {
+        "name": "더블크리티컬대미지감소",
+        "description": "받는 물리 더블 크리티컬 대미지 감소 [수치]0％",
+        "short_text": "받는 물리 더블 크리티컬 대미지 감소 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "text:물리"
+        ]
+      }
+    },
+    "472": {
+      "source_text": {
+        "name": "pvp공격력상승",
+        "description": "PVP 시 대미지 증가[수치]0％",
+        "short_text": "PVP 시 대미지 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "PvP"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "PvP": [
+          "text:PvP"
+        ]
+      }
+    },
+    "473": {
+      "source_text": {
+        "name": "pvp방어력상승",
+        "description": "PvP 시 방어력 증가 [수치]0％",
+        "short_text": "PvP 시 방어력 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "방어",
+        "PvP"
+      ],
+      "evidence": {
+        "방어": [
+          "text:방어/피격"
+        ],
+        "PvP": [
+          "text:PvP"
+        ]
+      }
+    },
+    "574": {
+      "source_text": {
+        "name": "스킬쿨타임감소P",
+        "description": "스킬 쿨타임 감소 [수치]0％",
+        "short_text": "스킬 쿨타임 감소 [0%]"
+      },
+      "source_tags": [
+        "속도",
+        "스킬"
+      ],
+      "canonical_tags": [
+        "속도",
+        "스킬"
+      ],
+      "evidence": {
+        "속도": [
+          "source_tag:속도"
+        ],
+        "스킬": [
+          "source_tag:스킬",
+          "text:스킬"
+        ]
+      }
+    },
+    "578": {
+      "source_text": {
+        "name": "소지시마법아이템드랍확률증가",
+        "description": "마법 아이템 드랍 확률(％) +[수치]0％",
+        "short_text": "마법 아이템 드랍 확률(％) +[0%]"
+      },
+      "source_tags": [
+        "출현"
+      ],
+      "canonical_tags": [
+        "드롭"
+      ],
+      "evidence": {
+        "드롭": [
+          "source_tag:출현"
+        ]
+      }
+    },
+    "579": {
+      "source_text": {
+        "name": "유니크아이템드랍확률증가",
+        "description": "유니크 아이템 드랍 확률(％) +[수치]0％",
+        "short_text": "유니크 아이템 드랍 확률(％) +[0%]"
+      },
+      "source_tags": [
+        "출현"
+      ],
+      "canonical_tags": [
+        "드롭"
+      ],
+      "evidence": {
+        "드롭": [
+          "source_tag:출현"
+        ]
+      }
+    },
+    "611": {
+      "source_text": {
+        "name": "소환수모든스탯증가",
+        "description": "소환수의 모든 스탯 [수치]0 증가",
+        "short_text": "소환수의 모든 스탯 [0] 증가"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "소환수/펫"
+      ],
+      "evidence": {
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "623": {
+      "source_text": {
+        "name": "적치명타저항률감소",
+        "description": "적의 물리 치명타 저항(％) 감소 [수치]0％",
+        "short_text": "적의 물리 치명타 저항(％) 감소 [0%]"
+      },
+      "source_tags": [
+        "치명타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "651": {
+      "source_text": {
+        "name": "vs언데드악마_물리대미지증가P",
+        "description": "vs 언데드, 악마 물리 대미지 증가 [수치]0％",
+        "short_text": "vs 언데드, 악마 물리 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "악마형",
+        "언데드형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "악마형": [
+          "text:vs 악마"
+        ],
+        "언데드형": [
+          "text:vs 언데드"
+        ]
+      }
+    },
+    "652": {
+      "source_text": {
+        "name": "vs동물신수_물리대미지증가P",
+        "description": "vs 동물, 신수 물리 대미지 증가 [수치]0％",
+        "short_text": "vs 동물, 신수 물리 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "물리",
+        "동물형",
+        "신수형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "동물형": [
+          "text:vs 동물"
+        ],
+        "신수형": [
+          "text:vs 신수"
+        ]
+      }
+    },
+    "653": {
+      "source_text": {
+        "name": "vs언데드악마_마법대미지증가P",
+        "description": "vs 언데드, 악마 마법 대미지 증가 [수치]0％",
+        "short_text": "vs 언데드, 악마 마법 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "악마형",
+        "언데드형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "악마형": [
+          "text:vs 악마"
+        ],
+        "언데드형": [
+          "text:vs 언데드"
+        ]
+      }
+    },
+    "654": {
+      "source_text": {
+        "name": "vs동물신수_마법대미지증가P",
+        "description": "vs 동물, 신수 마법 대미지 증가 [수치]0％",
+        "short_text": "vs 동물, 신수 마법 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "동물형",
+        "신수형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "동물형": [
+          "text:vs 동물"
+        ],
+        "신수형": [
+          "text:vs 신수"
+        ]
+      }
+    },
+    "657": {
+      "source_text": {
+        "name": "받는피해감소P",
+        "description": "받는 대미지 감소 [수치]0％",
+        "short_text": "받는 대미지 감소 [0％]"
+      },
+      "source_tags": [
+        "방어",
+        "저항"
+      ],
+      "canonical_tags": [
+        "받는 피해",
+        "방어"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ]
+      }
+    },
+    "673": {
+      "source_text": {
+        "name": "(소환수,펫)모든스탯증가",
+        "description": "동반자의 모든 기초 능력치 +[수치]0",
+        "short_text": "동반자의 모든 기초 능력치 +[0]"
+      },
+      "source_tags": [
+        "소환수",
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "682": {
+      "source_text": {
+        "name": "(소환수,펫)최종공격력증가P",
+        "description": "동반자의 최종 공격력 증가 [수치]0％",
+        "short_text": "동반자의 최종 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "683": {
+      "source_text": {
+        "name": "(소환수,펫)물리공격력증가P",
+        "description": "동반자의 물리 공격력 증가 [수치]0％",
+        "short_text": "동반자의 물리 공격력 증가 [0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "685": {
+      "source_text": {
+        "name": "(소환수,펫)물리치명타발동확률",
+        "description": "동반자의 물리 치명타 확률(％) +[수치]0％",
+        "short_text": "동반자의 물리 치명타 확률(％) +[0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "686": {
+      "source_text": {
+        "name": "(소환수,펫)마법치명타발동확률",
+        "description": "동반자의 마법 치명타 확률(％) +[수치]0％",
+        "short_text": "동반자의 마법 치명타 확률(％) +[0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "치명타",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "688": {
+      "source_text": {
+        "name": "(소환수,펫)물리더블크리티컬대미지증가P",
+        "description": "동반자의 물리 더블 크리티컬 대미지 증가 [수치]0％",
+        "short_text": "동반자의 물리 더블 크리티컬 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "690": {
+      "source_text": {
+        "name": "(소환수,펫)마법강타확률증가",
+        "description": "동반자의 마법 강타 확률(％) +[수치]0％",
+        "short_text": "동반자의 마법 강타 확률(％) +[0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "강타",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "691": {
+      "source_text": {
+        "name": "(소환수,펫)모든속성공격력증가P",
+        "description": "동반자의 모든 속성 공격력 증가 [수치]0％",
+        "short_text": "동반자의 모든 속성 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "속성",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "695": {
+      "source_text": {
+        "name": "(소환수,펫)최대체력증가P",
+        "description": "동반자의 최대 HP 증가 [수치]0％",
+        "short_text": "동반자의 최대 HP 증가 [0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "HP": [
+          "source_tag:HP",
+          "text:HP/체력"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "703": {
+      "source_text": {
+        "name": "물리한계대미지증가",
+        "description": "한계돌파 칭호의 물리 대미지 제한 +[수치]0",
+        "short_text": "한계돌파 칭호의 물리 대미지 제한 +[0]"
+      },
+      "source_tags": [
+        "피해",
+        "물리",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "704": {
+      "source_text": {
+        "name": "물리한계대미지증가P",
+        "description": "한계돌파 칭호의 물리 대미지 제한 초과량 적용(％) 증가 [수치]0％",
+        "short_text": "한계돌파 칭호의 물리 대미지 제한 초과량 적용(％) 증가 [0％]"
+      },
+      "source_tags": [
+        "피해",
+        "물리",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "705": {
+      "source_text": {
+        "name": "마법한계대미지증가",
+        "description": "한계돌파 칭호의 마법 대미지 제한 +[수치]0",
+        "short_text": "한계돌파 칭호의 마법 대미지 제한 +[0]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "706": {
+      "source_text": {
+        "name": "마법한계대미지증가P",
+        "description": "한계돌파 칭호의 마법 대미지 제한 초과량 적용(％) 증가 [수치]0％",
+        "short_text": "한계돌파 칭호의 마법 대미지 제한 초과량 적용(％) 증가 [0％]"
+      },
+      "source_tags": [
+        "피해",
+        "속성",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "716": {
+      "source_text": {
+        "name": "(소환수,펫)공속증가",
+        "description": "동반자의 공격 속도 증가 [수치]0％",
+        "short_text": "동반자의 공격 속도 증가 [0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "속도"
+      ],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "속도": [
+          "source_tag:속도",
+          "text:속도"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "717": {
+      "source_text": {
+        "name": "(소환수,펫)마법공격력증가P",
+        "description": "동반자의 마법 공격력 증가 [수치]0％",
+        "short_text": "동반자의 마법 공격력 증가 [0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "속성"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "719": {
+      "source_text": {
+        "name": "(소환수,펫)상태이상저항증가",
+        "description": "동반자의 이상 저항(％) +[수치]0％",
+        "short_text": "동반자의 이상 저항(％) +[0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "저항"
+      ],
+      "canonical_tags": [
+        "저항",
+        "상태 이상",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "text:상태 이상"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "721": {
+      "source_text": {
+        "name": "무기최소공격력증가",
+        "description": "무기 최소 공격력 +[수치]0",
+        "short_text": "무기 최소 공격력 +[0]"
+      },
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "물리": [
+          "source_tag:물리"
+        ]
+      }
+    },
+    "722": {
+      "source_text": {
+        "name": "무기최대공격력증가",
+        "description": "무기 최대 공격력 +[수치]0",
+        "short_text": "무기 최대 공격력 +[0]"
+      },
+      "source_tags": [
+        "피해",
+        "물리"
+      ],
+      "canonical_tags": [
+        "공격력",
+        "물리"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "물리": [
+          "source_tag:물리"
+        ]
+      }
+    },
+    "723": {
+      "source_text": {
+        "name": "마법강타확률증가",
+        "description": "마법 강타 확률(％) +[수치]0％",
+        "short_text": "마법 강타 확률(％) +[0％]"
+      },
+      "source_tags": [
+        "강타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "강타",
+        "마법"
+      ],
+      "evidence": {
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "724": {
+      "source_text": {
+        "name": "최종공격력증가P",
+        "description": "최종 공격력 증가 [수치]0％",
+        "short_text": "최종 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ]
+      }
+    },
+    "725": {
+      "source_text": {
+        "name": "최대체력증가",
+        "description": "최대 HP +[수치]0",
+        "short_text": "최대 HP +[0]"
+      },
+      "source_tags": [
+        "HP"
+      ],
+      "canonical_tags": [
+        "HP"
+      ],
+      "evidence": {
+        "HP": [
+          "source_tag:HP",
+          "text:HP/체력"
+        ]
+      }
+    },
+    "727": {
+      "source_text": {
+        "name": "스탯저하저항",
+        "description": "필드의 능력치 하락 저항(％) +[수치]0％",
+        "short_text": "필드의 능력치 하락 저항(％) +[0%]"
+      },
+      "source_tags": [
+        "저항",
+        "스탯"
+      ],
+      "canonical_tags": [
+        "스탯",
+        "저항"
+      ],
+      "evidence": {
+        "스탯": [
+          "source_tag:스탯",
+          "text:능력치"
+        ],
+        "저항": [
+          "text:저항"
+        ]
+      }
+    },
+    "728": {
+      "source_text": {
+        "name": "속성저항저하저항",
+        "description": "필드의 속성 저항력 제한 무시(％) +[수치]0％",
+        "short_text": "필드의 속성 저항력 제한(％) 무시 +[0%]"
+      },
+      "source_tags": [
+        "저항",
+        "속성"
+      ],
+      "canonical_tags": [
+        "저항",
+        "무시",
+        "속성"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "무시": [
+          "text:무시"
+        ],
+        "속성": [
+          "text:속성"
+        ]
+      }
+    },
+    "729": {
+      "source_text": {
+        "name": "vs인간형_마법대미지증가P",
+        "description": "vs 인간 마법 대미지 증가 [수치]0％",
+        "short_text": "vs 인간 마법 대미지 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "마법",
+        "인간형"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "인간형": [
+          "text:인간형/인간계",
+          "text:vs 인간"
+        ]
+      }
+    },
+    "730": {
+      "source_text": {
+        "name": "CP획득보너스P",
+        "description": "CP 획득량 증가 [수치]0％",
+        "short_text": "CP 획득량 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "CP"
+      ],
+      "evidence": {
+        "CP": [
+          "text:CP/마나"
+        ]
+      }
+    },
+    "732": {
+      "source_text": {
+        "name": "모든속성공격력증가P",
+        "description": "모든 속성 공격력 증가 [수치]0%",
+        "short_text": "모든 속성 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "속성"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "속성": [
+          "text:속성"
+        ]
+      }
+    },
+    "736": {
+      "source_text": {
+        "name": "현아이템착용레벨감소",
+        "description": "이 아이템의 착용 레벨 -[수치]0",
+        "short_text": "이 아이템의 착용 레벨 -[0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "착용 조건"
+      ],
+      "evidence": {
+        "착용 조건": [
+          "text:착용/장착 레벨"
+        ]
+      }
+    },
+    "745": {
+      "source_text": {
+        "name": "(소환수,펫)적 치명 저항 감소",
+        "description": "동반자의 적 물리 치명타 저항(％) 감소 [수치]0％",
+        "short_text": "동반자의 적 물리 치명타 저항(％) 감소 [0％]"
+      },
+      "source_tags": [
+        "소환수",
+        "치명타"
+      ],
+      "canonical_tags": [
+        "저항",
+        "치명타",
+        "물리",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "소환수/펫": [
+          "source_tag:소환수",
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "752": {
+      "source_text": {
+        "name": "마법 치명타 대미지 증가",
+        "description": "마법 치명타 대미지 증가 [수치]0％",
+        "short_text": "마법 치명타 대미지 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "치명타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "754": {
+      "source_text": {
+        "name": "마법 강타 대미지 증가",
+        "description": "마법 강타 대미지 증가 [수치]0％",
+        "short_text": "마법 강타 대미지 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "강타",
+        "속성"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "755": {
+      "source_text": {
+        "name": "물리 강타 대미지 증가",
+        "description": "물리 강타 대미지 증가 [수치]0％",
+        "short_text": "물리 강타 대미지 증가 [0%]"
+      },
+      "source_tags": [
+        "피해",
+        "강타",
+        "물리"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "물리"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "물리": [
+          "source_tag:물리",
+          "text:물리"
+        ]
+      }
+    },
+    "787": {
+      "source_text": {
+        "name": "(소환수,펫)적속성흡수능력무시",
+        "description": "동반자가 공격 시 적의 속성 흡수치 무시",
+        "short_text": "동반자가 공격 시 적의 속성 흡수치 무시"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "흡수",
+        "무시",
+        "속성",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "흡수": [
+          "text:흡수/흡혈"
+        ],
+        "무시": [
+          "text:무시"
+        ],
+        "속성": [
+          "text:속성"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "789": {
+      "source_text": {
+        "name": "마법대미지흡수",
+        "description": "마법 대미지 흡수 [수치]0％",
+        "short_text": "마법 속성 대미지 흡수 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "흡수",
+        "마법",
+        "속성"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "흡수": [
+          "text:흡수/흡혈"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "속성": [
+          "text:속성"
+        ]
+      }
+    },
+    "796": {
+      "source_text": {
+        "name": "레벨비례힘상승",
+        "description": "힘이 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "힘 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "797": {
+      "source_text": {
+        "name": "레벨비례민첩성상승",
+        "description": "민첩성이 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "민첩성 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "798": {
+      "source_text": {
+        "name": "레벨비례건강상승",
+        "description": "건강이 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "건강 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "799": {
+      "source_text": {
+        "name": "레벨비례지혜상승",
+        "description": "지혜가 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "지혜 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "800": {
+      "source_text": {
+        "name": "레벨비례지식상승",
+        "description": "지식이 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "지식 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "801": {
+      "source_text": {
+        "name": "레벨비례카리스마상승",
+        "description": "카리스마가 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "카리스마 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "802": {
+      "source_text": {
+        "name": "레벨비례운상승",
+        "description": "운이 레벨 [수치]0당 [수치]1 증가",
+        "short_text": "운 [+1]/레벨 [0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "레벨 비례"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "레벨 비례": [
+          "text:레벨 비례"
+        ]
+      }
+    },
+    "803": {
+      "source_text": {
+        "name": "적에게입힌대미지의일부체력으로흡수",
+        "description": "흡혈 [수치]0％",
+        "short_text": "흡혈 +[0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "주는 피해",
+        "흡수"
+      ],
+      "evidence": {
+        "HP": [
+          "text:HP/체력"
+        ],
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "흡수": [
+          "text:흡수/흡혈"
+        ]
+      }
+    },
+    "804": {
+      "source_text": {
+        "name": "적에게입힌마법대미지의일부체력으로흡수",
+        "description": "[수치]0% 확률로 마법 대미지의 [수치]1%를 체력으로 흡수",
+        "short_text": "[0%] 확률로 마법 대미지의 [1%]를 체력으로 흡수"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "주는 피해",
+        "흡수",
+        "마법"
+      ],
+      "evidence": {
+        "HP": [
+          "text:HP/체력"
+        ],
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "흡수": [
+          "text:흡수/흡혈"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "832": {
+      "source_text": {
+        "name": "vs언데드_마법물리피격대미지감소P",
+        "description": "vs 언데드 물리, 마법 대미지 감소 [수치]0％",
+        "short_text": "vs 언데드 받는 대미지 감소 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "언데드형"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "언데드형": [
+          "text:vs 언데드"
+        ]
+      }
+    },
+    "833": {
+      "source_text": {
+        "name": "vs인간_마법물리피격대미지감소P",
+        "description": "vs 인간 대미지 감소 [수치]0％",
+        "short_text": "vs 인간 받는 대미지 감소 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "인간형"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "인간형": [
+          "text:vs 인간"
+        ]
+      }
+    },
+    "834": {
+      "source_text": {
+        "name": "vs악마_마법물리피격대미지감소P",
+        "description": "vs 악마 대미지 감소 [수치]0％",
+        "short_text": "vs 악마 받는 대미지 감소 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "악마형"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "악마형": [
+          "text:vs 악마"
+        ]
+      }
+    },
+    "835": {
+      "source_text": {
+        "name": "vs동물_마법물리피격대미지감소P",
+        "description": "vs 동물 대미지 감소 [수치]0％",
+        "short_text": "vs 동물 받는 대미지 감소 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "동물형"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "동물형": [
+          "text:vs 동물"
+        ]
+      }
+    },
+    "836": {
+      "source_text": {
+        "name": "vs신수_마법물리피격대미지감소P",
+        "description": "vs 신수 대미지 감소 [수치]0％",
+        "short_text": "vs 신수 받는 대미지 감소 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "받는 피해",
+        "방어",
+        "물리",
+        "마법",
+        "신수형"
+      ],
+      "evidence": {
+        "받는 피해": [
+          "text:받는/피격/흡수 피해"
+        ],
+        "방어": [
+          "text:방어/피격"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "신수형": [
+          "text:vs 신수"
+        ]
+      }
+    },
+    "869": {
+      "source_text": {
+        "name": "모든상태이상저항증가P(최종)",
+        "description": "최종 모든 상태 저항(％) +[수치]0%",
+        "short_text": "최종 모든 상태 저항(％) +[0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "저항",
+        "상태 이상"
+      ],
+      "evidence": {
+        "저항": [
+          "text:저항"
+        ],
+        "상태 이상": [
+          "text:상태 이상"
+        ]
+      }
+    },
+    "921": {
+      "source_text": {
+        "name": "속성흡수무시",
+        "description": "속성 흡수 무시",
+        "short_text": "속성 흡수 무시"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "흡수",
+        "무시",
+        "속성"
+      ],
+      "evidence": {
+        "흡수": [
+          "text:흡수/흡혈"
+        ],
+        "무시": [
+          "text:무시"
+        ],
+        "속성": [
+          "text:속성"
+        ]
+      }
+    },
+    "922": {
+      "source_text": {
+        "name": "한계대미지증가(물리P,마법P)",
+        "description": "한계돌파 칭호의 물리 대미지 제한 초과량 적용(％) 증가 [수치.1F]0％, 물리 대미지 제한 초과량 적용(％) 증가 [수치.1F]1％",
+        "short_text": "한계돌파 칭호의 물리 대미지 제한 초과량 적용(％) 증가 [0.1%], 마법 대미지 제한 초과량 적용(％) 증가 [1.1%]"
+      },
+      "source_tags": [
+        "피해",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "923": {
+      "source_text": {
+        "name": "소환수마법공격력증가P",
+        "description": "소환수의 마법 공격력 증가 [수치]0％",
+        "short_text": "소환수의 마법 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "924": {
+      "source_text": {
+        "name": "소환수공격속도증가P",
+        "description": "소환수의 공격 속도 증가 [수치]0％",
+        "short_text": "소환수의 공격 속도 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "속도": [
+          "text:속도"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "925": {
+      "source_text": {
+        "name": "소환수최대체력증가P",
+        "description": "소환수의 최대 HP 증가 [수치]0％",
+        "short_text": "소환수의 최대 HP 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "HP",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "HP": [
+          "text:HP/체력"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "926": {
+      "source_text": {
+        "name": "조련펫마법공격력증가P",
+        "description": "조련 펫의 마법 공격력 증가 [수치]0％",
+        "short_text": "조련 펫의 마법 공격력 증가 [0％]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "공격력",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "공격력": [
+          "text:공격력"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "927": {
+      "source_text": {
+        "name": "조련펫이동속도",
+        "description": "조련 펫의 이동 속도 증가 [수치]0％",
+        "short_text": "조련 펫의 이동 속도 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "속도": [
+          "text:속도"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "928": {
+      "source_text": {
+        "name": "조련펫공격속도",
+        "description": "조련 펫의 공격 속도 증가 [수치]0％",
+        "short_text": "조련 펫의 공격 속도 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "속도",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "속도": [
+          "text:속도"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "929": {
+      "source_text": {
+        "name": "조련펫모든스탯증가",
+        "description": "조련 펫의 모든 기초 능력치 +[수치]0",
+        "short_text": "조련 펫의 모든 기초 능력치 +[0]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "스탯",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "스탯": [
+          "text:능력치"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "1026": {
+      "source_text": {
+        "name": "(소환수,펫)마법치명타대미지증가",
+        "description": "동반자의 마법 치명타 대미지 증가 [수치]0％",
+        "short_text": "동반자의 마법 치명타 대미지 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "치명타",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "치명타": [
+          "text:치명타/크리티컬"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "1027": {
+      "source_text": {
+        "name": "(소환수,펫)마법강타대미지증가",
+        "description": "동반자의 마법 강타 대미지 증가 [수치]0％",
+        "short_text": "동반자의 마법 강타 대미지 증가 [0%]"
+      },
+      "source_tags": [],
+      "canonical_tags": [
+        "주는 피해",
+        "강타",
+        "마법",
+        "소환수/펫"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "강타": [
+          "text:강타/결정타"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ],
+        "소환수/펫": [
+          "text:소환수/펫/조련"
+        ]
+      }
+    },
+    "1045": {
+      "source_text": {
+        "name": "한계대미지증가(물리,마법)",
+        "description": "한계돌파 칭호의 물리 대미지 제한 +[수치]0, 마법 대미지 제한 +[수치]1",
+        "short_text": "한계돌파 칭호의 물리 대미지 제한 +[0], 마법 대미지 제한 +[1]"
+      },
+      "source_tags": [
+        "피해",
+        "한계 돌파"
+      ],
+      "canonical_tags": [
+        "주는 피해",
+        "한계 돌파",
+        "물리",
+        "마법"
+      ],
+      "evidence": {
+        "주는 피해": [
+          "text:주는 피해/대미지"
+        ],
+        "한계 돌파": [
+          "source_tag:한계 돌파",
+          "text:한계 돌파"
+        ],
+        "물리": [
+          "text:물리"
+        ],
+        "마법": [
+          "text:마법 전투 문맥"
+        ]
+      }
+    },
+    "1068": {
+      "source_text": {
+        "name": "최대CP증가",
+        "description": "최대 CP +[수치]0",
+        "short_text": "최대 CP +[0]"
+      },
+      "source_tags": [
+        "CP"
+      ],
+      "canonical_tags": [
+        "CP"
+      ],
+      "evidence": {
+        "CP": [
+          "source_tag:CP",
+          "text:CP/마나"
+        ]
+      }
+    }
+  }
+}

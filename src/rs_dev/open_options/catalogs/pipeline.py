@@ -28,10 +28,13 @@ from rs_dev.open_options.catalogs.metadata import (
     collect_usage,
 )
 from rs_dev.open_options.catalogs.option_tags import (
+    DEFAULT_AUDIT_OUTPUT as DEFAULT_OPTION_TAG_AUDIT,
+    build_option_tag_audit,
     build_option_tags,
     collect_option_ids,
     load_source_tags,
     write_option_tags,
+    write_option_tag_audit,
 )
 from rs_dev.parsers import parse_capa, parse_item_groups, parse_japanese_llt
 
@@ -152,6 +155,7 @@ def build_auxiliary_catalogs(
     general_rows_path: Path = DEFAULT_GENERAL_ROWS,
     instandard_rows_path: Path = DEFAULT_INSTANDARD_ROWS,
     instandard_catalog_path: Path = DEFAULT_INSTANDARD_CATALOG,
+    option_tag_audit_path: Path = DEFAULT_OPTION_TAG_AUDIT,
 ) -> dict[str, int]:
     """Create production catalogs from freshly generated audit objects."""
     equipment_groups = build_production_equipment_groups(audits.equipment_groups)
@@ -160,10 +164,11 @@ def build_auxiliary_catalogs(
 
     option_ids = collect_option_ids(general_rows_path, instandard_rows_path)
     source_tags = load_source_tags(instandard_catalog_path)
-    option_tags = build_option_tags(
-        parse_capa(data_dir / "capa.dat"), source_tags, option_ids
-    )
+    capa = parse_capa(data_dir / "capa.dat")
+    option_tags = build_option_tags(capa, source_tags, option_ids)
+    option_tag_audit = build_option_tag_audit(capa, source_tags, option_ids)
     write_option_tags(output_root / "option_tags.json", option_tags)
+    write_option_tag_audit(option_tag_audit_path, option_tag_audit)
     _write(output_root / "equipment_groups.json", equipment_groups)
     _write(output_root / "open_equipment_buckets.json", open_buckets)
 
