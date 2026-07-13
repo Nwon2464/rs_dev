@@ -24,7 +24,11 @@ export function TagFilterPanel({ availableTags, selectedTags, onChange, language
       <button type="button" className="tag-filter-toggle" aria-expanded={expanded} aria-controls={groupsId} onClick={() => setExpanded((value) => !value)}>
         <span>{uiText(language, "filter.tags")}</span>
         <b>{formatSelectedTagCount(language, selectedTags.length)}</b>
-        <span aria-hidden="true">{expanded ? "⌃" : "⌄"}</span>
+        {expanded ? (
+          <span className="tag-filter-chevron" aria-hidden="true">▲</span>
+        ) : (
+          <span className="tag-filter-chevron" aria-hidden="true">▼</span>
+        )}
       </button>
       <button type="button" className="tag-filter-reset" onClick={() => onChange([])} disabled={!selectedTags.length}>{uiText(language, "common.reset")}</button>
     </div>

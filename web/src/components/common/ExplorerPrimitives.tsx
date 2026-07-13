@@ -121,7 +121,7 @@ export function Context({
   hideSearch = false,
 }: {
   language: Language;
-  breadcrumb: string;
+  breadcrumb: string[];
   query: string;
   onQuery: (value: string) => void;
   placeholder: string;
@@ -131,8 +131,16 @@ export function Context({
     <section
       className={`context-row ${hideSearch ? "breadcrumb-only" : ""}`}
     >
-      <div className="breadcrumb">
-        {uiText(language, "common.currentLocation")} <b>{breadcrumb}</b>
+      <div className="breadcrumb" aria-label={uiText(language, "common.currentLocation")}>
+        <span className="breadcrumb-label">{uiText(language, "common.currentLocation")}</span>
+        <span className="breadcrumb-trail">
+          {breadcrumb.map((part, index) => (
+            <span className="breadcrumb-item" key={`${part}-${index}`}>
+              {index > 0 && <span className="breadcrumb-separator" aria-hidden="true">›</span>}
+              <b className={index === breadcrumb.length - 1 ? "breadcrumb-current" : undefined}>{part}</b>
+            </span>
+          ))}
+        </span>
       </div>
       {!hideSearch && (
         <label className="search">
@@ -181,6 +189,17 @@ export function SectionHead({ title, count }: { title: string; count: string }) 
   );
 }
 
-export function Empty({ language }: { language: Language }) {
-  return <div className="empty">{uiText(language, "common.noResults")}</div>;
+export function Empty({
+  language,
+  onReset,
+}: {
+  language: Language;
+  onReset?: () => void;
+}) {
+  return (
+    <div className="empty">
+      <p>{uiText(language, "common.noResults")}</p>
+      {onReset && <button type="button" onClick={onReset}>{uiText(language, "common.resetFilters")}</button>}
+    </div>
+  );
 }

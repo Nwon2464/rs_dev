@@ -359,7 +359,7 @@ export function InstandardTierViewer({
                 })}
               </div>
             ) : (
-              <Empty language={language} />
+              <Empty language={language} onReset={() => { setSelectedTierTags([]); setTierQuery(""); }} />
             )}
           </section>
         )}
