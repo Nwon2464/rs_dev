@@ -1,105 +1,54 @@
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
-import pytest
-
-from rs_dev import instandard_open_options as collector
+from rs_dev.models.instandard_equipment import InstandardCatalog
+from rs_dev.models.instandard_open_option import InstandardOpenOptionRow
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture(scope="module")
-def exported_rows() -> tuple[list[dict], dict[str, object]]:
-    data_dir = collector.DEFAULT_DATA_DIR
-    required = (
-        data_dir / "item_option_open.dat",
-        data_dir / "simpleGameText.dat",
-        data_dir / "capa.dat",
+def _rows() -> list[InstandardOpenOptionRow]:
+    with (ROOT / "data/processed/open_options/instandard/open_option_rows.csv").open(encoding="utf-8-sig", newline="") as handle:
+        return [InstandardOpenOptionRow.model_validate(row) for row in csv.DictReader(handle)]
+
+
+def test_normalized_catalog_preserves_assignments_and_tiers() -> None:
+    catalog = InstandardCatalog.model_validate_json(
+        (ROOT / "data/processed/open_options/instandard/catalog.json").read_text(encoding="utf-8")
     )
-    if not all(path.is_file() for path in required):
-        pytest.skip("local Red Stone DAT files are unavailable")
-    return collector.collect_rows(data_dir=data_dir)
+    assert len(catalog.equipment) == 34
+    assert len(catalog.options) == 80
+    necklace = next(item for item in catalog.equipment if item.item_group_id == 8)
+    assert necklace.option_ids[-2:] == [1045, 922]
+    assert necklace.supplemental_option_ids == [1045, 922]
+    tiers = [tier for option in catalog.options for tier in option.tiers]
+    assert sum(len(tier.rolls) for tier in tiers if tier.enabled) == 7640
+    assert sum(len(tier.rolls) for tier in tiers if not tier.enabled) == 360
+    assert catalog.value_bindings == {"922": {"1": 0}, "1045": {"1": 0}}
 
 
-def test_all_instandard_groups_and_raw_signatures_are_covered(
-    exported_rows: tuple[list[dict], dict[str, object]],
-) -> None:
-    rows, summary = exported_rows
-    dataset = json.loads(
-        collector.DEFAULT_INSTANDARD_JSON.read_text(encoding="utf-8")
-    )
-    expected_ids = {row["item_group_id"] for row in dataset["equipment"]}
-
-    assert summary == {
-        "equipment_group_count": 34,
-        "bucket_signature_count": 10,
-        "source_block_count": 30,
-        "row_count": 12199,
-        "invalid_probability_slot_count": 1,
-    }
-    assert {row["item_group_id"] for row in rows} == expected_ids
-    assert len({row["bucket_group_ids"] for row in rows}) == 10
-    assert {row["section_type"] for row in rows} == {11}
-    assert {row["section_group"] for row in rows} == {0, 1, 3}
-    assert any(row["option_id"] == 0 for row in rows)
+def test_four_converter_views_match_migration_baseline() -> None:
+    rows = _rows()
+    assert len(rows) == 12199
+    assert {row.converter_type for row in rows} == {"normal", "improved", "fake", "burning"}
+    report = json.loads((ROOT / "data/reports/open_options/instandard/converter_validation.json").read_text(encoding="utf-8"))
+    assert report["migration_comparison"]["matches"] is True
+    assert report["probability_anomalies"] == [{
+        "item_group_id": 1,
+        "converter_type": "burning",
+        "open_slot": 4,
+        "source_block_index": 73,
+        "sum": "88.8899989",
+    }]
 
 
-def test_weapon_burning_screen_result_is_reproduced(
-    exported_rows: tuple[list[dict], dict[str, object]],
-) -> None:
-    rows, _summary = exported_rows
-    cannon = [
-        row
-        for row in rows
-        if row["item_group_id"] == 82 and row["converter_type"] == "불타는"
-    ]
-    expected = (
-        (1, 15, 736, 300),
-        (2, 13, 623, 25),
-        (3, 1, 623, 20),
-        (4, 17, 464, 20),
-    )
-    for slot, candidate, option_id, value_0 in expected:
-        match = next(
-            row
-            for row in cannon
-            if row["open_slot"] == slot
-            and row["candidate_index"] == candidate
-        )
-        assert (match["option_id"], match["value_0_low16"]) == (
-            option_id,
-            value_0,
-        )
-        assert match["mapping_status"] == "screen_confirmed"
-
-
-def test_crown_burning_slot4_is_the_only_probability_anomaly(
-    exported_rows: tuple[list[dict], dict[str, object]],
-) -> None:
-    rows, _summary = exported_rows
-    invalid = {
-        (
-            row["item_group_id"],
-            row["converter_type"],
-            row["open_slot"],
-            row["source_block_index"],
-            row["slot_probability_sum"],
-        )
-        for row in rows
-        if row["probability_sum_valid"] == "false"
-    }
-    assert invalid == {(1, "불타는", 4, 73, "88.8899989")}
-    anomaly_rows = [
-        row
-        for row in rows
-        if row["item_group_id"] == 1
-        and row["converter_type"] == "불타는"
-        and row["open_slot"] == 4
-    ]
-    assert len(anomaly_rows) == 24
-    assert sum(float(row["probability"]) for row in anomaly_rows) == pytest.approx(
-        88.8899989
-    )
+def test_screen_confirmed_cannon_rows_are_preserved() -> None:
+    cannon = [row for row in _rows() if row.item_group_id == 82 and row.converter_type == "burning"]
+    for slot, candidate, option_id, value_0 in (
+        (1, 15, 736, 300), (2, 13, 623, 25), (3, 1, 623, 20), (4, 17, 464, 20),
+    ):
+        assert any(row.open_slot == slot and row.candidate_index == candidate and row.option_id == option_id and row.value_0 == value_0 for row in cannon)

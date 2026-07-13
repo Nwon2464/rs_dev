@@ -18,7 +18,7 @@ from rs_dev.parsers import parse_japanese_llt
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CURRENT_OPTIONS_JSON = (
-    ROOT / "data" / "processed" / "instandard_equipment.json"
+    ROOT / "data" / "processed" / "open_options" / "instandard" / "catalog.json"
 )
 JAPANESE_OPTION_SECTION_ID = 22
 
@@ -43,7 +43,7 @@ def collect_current_option_ids(path: Path) -> set[int]:
         selectable_ids = {
             int(option["option_id"])
             for option in options
-            if option["selectable"]
+            if option.get("selectable", int(option["option_id"]) in current_ids)
         }
     except (KeyError, TypeError, ValueError) as error:
         raise ValueError("invalid non-standard option dataset structure") from error

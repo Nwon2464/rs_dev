@@ -13,24 +13,24 @@ function run(command, args, cwd) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
-run("python3", ["scripts/collect_instandard_equipment.py"], root);
-run("python3", [
-  "scripts/collect_equipment_open_options.py",
-  "--classify-converters",
-  "--output",
-  "data/processed/equipment_converter_type_options.csv",
-], root);
-run("python3", ["scripts/export_instandard_open_options.py"], root);
-run("python3", ["scripts/export_option_tags.py"], root);
-run("python3", ["scripts/validate_instandard_equipment.py"], root);
+run("python3", ["scripts/build_open_options.py"], root);
 
 const publicData = resolve(webRoot, "public", "data");
-await mkdir(publicData, { recursive: true });
+const openOptionsData = resolve(publicData, "open_options");
 await Promise.all([
-  copyFile(resolve(root, "data/processed/instandard_equipment.json"), resolve(publicData, "instandard_equipment.json")),
-  copyFile(resolve(root, "data/processed/equipment_converter_type_options.csv"), resolve(publicData, "equipment_converter_type_options.csv")),
-  copyFile(resolve(root, "data/processed/instandard_open_option_rows.csv"), resolve(publicData, "instandard_open_option_rows.csv")),
-  copyFile(resolve(root, "data/processed/option_tags.json"), resolve(publicData, "option_tags.json")),
+  mkdir(resolve(openOptionsData, "general"), { recursive: true }),
+  mkdir(resolve(openOptionsData, "instandard"), { recursive: true }),
+  mkdir(resolve(openOptionsData, "i18n", "ko"), { recursive: true }),
+  mkdir(resolve(openOptionsData, "i18n", "ja"), { recursive: true }),
+  mkdir(resolve(openOptionsData, "catalogs"), { recursive: true }),
+]);
+await Promise.all([
+  copyFile(resolve(root, "data/processed/open_options/general/open_option_rows.csv"), resolve(openOptionsData, "general/open_option_rows.csv")),
+  copyFile(resolve(root, "data/processed/open_options/instandard/catalog.json"), resolve(openOptionsData, "instandard/catalog.json")),
+  copyFile(resolve(root, "data/processed/open_options/instandard/open_option_rows.csv"), resolve(openOptionsData, "instandard/open_option_rows.csv")),
+  copyFile(resolve(root, "data/processed/open_options/i18n/ko/base_options.json"), resolve(openOptionsData, "i18n/ko/base_options.json")),
+  copyFile(resolve(root, "data/processed/open_options/i18n/ja/base_options.json"), resolve(openOptionsData, "i18n/ja/base_options.json")),
+  ...["option_tags.json", "equipment_groups.json", "open_equipment_buckets.json", "open_metadata.json"].map((name) => copyFile(resolve(root, "data/processed/open_options/catalogs", name), resolve(openOptionsData, "catalogs", name))),
 ]);
 
 run(npm, ["run", "build"], webRoot);

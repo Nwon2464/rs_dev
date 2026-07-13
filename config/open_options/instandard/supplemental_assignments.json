@@ -1,0 +1,15 @@
+{
+  "922": {
+    "item_group_id": 8,
+    "option_order": 30,
+    "basis": "item_option_open.dat equipment target list",
+    "evidence_id": "inst-922-necklace"
+  },
+  "1045": {
+    "item_group_id": 8,
+    "option_order": 29,
+    "basis": "item.dat fixed-effect references",
+    "evidence_id": "inst-1045-necklace",
+    "item_ids": [1390, 5238, 7145, 7432, 7433]
+  }
+}

@@ -11,11 +11,11 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_SOURCE_JSON = ROOT / "data/processed/instandard_equipment.json"
-DEFAULT_GENERAL_OPEN_CSV = ROOT / "data/processed/equipment_converter_type_options.csv"
-DEFAULT_INSTANDARD_OPEN_CSV = ROOT / "data/processed/instandard_open_option_rows.csv"
+DEFAULT_SOURCE_JSON = ROOT / "data/processed/open_options/instandard/catalog.json"
+DEFAULT_GENERAL_OPEN_CSV = ROOT / "data/processed/open_options/general/open_option_rows.csv"
+DEFAULT_INSTANDARD_OPEN_CSV = ROOT / "data/processed/open_options/instandard/open_option_rows.csv"
 DEFAULT_CAPA = Path("/mnt/c/game/Red Stone/Data/capa.dat")
-DEFAULT_OUTPUT = ROOT / "data/processed/option_tags.json"
+DEFAULT_OUTPUT = ROOT / "data/processed/open_options/catalogs/option_tags.json"
 
 GROUPS = {
     "resource": {"ko": "자원", "ja": "リソース"},
@@ -148,7 +148,7 @@ def collect_option_ids(*csv_paths: Path) -> set[int]:
 def load_source_tags(path: Path) -> dict[int, list[str]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     return {
-        int(option["option_id"]): list(option["tags"])
+        int(option["option_id"]): list(option.get("source_tags", option.get("tags", [])))
         for option in payload["options"]
     }
 

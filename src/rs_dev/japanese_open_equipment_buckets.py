@@ -28,9 +28,8 @@ DEFAULT_AUDIT_OUTPUT = (
 )
 DEFAULT_PRODUCTION_OUTPUT = (
     ROOT
-    / "web"
-    / "public"
     / "data"
+    / "processed"
     / "i18n"
     / "ja"
     / "open_equipment_buckets.json"

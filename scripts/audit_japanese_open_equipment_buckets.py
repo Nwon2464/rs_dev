@@ -26,9 +26,9 @@ from rs_dev.parsers import parse_item_groups, parse_japanese_llt
 DEFAULT_LLT = Path("/mnt/c/game/Red Stone/Data/language/japanese.llt")
 DEFAULT_SIMPLE_GAME_TEXT = Path("/mnt/c/game/Red Stone/Data/simpleGameText.dat")
 DEFAULT_EQUIPMENT_GROUPS = (
-    ROOT / "web" / "public" / "data" / "i18n" / "ja" / "equipment_groups.json"
+    ROOT / "data/processed/open_options/catalogs/equipment_groups.json"
 )
-DEFAULT_CSV = ROOT / "data" / "processed" / "equipment_converter_type_options.csv"
+DEFAULT_CSV = ROOT / "data/processed/open_options/general/open_option_rows.csv"
 
 
 def main() -> None:

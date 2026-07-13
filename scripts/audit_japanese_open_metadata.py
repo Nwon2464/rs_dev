@@ -18,8 +18,8 @@ from rs_dev.japanese_open_metadata import (
 from rs_dev.parsers import parse_japanese_llt
 
 DEFAULT_LLT = Path("/mnt/c/game/Red Stone/Data/language/japanese.llt")
-DEFAULT_GENERAL_CSV = ROOT / "web/public/data/equipment_converter_type_options.csv"
-DEFAULT_INSTANDARD_CSV = ROOT / "web/public/data/instandard_open_option_rows.csv"
+DEFAULT_GENERAL_CSV = ROOT / "data/processed/open_options/general/open_option_rows.csv"
+DEFAULT_INSTANDARD_CSV = ROOT / "data/processed/open_options/instandard/open_option_rows.csv"
 DEFAULT_UI = ROOT / "web/src/i18n/index.ts"
 
 

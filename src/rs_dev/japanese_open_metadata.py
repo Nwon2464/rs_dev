@@ -18,7 +18,7 @@ from rs_dev.models import (
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_AUDIT_OUTPUT = ROOT / "data/processed/i18n/ja/open_metadata_audit.json"
-DEFAULT_PRODUCTION_OUTPUT = ROOT / "web/public/data/i18n/ja/open_metadata.json"
+DEFAULT_PRODUCTION_OUTPUT = ROOT / "data/processed/i18n/ja/open_metadata.json"
 
 GRADE_SPECS = {
     "7": ("유니크", 12, "ユニーク"),
@@ -28,17 +28,20 @@ GRADE_SPECS = {
 CONVERTER_SPECS = {
     "normal": ("일반 변환기 / 일반", 12501, "解放オプション変換器"),
     "improved": ("개량된 변환기 / 개량", 12785, "解放オプション変換器・改"),
-    "replica": ("모조 변환기 / 모조", 12859, "レプリカ解放オプション変換器"),
+    "fake": ("모조 변환기 / 모조", 12859, "レプリカ解放オプション変換器"),
     "burning": ("불타는 변환기 / 불타는", 13498, "灼熱の解放オプション変換器"),
     "association": ("협회 변환기", 13039, "解放オプション変換器[協会]"),
 }
 GENERAL_TO_CANONICAL = {
     "일반 변환기": "normal", "개량된 변환기": "improved",
-    "모조 변환기": "replica", "불타는 변환기": "burning",
+    "모조 변환기": "fake", "불타는 변환기": "burning",
     "협회 변환기": "association",
+    "normal": "normal", "improved": "improved", "fake": "fake",
+    "burning": "burning", "association": "association",
 }
 INSTANDARD_TO_CANONICAL = {
-    "일반": "normal", "개량": "improved", "모조": "replica", "불타는": "burning",
+    "일반": "normal", "개량": "improved", "모조": "fake", "불타는": "burning",
+    "normal": "normal", "improved": "improved", "fake": "fake", "burning": "burning",
 }
 
 
@@ -48,7 +51,8 @@ def collect_usage(general_csv: Path, instandard_csv: Path) -> tuple[dict[str, Co
     instandard: Counter[str] = Counter()
     with general_csv.open(encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):
-            grades[f"{row['grade_code']}:{row['grade_name']}"] += 1
+            grade_name = row.get("grade_name") or GRADE_SPECS[row["grade_code"]][0]
+            grades[f"{row['grade_code']}:{grade_name}"] += 1
             general[row["converter_type"]] += 1
     with instandard_csv.open(encoding="utf-8-sig", newline="") as handle:
         for row in csv.DictReader(handle):

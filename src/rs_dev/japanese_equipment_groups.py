@@ -22,7 +22,7 @@ DEFAULT_AUDIT_OUTPUT = (
     ROOT / "data" / "processed" / "i18n" / "ja" / "equipment_groups_audit.json"
 )
 DEFAULT_PRODUCTION_OUTPUT = (
-    ROOT / "web" / "public" / "data" / "i18n" / "ja" / "equipment_groups.json"
+    ROOT / "data" / "processed" / "i18n" / "ja" / "equipment_groups.json"
 )
 
 SEARCH_HINTS = (

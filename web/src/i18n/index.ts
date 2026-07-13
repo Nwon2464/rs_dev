@@ -209,6 +209,7 @@ export function formatResultCount(language: Language, count: number): string { r
 export function formatCandidateCount(language: Language, count: number): string { return language === "ja" ? `${count}件の候補` : `${count}개 후보`; }
 export function formatAppliedEquipmentCount(language: Language, count: number): string { return language === "ja" ? `適用装備 ${count}件` : `적용 장비 ${count}개`; }
 export function formatPossibleValueCount(language: Language, count: number): string { return language === "ja" ? `数値候補 ${count}件` : `가능 수치 ${count}개`; }
+export function formatSelectedTagCount(language: Language, count: number): string { return language === "ja" ? `${count}件選択` : `${count}개 선택`; }
 export function formatOpenSlot(language: Language, slot: string): string { return language === "ja" ? `解放スロット ${slot}` : `${slot}번째 개방 줄`; }
 export function formatTierOptionsTitle(language: Language, tier: number): string { return language === "ja" ? `Tier ${tier} のオプション` : `Tier ${tier}에서 가능한 옵션`; }
 export function formatTierValuesTitle(language: Language, tier: number): string { return language === "ja" ? `Tier ${tier} の数値候補` : `Tier ${tier} 가능 수치`; }

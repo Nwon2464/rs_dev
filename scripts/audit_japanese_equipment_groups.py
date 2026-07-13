@@ -24,7 +24,7 @@ from rs_dev.parsers import parse_item_groups, parse_japanese_llt
 
 DEFAULT_LLT = Path("/mnt/c/game/Red Stone/Data/language/japanese.llt")
 DEFAULT_SIMPLE_GAME_TEXT = Path("/mnt/c/game/Red Stone/Data/simpleGameText.dat")
-DEFAULT_CURRENT_UI = ROOT / "data" / "processed" / "instandard_equipment.json"
+DEFAULT_CURRENT_UI = ROOT / "data/processed/open_options/instandard/catalog.json"
 
 
 def main() -> None:

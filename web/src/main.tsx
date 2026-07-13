@@ -1,7 +1,29 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { Icon } from "./components/Icon";
+import { OpenViewer } from "./components/OpenViewer";
+import { SelectedTagChips, TagFilterPanel } from "./components/TagFilterPanel";
 import { equipmentIconId, featureIconId } from "./components/iconMap";
+import { prepareGeneralOpenRows } from "./data/generalOpenOptions";
+import {
+  prepareInstandardOpenRows,
+  type InstandardCatalog,
+  type InstandardEquipment,
+  type InstandardOpenOptionRow,
+  type InstandardOption,
+  type InstandardTier,
+} from "./data/instandardOptions";
+import { matchesSelectedTags, tagSearchText, tagText, toggleSelectedTag } from "./domain/openOptions/tags";
+import { renderTemplate } from "./domain/openOptions/renderTemplate";
+import { titleTemplate } from "./domain/openOptions/placeholders";
+import type {
+  EquipmentGroups,
+  GeneralOpenOptionRow,
+  OpenEquipmentBuckets,
+  OpenMetadata,
+  OptionLocales,
+  OptionTagData,
+} from "./domain/openOptions/types";
 import {
   formatActiveTierSummary,
   formatAppliedEquipmentCount,
@@ -14,7 +36,6 @@ import {
   formatPossibleValueCount,
   formatRangeSubtitle,
   formatResultCount,
-  formatTierLevel,
   formatTierOptionsTitle,
   formatTierValuesTitle,
   loadLanguage,
@@ -25,374 +46,81 @@ import {
 } from "./i18n";
 import "./styles.css";
 
-type Roll = [number, number, number];
 type View = "home" | "instandard" | "open";
 type Theme = "light" | "dark";
 type InstandardMode = "option" | "open" | "tier";
 
-type Tier = {
-  tier: number;
-  raw_tier_index: number;
-  option_level_group_index: number | null;
-  enabled: boolean;
-  roll_values: Roll[];
-};
-
-type InstandardOption = {
-  option_id: number;
-  name: string;
-  description: string;
-  short_text: string;
-  tags: string[];
-  source_tags: string[];
-  canonical_tags: string[];
-  tiers: Tier[];
-};
-
-type Equipment = {
-  item_group_id: number;
-  item_group_name: string;
-  option_ids: number[];
-  supplemental_option_ids: number[];
-};
-
-type SourceDataset = {
-  equipment: Equipment[];
-  options: InstandardOption[];
-};
+type Tier = InstandardTier;
+type Equipment = InstandardEquipment;
+type SourceDataset = InstandardCatalog;
 
 type JapaneseBaseOptions = Record<string, string>;
-type JapaneseEquipmentGroups = Record<string, string>;
-type JapaneseOpenEquipmentBuckets = Record<string, string>;
-type ConverterConcept = "normal" | "improved" | "replica" | "burning" | "association";
-type JapaneseOpenMetadata = {
-  grades: Record<string, string>;
-  converters: Record<ConverterConcept, string>;
-};
-type OptionTagData = {
-  schema_version: number;
-  groups: Record<string, { ko: string; ja: string }>;
-  tags: Record<string, { group: string; labels: Record<Language, string> }>;
-  options: Record<string, { source_tags: string[]; canonical_tags: string[] }>;
-};
+type JapaneseEquipmentGroups = EquipmentGroups;
+type ConverterConcept = "normal" | "improved" | "fake" | "burning" | "association";
 
-type OpenOptionRow = {
-  converter_type: string;
-  converter_probability: string;
-  converter_probability_source: string;
-  equipment_bucket: string;
-  item_group_ids: string;
-  item_group_names: string;
-  grade_code: string;
-  grade_name: string;
-  section_group: string;
-  open_slot: string;
-  candidate_index: string;
-  option_id: string;
-  option_name: string;
-  option_value_arity: string;
-  option_display: string;
-  value_raw: string;
-  value_0_low16: string;
-  value_1_high16: string;
-  normal_probability: string;
-  improved_probability: string;
-  option_tier: string;
-  probability_sum_valid: string;
-  source_file_name: string;
-  source_block_index: string;
-  source_file_offset: string;
-  mapping_basis: string;
-  mapping_confidence: string;
-  option_display_name: string;
-  tags: string[];
-};
-
-type InstandardOpenOptionRow = {
-  item_group_id: string;
-  item_group_name: string;
-  bucket_signature_index: string;
-  bucket_group_ids: string;
-  bucket_group_names: string;
-  converter_type: "일반" | "개량" | "모조" | "불타는";
-  mapping_status: "screen_confirmed" | "structural_candidate";
-  section_type: string;
-  section_group: string;
-  open_slot: string;
-  candidate_index: string;
-  option_id: string;
-  option_name: string;
-  option_value_arity: string;
-  option_display: string;
-  value_raw: string;
-  value_0_low16: string;
-  value_1_high16: string;
-  option_tier: string;
-  probability: string;
-  probability_source: string;
-  slot_probability_sum: string;
-  probability_sum_valid: "true" | "false";
-  source_file_name: string;
-  source_block_index: string;
-  source_file_offset: string;
-};
-
-type LocalizableOpenOptionRow = {
-  option_id: string;
-  option_name: string;
-  option_display_name?: string;
-  option_value_arity: string;
-  option_display: string;
-  value_0_low16: string;
-  value_1_high16: string;
-};
-
-const converterOrder = new Map(["일반 변환기", "개량된 변환기", "모조 변환기", "불타는 변환기", "협회 변환기"].map((name, index) => [name, index]));
 const converterConceptByKey: Record<string, ConverterConcept> = {
-  "일반 변환기": "normal", "개량된 변환기": "improved", "모조 변환기": "replica", "불타는 변환기": "burning", "협회 변환기": "association",
-  일반: "normal", 개량: "improved", 모조: "replica", 불타는: "burning",
+  "일반 변환기": "normal", "개량된 변환기": "improved", "모조 변환기": "fake", "불타는 변환기": "burning", "협회 변환기": "association",
+  일반: "normal", 개량: "improved", 모조: "fake", 불타는: "burning",
+  normal: "normal", improved: "improved", fake: "fake", burning: "burning", association: "association",
 };
-const koreanConverterLabels: Record<string, string> = {
-  "일반 변환기": "개방옵션변환기", "개량된 변환기": "개방옵션변환기改", "모조 변환기": "모조변환기", "불타는 변환기": "불타는변환기", "협회 변환기": "협회변환기",
-  일반: "개방옵션변환기", 개량: "개방옵션변환기改", 모조: "모조변환기", 불타는: "불타는변환기",
-};
-const openEquipmentIconAliases: Record<string, string> = {
-  "귀걸이/망토": "귀걸이",
-  "장갑/팔찌": "장갑",
-  "전용 갑옷": "공용 갑옷",
-  "무기": "한 손 검",
-};
-
-function openEquipmentIconId(equipmentName: string): string {
-  return equipmentIconId[equipmentName] ?? equipmentIconId[openEquipmentIconAliases[equipmentName]] ?? "feature-open-option";
-}
-
-function parseCsv(value: string): Record<string, string>[] {
-  const table: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let quoted = false;
-  for (let index = 0; index < value.length; index += 1) {
-    const character = value[index];
-    if (quoted) {
-      if (character === '"' && value[index + 1] === '"') { field += '"'; index += 1; }
-      else if (character === '"') quoted = false;
-      else field += character;
-    } else if (character === '"') quoted = true;
-    else if (character === ",") { row.push(field); field = ""; }
-    else if (character === "\n") { row.push(field.replace(/\r$/, "")); table.push(row); row = []; field = ""; }
-    else field += character;
-  }
-  if (field || row.length) { row.push(field); table.push(row); }
-  const [rawHeader, ...rows] = table;
-  const header = rawHeader.map((name, index) => index === 0 ? name.replace(/^\uFEFF/, "") : name);
-  return rows.filter((values) => values.length === header.length).map((values) => Object.fromEntries(header.map((name, index) => [name, values[index]])));
-}
-
-function prepareSourceDataset(source: SourceDataset, optionTags: OptionTagData): SourceDataset {
-  return {
-    ...source,
-    options: source.options.map((option) => {
-      const generated = optionTags.options[String(option.option_id)];
-      return {
-        ...option,
-        source_tags: generated?.source_tags ?? option.tags,
-        canonical_tags: generated?.canonical_tags ?? [],
-      };
-    }),
-  };
-}
-
-function prepareOpenRows(csv: string, optionTags: OptionTagData): OpenOptionRow[] {
-  const rows = parseCsv(csv).map((raw) => ({
-    ...raw,
-    option_display_name: raw.option_name.endsWith("P") ? raw.option_name.slice(0, -1) : raw.option_name,
-    tags: optionTags.options[raw.option_id]?.canonical_tags ?? [],
-  })) as OpenOptionRow[];
-  const requiredFields = ["converter_type", "equipment_bucket", "grade_code", "open_slot", "option_id", "option_display", "converter_probability"] as const;
-  if (!rows.length || rows.some((row) => requiredFields.some((field) => !row[field]?.trim()))) {
-    throw new Error("개방 옵션 데이터에 필수 필드가 없거나 비어 있습니다.");
-  }
-  return rows;
-}
-
-function prepareInstandardOpenRows(csv: string): InstandardOpenOptionRow[] {
-  const rows = parseCsv(csv) as unknown as InstandardOpenOptionRow[];
-  const requiredFields = ["item_group_id", "converter_type", "mapping_status", "open_slot", "option_id", "option_display", "probability", "option_tier"] as const;
-  if (!rows.length || rows.some((row) => requiredFields.some((field) => !row[field]?.trim()))) {
-    throw new Error("비규격 개방옵션 데이터에 필수 필드가 없거나 비어 있습니다.");
-  }
-  return rows;
-}
-
-function displayName(option: InstandardOption): string {
-  return option.name.endsWith("P") ? option.name.slice(0, -1) : option.name;
-}
 
 function localizedEquipmentName(itemGroupId: number, koreanName: string, language: Language, japaneseEquipmentGroups: JapaneseEquipmentGroups): string {
   return language === "ja" ? japaneseEquipmentGroups[String(itemGroupId)] ?? koreanName : koreanName;
 }
 
-function localizedOpenEquipmentBucket(koreanBucket: string, language: Language, japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets): string {
-  return language === "ja" ? japaneseOpenEquipmentBuckets[koreanBucket] ?? koreanBucket : koreanBucket;
-}
-
-function localizedConverterLabel(internalKey: string, language: Language, japaneseOpenMetadata: JapaneseOpenMetadata): string {
-  const koreanLabel = koreanConverterLabels[internalKey] ?? internalKey;
+function localizedConverterLabel(internalKey: string, language: Language, openMetadata: OpenMetadata): string {
   const concept = converterConceptByKey[internalKey];
-  return language === "ja" && concept ? japaneseOpenMetadata.converters[concept] ?? koreanLabel : koreanLabel;
+  return concept ? openMetadata.converters[concept]?.[language] ?? internalKey : internalKey;
 }
 
-function localizedGradeLabel(gradeCode: string, koreanName: string, language: Language, japaneseOpenMetadata: JapaneseOpenMetadata): string {
-  return language === "ja" ? japaneseOpenMetadata.grades[gradeCode] ?? koreanName : koreanName;
+function optionTemplate(option: InstandardOption, language: Language, optionLocales: OptionLocales): string {
+  const template = optionLocales[language][String(option.option_id)];
+  if (!template) throw new Error(`missing ${language} template for option_id=${option.option_id}`);
+  return template;
 }
 
-function tagText(language: Language, tag: string, optionTags: OptionTagData): string {
-  return optionTags.tags[tag]?.labels[language] ?? tag;
+function optionBindings(source: SourceDataset, optionId: number): Record<string, number> {
+  return source.value_bindings[String(optionId)] ?? {};
 }
 
-function tagSearchText(tags: string[], optionTags: OptionTagData): string {
-  return tags.flatMap((tag) => [tag, tagText("ja", tag, optionTags)]).join(" ");
-}
-
-function matchesSelectedTags(optionTagValues: string[], selectedTags: string[], optionTags: OptionTagData): boolean {
-  const selectedByGroup = new Map<string, string[]>();
-  selectedTags.forEach((tag) => {
-    const group = optionTags.tags[tag]?.group;
-    if (group) selectedByGroup.set(group, [...(selectedByGroup.get(group) ?? []), tag]);
-  });
-  return [...selectedByGroup.values()].every((groupTags) => groupTags.some((tag) => optionTagValues.includes(tag)));
-}
-
-function toggleSelectedTag(selectedTags: string[], tag: string): string[] {
-  return selectedTags.includes(tag) ? selectedTags.filter((value) => value !== tag) : [...selectedTags, tag];
-}
-
-function localizedOptionTemplate(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
-  const koreanTemplate = option.short_text || option.description;
-  return language === "ja"
-    ? japaneseBaseOptions[String(option.option_id)] ?? koreanTemplate
-    : koreanTemplate;
-}
-
-function displayTemplate(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
-  const template = localizedOptionTemplate(option, language, japaneseBaseOptions);
-  return option.option_id === 922 || option.option_id === 1045
-    ? template.replaceAll("[1]", "[0]").replaceAll("[1.1%]", "[0.1%]")
-    : template;
-}
-
-function displayTitlePlaceholders(template: string): string {
-  const placeholderPattern = /\[([+-]?)([012])(?:\.\d+)?([%％]?)\]/g;
-  const indices = [...template.matchAll(placeholderPattern)].map((match) => match[2]);
-  const uniqueIndices = [...new Set(indices)];
-  const names = new Map(uniqueIndices.map((index, position) => [index, uniqueIndices.length === 1 ? "n" : `n${position + 1}`]));
-  return template.replace(placeholderPattern, (_, sign: string, index: string, suffix: string) => `[${sign}${names.get(index)}${suffix}]`);
-}
-
-function localizedDisplayName(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
-  return displayTitlePlaceholders(localizedOptionTemplate(option, language, japaneseBaseOptions));
-}
-
-function safelyRenderOpenOptionValue(template: string, row: LocalizableOpenOptionRow): string | null {
-  const rawValues = [row.value_0_low16, row.value_1_high16];
-  const values = rawValues.map(Number);
-  const arity = Number(row.option_value_arity);
-  if (rawValues.some((value) => !value.trim()) || values.some((value) => !Number.isFinite(value)) || !Number.isInteger(arity) || arity < 0 || arity > 2) {
-    return null;
-  }
-
-  if (!template.trim()) return null;
-  const valuePlaceholders = [...template.matchAll(/\[([+-]?)(\d+)(?:\.\d+)?([%％]?)\]/g)];
-  if (valuePlaceholders.some((match) => Number(match[2]) >= 2 || Number(match[2]) >= arity)) {
-    return null;
-  }
-
-  try {
-    const display = renderValue(template, [values[0], values[1], 0]);
-    return /\[([+-]?)(\d+)(?:\.\d+)?([%％]?)\]/.test(display) ? null : display;
-  } catch {
-    return null;
-  }
-}
-
-function fallbackOpenOptionTitle(row: LocalizableOpenOptionRow): string {
-  return row.option_display_name || (row.option_name.endsWith("P") ? row.option_name.slice(0, -1) : row.option_name);
+function localizedDisplayName(option: InstandardOption, language: Language, optionLocales: OptionLocales, source: SourceDataset): string {
+  return titleTemplate(optionTemplate(option, language, optionLocales), optionBindings(source, option.option_id));
 }
 
 function localizedInstandardOpenOptionRow(
   row: InstandardOpenOptionRow,
-  optionMap: Map<number, InstandardOption>,
   language: Language,
-  japaneseBaseOptions: JapaneseBaseOptions,
+  optionLocales: OptionLocales,
+  source: SourceDataset,
 ): { title: string; display: string } {
-  const optionId = Number(row.option_id);
-  const option = Number.isInteger(optionId) ? optionMap.get(optionId) : undefined;
-  if (language === "ja") {
-    const template = japaneseBaseOptions[row.option_id];
-    if (template?.trim()) {
-      return {
-        title: displayTitlePlaceholders(template),
-        display: safelyRenderOpenOptionValue(template, row) ?? row.option_display,
-      };
-    }
-  }
-  if (!option) return { title: fallbackOpenOptionTitle(row), display: row.option_display };
-  const template = localizedOptionTemplate(option, language, japaneseBaseOptions);
+  const template = optionLocales[language][row.option_id];
+  if (!template) throw new Error(`missing ${language} template for option_id=${row.option_id}`);
+  const bindings = optionBindings(source, Number(row.option_id));
   return {
-    title: localizedDisplayName(option, language, japaneseBaseOptions),
-    display: safelyRenderOpenOptionValue(template, row) ?? row.option_display,
+    title: titleTemplate(template, bindings),
+    display: renderTemplate(template, [Number(row.value_0), Number(row.value_1)], bindings),
   };
 }
 
-function localizedGeneralOpenOptionRow(
-  row: OpenOptionRow,
-  optionMap: Map<number, InstandardOption>,
-  language: Language,
-  japaneseBaseOptions: JapaneseBaseOptions,
-): { title: string; display: string } {
-  const option = optionMap.get(Number(row.option_id));
-  if (language === "ko") {
-    return {
-      title: option ? localizedDisplayName(option, language, japaneseBaseOptions) : fallbackOpenOptionTitle(row),
-      display: row.option_display,
-    };
-  }
-
-  const template = japaneseBaseOptions[row.option_id];
-  if (!template?.trim()) return { title: fallbackOpenOptionTitle(row), display: row.option_display };
-  return {
-    title: displayTitlePlaceholders(template),
-    display: safelyRenderOpenOptionValue(template, row) ?? row.option_display,
-  };
+function candidateValues(option: InstandardOption, language: Language, optionLocales: OptionLocales, source: SourceDataset): string[] {
+  const template = optionTemplate(option, language, optionLocales);
+  const bindings = optionBindings(source, option.option_id);
+  return [...new Set(option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.rolls.map((vector) => renderTemplate(template, vector, bindings))))];
 }
 
-function renderValue(template: string, vector: Roll): string {
-  return template.replace(/\[([+-]?)([012])(?:\.(\d+))?([%％])?\]/g, (_, sign, index, digits, suffix) => {
-    const value = vector[Number(index)];
-    const precision = Number(digits || 0);
-    const rendered = precision ? (value / 10 ** precision).toFixed(precision) : String(value);
-    const signed = sign && value >= 0 ? `${sign}${rendered}` : rendered;
-    return `${signed}${suffix || ""}`;
-  });
+function tierCandidateValues(option: InstandardOption, tier: Tier, language: Language, optionLocales: OptionLocales, source: SourceDataset): string[] {
+  const template = optionTemplate(option, language, optionLocales);
+  const bindings = optionBindings(source, option.option_id);
+  return [...new Set(tier.rolls.map((vector) => renderTemplate(template, vector, bindings)))];
 }
 
-function candidateValues(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string[] {
-  const template = displayTemplate(option, language, japaneseBaseOptions);
-  return [...new Set(option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values.map((vector) => renderValue(template, vector))))];
-}
-
-function tierCandidateValues(option: InstandardOption, tier: Tier, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string[] {
-  const template = displayTemplate(option, language, japaneseBaseOptions);
-  return [...new Set(tier.roll_values.map((vector) => renderValue(template, vector)))];
-}
-
-function rangeLabel(option: InstandardOption, language: Language, japaneseBaseOptions: JapaneseBaseOptions): string {
-  const vectors = option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.roll_values);
+function rangeLabel(option: InstandardOption, language: Language, optionLocales: OptionLocales, source: SourceDataset): string {
+  const vectors = option.tiers.filter((tier) => tier.enabled).flatMap((tier) => tier.rolls);
   const values = vectors.map((vector) => vector[0]);
-  const template = displayTemplate(option, language, japaneseBaseOptions);
-  const minimum = renderValue(template, vectors[values.indexOf(Math.min(...values))]);
-  const maximum = renderValue(template, vectors[values.indexOf(Math.max(...values))]);
+  const template = optionTemplate(option, language, optionLocales);
+  const bindings = optionBindings(source, option.option_id);
+  const minimum = renderTemplate(template, vectors[values.indexOf(Math.min(...values))], bindings);
+  const maximum = renderTemplate(template, vectors[values.indexOf(Math.max(...values))], bindings);
   return minimum === maximum ? minimum : `${minimum} ~ ${maximum}`;
 }
 
@@ -406,7 +134,7 @@ function App() {
   const [language, setLanguage] = useState<Language>(
     () => loadLanguage(localStorage),
   );
-  const [resources, setResources] = useState<{ source: SourceDataset; openRows: OpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[]; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData } | null>(null);
+  const [resources, setResources] = useState<{ source: SourceDataset; openRows: GeneralOpenOptionRow[]; instandardOpenRows: InstandardOpenOptionRow[]; optionLocales: OptionLocales; japaneseEquipmentGroups: JapaneseEquipmentGroups; openEquipmentBuckets: OpenEquipmentBuckets; openMetadata: OpenMetadata; optionTags: OptionTagData } | null>(null);
   const [loadError, setLoadError] = useState<UiMessageKey | null>(null);
 
   useEffect(() => {
@@ -423,41 +151,44 @@ function App() {
     let cancelled = false;
     const base = import.meta.env.BASE_URL;
     Promise.all([
-      fetch(`${base}data/instandard_equipment.json`).then((response) => {
+      fetch(`${base}data/open_options/instandard/catalog.json`).then((response) => {
         if (!response.ok) throw new Error("error.dataset");
         return response.json() as Promise<SourceDataset>;
       }),
-      fetch(`${base}data/equipment_converter_type_options.csv`).then((response) => {
+      fetch(`${base}data/open_options/general/open_option_rows.csv`).then((response) => {
         if (!response.ok) throw new Error("error.openCsv");
         return response.text();
       }),
-      fetch(`${base}data/instandard_open_option_rows.csv`).then((response) => {
+      fetch(`${base}data/open_options/instandard/open_option_rows.csv`).then((response) => {
         if (!response.ok) throw new Error("error.instandardOpenCsv");
         return response.text();
       }),
-      fetch(`${base}data/i18n/ja/base_options.json`).then((response) => {
+      fetch(`${base}data/open_options/i18n/ko/base_options.json`).then((response) => {
         if (!response.ok) throw new Error("error.japaneseOptions");
         return response.json() as Promise<JapaneseBaseOptions>;
       }),
-      fetch(`${base}data/i18n/ja/equipment_groups.json`).then((response) => {
+      fetch(`${base}data/open_options/i18n/ja/base_options.json`).then((response) => {
+        if (!response.ok) throw new Error("error.japaneseOptions");
+        return response.json() as Promise<JapaneseBaseOptions>;
+      }),
+      fetch(`${base}data/open_options/catalogs/equipment_groups.json`).then((response) => {
         if (!response.ok) throw new Error("error.japaneseEquipmentGroups");
         return response.json() as Promise<JapaneseEquipmentGroups>;
       }),
-      fetch(`${base}data/i18n/ja/open_equipment_buckets.json`).then((response) => {
+      fetch(`${base}data/open_options/catalogs/open_equipment_buckets.json`).then((response) => {
         if (!response.ok) throw new Error("error.japaneseOpenEquipmentBuckets");
-        return response.json() as Promise<JapaneseOpenEquipmentBuckets>;
+        return response.json() as Promise<OpenEquipmentBuckets>;
       }),
-      fetch(`${base}data/i18n/ja/open_metadata.json`).then((response) => {
+      fetch(`${base}data/open_options/catalogs/open_metadata.json`).then((response) => {
         if (!response.ok) throw new Error("error.japaneseOpenMetadata");
-        return response.json() as Promise<JapaneseOpenMetadata>;
+        return response.json() as Promise<OpenMetadata>;
       }),
-      fetch(`${base}data/option_tags.json`).then((response) => {
+      fetch(`${base}data/open_options/catalogs/option_tags.json`).then((response) => {
         if (!response.ok) throw new Error("error.optionTags");
         return response.json() as Promise<OptionTagData>;
       }),
-    ]).then(([rawSource, csv, instandardOpenCsv, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags]) => {
-      const source = prepareSourceDataset(rawSource, optionTags);
-      if (!cancelled) setResources({ source, openRows: prepareOpenRows(csv, optionTags), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv), japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags });
+    ]).then(([rawSource, csv, instandardOpenCsv, koreanBaseOptions, japaneseBaseOptions, japaneseEquipmentGroups, openEquipmentBuckets, openMetadata, optionTags]) => {
+      if (!cancelled) setResources({ source: rawSource, openRows: prepareGeneralOpenRows(csv, optionTags), instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv), optionLocales: { ko: koreanBaseOptions, ja: japaneseBaseOptions }, japaneseEquipmentGroups, openEquipmentBuckets, openMetadata, optionTags });
     }).catch((error: unknown) => {
       if (!cancelled) setLoadError(error instanceof Error && error.message.startsWith("error.") ? error.message as UiMessageKey : "error.unknown");
     });
@@ -498,9 +229,9 @@ function App() {
   if (view === "home") return <Home language={language} themeButton={headerControls} />;
   if (loadError) return <><Header language={language} title={uiText(language, "error.title")} description={uiText(language, loadError)} themeButton={headerControls} /><main><Empty language={language} /></main></>;
   if (!resources) return <><Header language={language} title={uiText(language, "loading.title")} description={uiText(language, "loading.description")} themeButton={headerControls} /><main><div className="empty">{uiText(language, "loading.progress")}</div></main></>;
-  if (view === "open") return <OpenViewer rows={resources.openRows} source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseOpenEquipmentBuckets={resources.japaneseOpenEquipmentBuckets} japaneseOpenMetadata={resources.japaneseOpenMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
-  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} optionTags={resources.optionTags} themeButton={headerControls} />;
-  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} language={language} japaneseBaseOptions={resources.japaneseBaseOptions} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} japaneseOpenMetadata={resources.japaneseOpenMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
+  if (view === "open") return <OpenViewer rows={resources.openRows} language={language} optionLocales={resources.optionLocales} openEquipmentBuckets={resources.openEquipmentBuckets} openMetadata={resources.openMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
+  if (view === "instandard" && instandardMode === "tier") return <InstandardTierViewer source={resources.source} language={language} optionLocales={resources.optionLocales} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} optionTags={resources.optionTags} themeButton={headerControls} />;
+  if (view === "instandard" && (instandardMode === "option" || instandardMode === "open")) return <InstandardOpenViewer mode={instandardMode} source={resources.source} openRows={resources.instandardOpenRows} language={language} optionLocales={resources.optionLocales} japaneseEquipmentGroups={resources.japaneseEquipmentGroups} japaneseOpenMetadata={resources.openMetadata} optionTags={resources.optionTags} themeButton={headerControls} />;
   return null;
 }
 
@@ -522,7 +253,7 @@ function InstandardModeTabs({ mode, language }: { mode: InstandardMode; language
   return <nav className="instandard-mode-tabs" aria-label={uiText(language, "mode.navigation")}>{instandardModes.map((item) => <a className={`mode-tab mode-tab--${item.className} ${mode === item.mode ? "active" : ""}`} href={`?view=instandard&mode=${item.mode}`} aria-current={mode === item.mode ? "page" : undefined} key={item.mode}><Icon className="app-icon" id={featureIconId[item.iconLabel]} size={18} />{uiText(language, item.titleKey)}</a>)}</nav>;
 }
 
-function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseEquipmentGroups, optionTags, themeButton }: { source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; optionTags: OptionTagData; themeButton: ReactNode }) {
+function InstandardTierViewer({ source, language, optionLocales, japaneseEquipmentGroups, optionTags, themeButton }: { source: SourceDataset; language: Language; optionLocales: OptionLocales; japaneseEquipmentGroups: JapaneseEquipmentGroups; optionTags: OptionTagData; themeButton: ReactNode }) {
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [selectedTierTags, setSelectedTierTags] = useState<string[]>([]);
   const [tierQuery, setTierQuery] = useState("");
@@ -536,8 +267,8 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
     return tierOptions
       .filter((option) => matchesSelectedTags(option.canonical_tags, selectedTierTags, optionTags))
       .map((option) => ({ option, equipment: source.equipment.filter((item) => item.option_ids.includes(option.option_id)) }))
-      .filter(({ option, equipment }) => !normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => [item.item_group_name, localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)].join(" ").toLocaleLowerCase().includes(normalized)));
-  }, [japaneseBaseOptions, japaneseEquipmentGroups, language, optionTags, selectedTier, selectedTierTags, source.equipment, tierOptions, tierQuery]);
+      .filter(({ option, equipment }) => !normalized || [optionLocales.ko[String(option.option_id)], optionLocales.ja[String(option.option_id)], localizedDisplayName(option, "ko", optionLocales, source), localizedDisplayName(option, "ja", optionLocales, source), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized) || equipment.some((item) => [item.item_group_name, localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)].join(" ").toLocaleLowerCase().includes(normalized)));
+  }, [japaneseEquipmentGroups, language, optionLocales, optionTags, selectedTier, selectedTierTags, source, tierOptions, tierQuery]);
 
   function changeTier(tierNumber: number) {
     setSelectedTier(tierNumber);
@@ -577,9 +308,9 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
           const expanded = expandedOptionIds.has(option.option_id);
           const contentId = `tier-option-${option.option_id}`;
           const tierData = option.tiers.find((tier) => tier.enabled && tier.tier === selectedTier)!;
-          const values = tierCandidateValues(option, tierData, language, japaneseBaseOptions);
+          const values = tierCandidateValues(option, tierData, language, optionLocales, source);
           return <article className={`tier-option-accordion ${expanded ? "expanded" : ""}`} key={option.option_id}>
-            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div><span>{formatAppliedEquipmentCount(language, equipment.length)}</span><span>{formatPossibleValueCount(language, values.length)}</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
+            <button className="tier-option-toggle" type="button" aria-expanded={expanded} aria-controls={contentId} onClick={() => toggleOption(option.option_id)}><strong>{localizedDisplayName(option, language, optionLocales, source)}</strong><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div><span>{formatAppliedEquipmentCount(language, equipment.length)}</span><span>{formatPossibleValueCount(language, values.length)}</span><Icon className="app-icon tier-chevron" id={expanded ? "ui-chevron-down" : "ui-chevron-right"} size={18} /></button>
             {expanded && <section className="tier-option-content" id={contentId}>
               <div className="tier-option-values"><h3>{formatTierValuesTitle(language, selectedTier)}</h3><div className="value-list">{values.map((value) => <span key={value}>{value}</span>)}</div></div>
               <div className="tier-option-equipment"><h3>{uiText(language, "tier.appliedEquipment")}</h3><div className="tier-applied-equipment-grid">{equipment.map((item) => <div className="tier-applied-equipment" key={item.item_group_id}><Icon className="app-icon" id={equipmentIconId[item.item_group_name] ?? "feature-instandard-option"} size={20} /><span>{localizedEquipmentName(item.item_group_id, item.item_group_name, language, japaneseEquipmentGroups)}</span></div>)}</div></div>
@@ -592,10 +323,10 @@ function InstandardTierViewer({ source, language, japaneseBaseOptions, japaneseE
 }
 
 
-function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOptions, japaneseEquipmentGroups, japaneseOpenMetadata, optionTags, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData; themeButton: ReactNode }) {
+function InstandardOpenViewer({ mode, source, openRows, language, optionLocales, japaneseEquipmentGroups, japaneseOpenMetadata, optionTags, themeButton }: { mode: "option" | "open"; source: SourceDataset; openRows: InstandardOpenOptionRow[]; language: Language; optionLocales: OptionLocales; japaneseEquipmentGroups: JapaneseEquipmentGroups; japaneseOpenMetadata: OpenMetadata; optionTags: OptionTagData; themeButton: ReactNode }) {
   const [equipmentName, setEquipmentName] = useState("헬멧");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [converter, setConverter] = useState<InstandardOpenOptionRow["converter_type"]>("일반");
+  const [converter, setConverter] = useState<InstandardOpenOptionRow["converter_type"]>("normal");
   const [selectedOpenLines, setSelectedOpenLines] = useState<string[] | null>(null);
   const [query, setQuery] = useState("");
   const [equipmentPickerOpen, setEquipmentPickerOpen] = useState(false);
@@ -616,21 +347,21 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
   }, [equipmentQuery, japaneseEquipmentGroups, language, source.equipment]);
   const filteredOptions = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
-    return options.filter((option) => matchesSelectedTags(option.canonical_tags, selectedTags, optionTags) && (!normalized || [option.name, displayName(option), displayTemplate(option, language, japaneseBaseOptions), localizedDisplayName(option, language, japaneseBaseOptions), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized)));
-  }, [japaneseBaseOptions, language, optionTags, options, query, selectedTags]);
+    return options.filter((option) => matchesSelectedTags(option.canonical_tags, selectedTags, optionTags) && (!normalized || [optionLocales.ko[String(option.option_id)], optionLocales.ja[String(option.option_id)], localizedDisplayName(option, "ko", optionLocales, source), localizedDisplayName(option, "ja", optionLocales, source), tagSearchText(option.canonical_tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized)));
+  }, [optionLocales, optionTags, options, query, selectedTags, source]);
   const equipmentOpenRows = useMemo(() => openRows.filter((row) => Number(row.item_group_id) === equipment.item_group_id), [equipment.item_group_id, openRows]);
-  const localizedOpenRows = useMemo(() => new Map(equipmentOpenRows.map((row) => [row, localizedInstandardOpenOptionRow(row, optionMap, language, japaneseBaseOptions)])), [equipmentOpenRows, japaneseBaseOptions, language, optionMap]);
-  const converters = useMemo(() => ["일반", "개량", "모조", "불타는"].filter((value) => equipmentOpenRows.some((row) => row.converter_type === value)) as InstandardOpenOptionRow["converter_type"][], [equipmentOpenRows]);
+  const localizedOpenRows = useMemo(() => new Map(equipmentOpenRows.map((row) => [row, localizedInstandardOpenOptionRow(row, language, optionLocales, source)])), [equipmentOpenRows, language, optionLocales, source]);
+  const converters = useMemo(() => ["normal", "improved", "fake", "burning"].filter((value) => equipmentOpenRows.some((row) => row.converter_type === value)) as InstandardOpenOptionRow["converter_type"][], [equipmentOpenRows]);
   const effectiveOpenLines = selectedOpenLines ?? openLines;
   const filteredOpenRows = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return equipmentOpenRows
       .filter((row) => {
         const localized = localizedOpenRows.get(row);
-        return converter === row.converter_type && effectiveOpenLines.includes(row.open_slot) && (!normalized || [row.option_name, row.option_display, localized?.title, localized?.display, row.option_id, row.converter_type, localizedConverterLabel(row.converter_type, "ko", japaneseOpenMetadata), localizedConverterLabel(row.converter_type, "ja", japaneseOpenMetadata)].join(" ").toLocaleLowerCase().includes(normalized));
+        return converter === row.converter_type && effectiveOpenLines.includes(row.open_slot) && (!normalized || [optionLocales.ko[row.option_id], optionLocales.ja[row.option_id], localized?.title, localized?.display, row.option_id, row.converter_type, localizedConverterLabel(row.converter_type, "ko", japaneseOpenMetadata), localizedConverterLabel(row.converter_type, "ja", japaneseOpenMetadata)].join(" ").toLocaleLowerCase().includes(normalized));
       })
       .sort((a, b) => Number(a.open_slot) - Number(b.open_slot) || Number(a.candidate_index) - Number(b.candidate_index));
-  }, [converter, effectiveOpenLines, equipmentOpenRows, japaneseOpenMetadata, localizedOpenRows, query]);
+  }, [converter, effectiveOpenLines, equipmentOpenRows, japaneseOpenMetadata, localizedOpenRows, optionLocales, query]);
   const openGroups = new Map(openLines.map((line) => [line, filteredOpenRows.filter((row) => row.open_slot === line)]));
   const selectedOpenLineLabel = selectedOpenLines === null ? "ALL" : selectedOpenLines.map((line) => formatOpenSlot(language, line)).join(" · ");
 
@@ -699,10 +430,7 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
             <button ref={equipmentToggleRef} type="button" aria-expanded={equipmentPickerOpen} aria-controls="instandard-equipment-picker" onClick={() => equipmentPickerOpen ? closeEquipmentPicker() : setEquipmentPickerOpen(true)}>{uiText(language, equipmentPickerOpen ? "filter.collapseEquipment" : "filter.changeEquipment")}</button>
           </div>
         </FilterGroup>
-        <FilterGroup className="option-tag-filter" number="2" title={uiText(language, "filter.optionCategory")}>
-          <TagFilterChips availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} allLabelKey="common.allCategories" />
-        </FilterGroup>
-        <FilterGroup className="option-search-filter" number="3" title={uiText(language, "filter.optionSearch")}>
+        <FilterGroup className="option-search-filter" number="2" title={uiText(language, "filter.optionSearch")}>
           <div className="panel-search-control"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={uiText(language, "filter.optionSearchPlaceholder")} aria-label={uiText(language, "filter.optionSearch")} />{query && <button type="button" onClick={() => setQuery("")}>{uiText(language, "common.reset")}</button>}</div>
         </FilterGroup>
         {equipmentPickerOpen && <section ref={equipmentPickerRef} className="equipment-picker-floating" id="instandard-equipment-picker" role="dialog" aria-label={uiText(language, "filter.equipment")}>
@@ -724,65 +452,31 @@ function InstandardOpenViewer({ mode, source, openRows, language, japaneseBaseOp
           </FilterGroup>
       </section>}
       {mode === "option" ? <>
+        <TagFilterPanel availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} />
         <Context language={language} breadcrumb={`${equipmentDisplayName} › ${uiText(language, "mode.option.title")} › ${selectedTagLabel(selectedTags, language, optionTags, "common.allCategories")}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentOptionSearch")} hideSearch />
         <ResultsHead language={language} title={formatEquipmentOptionTitle(language, equipmentDisplayName)} description={uiText(language, "option.resultsDescription")} count={filteredOptions.length} />
-        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "option.category")}</th><th>{uiText(language, "option.range")}</th><th>{uiText(language, "option.tierDetails")}</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{localizedDisplayName(option, language, japaneseBaseOptions)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>{uiText(language, "option.supplemental")}</em>}</td><td><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option, language, japaneseBaseOptions)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>{uiText(language, "option.viewTierValues")}</button><small>{formatPossibleValueCount(language, candidateValues(option, language, japaneseBaseOptions).length)}</small></div></td></tr>)}</tbody></table></div></section> : <Empty language={language} />}
+        <SelectedTagChips selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} />
+        {filteredOptions.length ? <section className="option-section instandard-option-results-section"><div className="table-wrap"><table className="instandard-option-results"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "option.category")}</th><th>{uiText(language, "option.range")}</th><th>{uiText(language, "option.tierDetails")}</th></tr></thead><tbody>{filteredOptions.map((option) => <tr key={option.option_id}><td><strong>{localizedDisplayName(option, language, optionLocales, source)}</strong>{equipment.supplemental_option_ids.includes(option.option_id) && <em>{uiText(language, "option.supplemental")}</em>}</td><td><div className="option-tag-badges">{option.canonical_tags.map((optionTag) => <span key={optionTag}>{tagText(language, optionTag, optionTags)}</span>)}</div></td><td><span className="option-range-text">{rangeLabel(option, language, optionLocales, source)}</span></td><td><div className="tier-detail-group"><button className="tier-detail-button" onClick={() => setSelectedOption(option)}>{uiText(language, "option.viewTierValues")}</button><small>{formatPossibleValueCount(language, candidateValues(option, language, optionLocales, source).length)}</small></div></td></tr>)}</tbody></table></div></section> : <Empty language={language} />}
       </> : <>
         <Context language={language} breadcrumb={`${equipmentDisplayName} › ${uiText(language, "mode.open.title")} › ${localizedConverterLabel(converter, language, japaneseOpenMetadata)} › ${selectedOpenLineLabel}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentOpenSearch")} />
         <ResultsHead language={language} title={formatEquipmentOpenTitle(language, equipmentDisplayName)} description={uiText(language, "instandardOpen.resultsDescription")} count={filteredOpenRows.length} />
         {filteredOpenRows.length ? openLines.filter((line) => (openGroups.get(line)?.length ?? 0) > 0).map((line) => {
           const group = openGroups.get(line) ?? [];
-          const anomaly = group.find((row) => row.probability_sum_valid === "false");
-          const missingProbability = anomaly ? 100 - Number(anomaly.slot_probability_sum) : 0;
+          const probabilitySum = group.reduce((sum, row) => sum + Number(row.probability), 0);
+          const anomaly = Math.abs(probabilitySum - 100) > 0.06;
+          const missingProbability = anomaly ? 100 - probabilitySum : 0;
           return <section className="option-section instandard-open-section" key={line}>
             <SectionHead title={formatOpenSlot(language, line)} count={formatCandidateCount(language, group.length)} />
-            {anomaly && <aside className="probability-warning"><strong>{formatIncompleteWarningTitle(language, line)}</strong><span>{formatIncompleteWarning(language, formatProbability(anomaly.slot_probability_sum), formatProbability(String(missingProbability))).map((message, index) => <span key={message}>{message}{index < 2 && <br />}</span>)}</span></aside>}
+            {anomaly && <aside className="probability-warning"><strong>{formatIncompleteWarningTitle(language, line)}</strong><span>{formatIncompleteWarning(language, formatProbability(String(probabilitySum)), formatProbability(String(missingProbability))).map((message, index) => <span key={message}>{message}{index < 2 && <br />}</span>)}</span></aside>}
             <div className="table-wrap"><table className="instandard-open-table"><thead><tr><th>{uiText(language, "instandardOpen.optionName")}</th><th>{uiText(language, "instandardOpen.value")}</th><th>{uiText(language, "instandardOpen.probability")}</th><th>{uiText(language, "instandardOpen.internalTier")}</th></tr></thead><tbody>
-              {group.map((row) => { const localized = localizedOpenRows.get(row); return <tr key={`${row.source_block_index}-${row.source_file_offset}`}><td><strong>{localized?.title ?? row.option_name}</strong></td><td>{localized?.display ?? row.option_display}</td><td><b className="probability">{formatProbability(row.probability)}%</b></td><td><span className="tier">{row.option_tier}</span></td></tr>; })}
+              {group.map((row) => { const localized = localizedOpenRows.get(row)!; return <tr key={`${row.source_block_index}-${row.source_file_offset}`}><td><strong>{localized.title}</strong></td><td>{localized.display}</td><td><b className="probability">{formatProbability(row.probability)}%</b></td><td><span className="tier">{row.tier}</span></td></tr>; })}
             </tbody></table></div>
           </section>;
         }) : <Empty language={language} />}
       </>}
     </main>
-    {mode === "option" && selectedOption && <Modal language={language} title={localizedDisplayName(selectedOption, language, japaneseBaseOptions)} subtitle={formatRangeSubtitle(language, rangeLabel(selectedOption, language, japaneseBaseOptions))} onClose={() => setSelectedOption(null)}><p>{formatActiveTierSummary(language, selectedOption.tiers.filter((tier) => tier.enabled).length, candidateValues(selectedOption, language, japaneseBaseOptions).length)}</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.raw_tier_index}><h3>Tier {tier.tier}</h3><div className="value-list">{tierCandidateValues(selectedOption, tier, language, japaneseBaseOptions).map((value) => <span key={`${tier.raw_tier_index}-${value}`}>{value}</span>)}</div></section>)}</div></Modal>}
+    {mode === "option" && selectedOption && <Modal language={language} title={localizedDisplayName(selectedOption, language, optionLocales, source)} subtitle={formatRangeSubtitle(language, rangeLabel(selectedOption, language, optionLocales, source))} onClose={() => setSelectedOption(null)}><p>{formatActiveTierSummary(language, selectedOption.tiers.filter((tier) => tier.enabled).length, candidateValues(selectedOption, language, optionLocales, source).length)}</p><div className="tier-value-groups">{selectedOption.tiers.filter((tier) => tier.enabled).map((tier) => <section className="tier-value-group" key={tier.tier}><h3>Tier {tier.tier}</h3><div className="value-list">{tierCandidateValues(selectedOption, tier, language, optionLocales, source).map((value) => <span key={`${tier.tier}-${value}`}>{value}</span>)}</div></section>)}</div></Modal>}
   </>;
-}
-
-function OpenViewer({ rows, source, language, japaneseBaseOptions, japaneseOpenEquipmentBuckets, japaneseOpenMetadata, optionTags, themeButton }: { rows: OpenOptionRow[]; source: SourceDataset; language: Language; japaneseBaseOptions: JapaneseBaseOptions; japaneseOpenEquipmentBuckets: JapaneseOpenEquipmentBuckets; japaneseOpenMetadata: JapaneseOpenMetadata; optionTags: OptionTagData; themeButton: ReactNode }) {
-  const optionMap = useMemo(() => new Map(source.options.map((option) => [option.option_id, option])), [source.options]);
-  const localizedRows = useMemo(() => new Map(rows.map((row) => [row, localizedGeneralOpenOptionRow(row, optionMap, language, japaneseBaseOptions)])), [japaneseBaseOptions, language, optionMap, rows]);
-  const equipmentValues = useMemo(() => [...new Set(rows.map((row) => row.equipment_bucket))].sort((a, b) => a.localeCompare(b, "ko")), [rows]);
-  const [equipment, setEquipment] = useState(equipmentValues[0]);
-  const equipmentDisplayName = localizedOpenEquipmentBucket(equipment, language, japaneseOpenEquipmentBuckets);
-  const converters = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)), [equipment, rows]);
-  const [converter, setConverter] = useState(converters[0]);
-  const grades = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)), [equipment, converter, rows]);
-  const [grade, setGrade] = useState(grades[0]);
-  const lines = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade).map((row) => row.open_slot))].sort((a, b) => Number(a) - Number(b)), [equipment, converter, grade, rows]);
-  const [selectedLines, setSelectedLines] = useState<string[] | null>(null);
-  const effectiveLines = selectedLines === null ? lines : selectedLines.filter((line) => lines.includes(line));
-  const tags = useMemo(() => [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot)).flatMap((row) => row.tags))].sort((a, b) => a.localeCompare(b, "ko")), [equipment, converter, grade, effectiveLines.join("|"), rows]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [query, setQuery] = useState("");
-  const gradeLabel = (code: string) => {
-    const koreanName = rows.find((row) => row.grade_code === code && row.grade_name)?.grade_name || uiText(language, "common.unknownName");
-    return `${code} · ${localizedGradeLabel(code, koreanName, language, japaneseOpenMetadata)}`;
-  };
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase();
-    return rows.filter((row) => {
-      const localized = localizedRows.get(row);
-      return row.equipment_bucket === equipment && row.converter_type === converter && row.grade_code === grade && effectiveLines.includes(row.open_slot) && matchesSelectedTags(row.tags, selectedTags, optionTags) && (!normalized || [row.equipment_bucket, localizedOpenEquipmentBucket(row.equipment_bucket, language, japaneseOpenEquipmentBuckets), row.converter_type, localizedConverterLabel(row.converter_type, "ko", japaneseOpenMetadata), localizedConverterLabel(row.converter_type, "ja", japaneseOpenMetadata), row.grade_code, row.grade_name, localizedGradeLabel(row.grade_code, row.grade_name, "ja", japaneseOpenMetadata), row.option_name, row.option_display_name, row.option_display, localized?.title, localized?.display, row.option_id, tagSearchText(row.tags, optionTags)].join(" ").toLocaleLowerCase().includes(normalized));
-    }).sort((a, b) => Number(a.open_slot) - Number(b.open_slot) || a.tags[0].localeCompare(b.tags[0], "ko") || a.tags.join("/").localeCompare(b.tags.join("/"), "ko") || Number(a.option_id) - Number(b.option_id) || Number(a.option_tier) - Number(b.option_tier) || Number(a.candidate_index) - Number(b.candidate_index));
-  }, [equipment, converter, grade, effectiveLines.join("|"), japaneseOpenEquipmentBuckets, japaneseOpenMetadata, language, optionTags, query, localizedRows, rows, selectedTags]);
-  const groups = new Map(lines.map((line) => [line, filtered.filter((row) => row.open_slot === line)]));
-
-  function changeEquipment(value: string) { const nextConverters = [...new Set(rows.filter((row) => row.equipment_bucket === value).map((row) => row.converter_type))].sort((a, b) => (converterOrder.get(a) ?? 99) - (converterOrder.get(b) ?? 99)); const nextConverter = nextConverters.includes(converter) ? converter : nextConverters[0]; const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === value && row.converter_type === nextConverter).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setEquipment(value); setConverter(nextConverter); setGrade(nextGrades[0]); setSelectedLines(null); setSelectedTags([]); }
-  function changeConverter(value: string) { const nextGrades = [...new Set(rows.filter((row) => row.equipment_bucket === equipment && row.converter_type === value).map((row) => row.grade_code))].sort((a, b) => Number(a) - Number(b)); setConverter(value); setGrade(nextGrades[0]); setSelectedLines(null); setSelectedTags([]); }
-  function toggleLine(value: string) { if (value === "ALL") setSelectedLines(effectiveLines.length === lines.length ? [] : null); else setSelectedLines(effectiveLines.includes(value) ? effectiveLines.filter((line) => line !== value) : [...effectiveLines, value].sort((a, b) => Number(a) - Number(b))); setSelectedTags([]); }
-  const generalConverterLabel = (_displayLanguage: Language, value: string) => localizedConverterLabel(value, language, japaneseOpenMetadata);
-
-  return <><Header language={language} title={uiText(language, "header.open.title")} description={uiText(language, "header.open.description")} themeButton={themeButton} /><main className="open-viewer-mode"><section className="selection-panel open-panel"><FilterGroup number="1" title={uiText(language, "filter.equipment")}>{equipmentValues.map((value) => <Chip key={value} active={equipment === value} onClick={() => changeEquipment(value)}><span className="open-equipment-chip"><Icon className="app-icon" id={openEquipmentIconId(value)} size={18} />{localizedOpenEquipmentBucket(value, language, japaneseOpenEquipmentBuckets)}</span></Chip>)}</FilterGroup><FilterGroup number="2" title={uiText(language, "filter.converterSelection")}>{converters.map((value) => <Chip key={value} active={converter === value} onClick={() => changeConverter(value)}>{generalConverterLabel(language, value)}</Chip>)}</FilterGroup><FilterGroup number="3" title={uiText(language, "filter.itemGrade")}>{grades.map((value) => <Chip key={value} active={grade === value} onClick={() => { setGrade(value); setSelectedLines(null); setSelectedTags([]); }}>{gradeLabel(value)}</Chip>)}</FilterGroup><FilterGroup number="4" title={uiText(language, "filter.openSlot")}><Chip active={effectiveLines.length === lines.length} onClick={() => toggleLine("ALL")}>▤ ALL</Chip>{lines.map((value) => <Chip key={value} active={effectiveLines.includes(value)} onClick={() => toggleLine(value)}>{formatOpenSlot(language, value)}</Chip>)}</FilterGroup><FilterGroup number="5" title={uiText(language, "filter.tags")}><TagFilterChips availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} allLabelKey="common.allTags" /></FilterGroup></section><Context language={language} breadcrumb={`${equipmentDisplayName} › ${generalConverterLabel(language, converter)} › ${gradeLabel(grade)} › ${effectiveLines.length === lines.length ? uiText(language, "common.allOpenSlots") : effectiveLines.map((line) => formatOpenSlot(language, line)).join(" · ")} › ${selectedTagLabel(selectedTags, language, optionTags, "common.allTags")}`} query={query} onQuery={setQuery} placeholder={uiText(language, "filter.currentListSearch")} /><ResultsHead language={language} title={uiText(language, "open.resultsTitle")} description={uiText(language, "open.resultsDescription")} count={filtered.length} />{filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}><SectionHead title={formatOpenSlot(language, line)} count={formatCandidateCount(language, groups.get(line)?.length ?? 0)} /><div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "open.effect")}</th><th>{uiText(language, "open.nameAndTags")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => { const localized = localizedRows.get(row); return <tr key={`${row.option_id}-${row.option_tier}-${row.candidate_index}-${index}`}><td><strong>{localized?.display ?? row.option_display}</strong></td><td>{localized?.title ?? row.option_display_name}<small>{row.tags.map((tag) => tagText(language, tag, optionTags)).join(" / ")}</small></td><td><span className="tier">{formatTierLevel(language, row.option_tier)}</span></td><td><b className="probability">{row.converter_probability}%</b></td></tr>; })}</tbody></table></div></section>) : <Empty language={language} />}</main></>;
 }
 
 function FilterGroup({ number, title, children, className = "" }: { number: string; title: string; children: ReactNode; className?: string }) { return <section className={`filter-group ${className}`}><h2><span>{number}</span>{title}</h2><div className="chip-grid">{children}</div></section>; }
