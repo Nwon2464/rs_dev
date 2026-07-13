@@ -1,4 +1,5 @@
 import { parseCsv } from "./generalOpenOptions";
+import type { OptionTagData } from "../domain/openOptions/types";
 
 export type Roll = [number, number, number];
 export type InstandardTier = {
@@ -44,10 +45,17 @@ export type InstandardOpenOptionRow = {
   mapping_status: "screen_confirmed" | "structural_candidate";
   source_block_index: string;
   source_file_offset: string;
+  tags: string[];
 };
 
-export function prepareInstandardOpenRows(csv: string): InstandardOpenOptionRow[] {
-  const rows = parseCsv(csv) as unknown as InstandardOpenOptionRow[];
+export function prepareInstandardOpenRows(
+  csv: string,
+  optionTags: OptionTagData,
+): InstandardOpenOptionRow[] {
+  const rows = parseCsv(csv).map((raw) => ({
+    ...raw,
+    tags: optionTags.options[raw.option_id]?.canonical_tags ?? [],
+  })) as InstandardOpenOptionRow[];
   const required = ["converter_type", "item_group_id", "open_slot", "option_id", "value_0", "value_1", "probability", "tier"] as const;
   if (!rows.length || rows.some((row) => required.some((field) => !row[field]?.trim()))) {
     throw new Error("error.instandardOpenCsv");

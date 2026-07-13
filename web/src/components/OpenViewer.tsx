@@ -2,6 +2,10 @@ import { useMemo, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
 import { equipmentIconId } from "./iconMap";
 import { TagFilterPanel, SelectedTagChips } from "./TagFilterPanel";
+import { OptionIdentityCell } from "./common/optionTable/OptionIdentityCell";
+import { OptionTagsCell } from "./common/optionTable/OptionTagsCell";
+import { OptionValueCell } from "./common/optionTable/OptionValueCell";
+import { ProgressBadge } from "./common/optionTable/ProgressBadge";
 import {
   formatCandidateCount,
   formatOpenSlot,
@@ -11,7 +15,7 @@ import {
   type Language,
 } from "../i18n";
 import { localizedOption } from "../domain/openOptions/localeCatalog";
-import { matchesSelectedTags, tagSearchText, tagText } from "../domain/openOptions/tags";
+import { matchesSelectedTags, tagSearchText } from "../domain/openOptions/tags";
 import type {
   GeneralOpenOptionRow,
   OpenEquipmentBuckets,
@@ -111,9 +115,9 @@ export function OpenViewer({ rows, language, optionLocales, openEquipmentBuckets
       <SelectedTagChips selectedTags={selectedTags} onChange={setSelectedTags} language={language} optionTags={optionTags} />
       {filtered.length ? lines.filter((line) => (groups.get(line)?.length ?? 0) > 0).map((line) => <section className="option-section open-section" key={line}>
         <div className="option-section-head"><h3>{formatOpenSlot(language, line)}</h3><span>{formatCandidateCount(language, groups.get(line)?.length ?? 0)}</span></div>
-        <div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "open.effect")}</th><th>{uiText(language, "open.nameAndTags")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => {
+        <div className="table-wrap"><table className="open-table"><thead><tr><th>{uiText(language, "option.name")}</th><th>{uiText(language, "open.effect")}</th><th className="option-category-column">{uiText(language, "option.category")}</th><th>{uiText(language, "open.level")}</th><th>{uiText(language, "open.converterProbability")}</th></tr></thead><tbody>{groups.get(line)?.map((row, index) => {
           const localized = localizedRows.get(row)!;
-          return <tr key={`${row.source_block_index}-${row.candidate_index}-${index}`}><td><strong>{localized.display}</strong></td><td>{localized.title}<small>{row.tags.map((tag) => tagText(language, tag, optionTags)).join(" / ")}</small></td><td><span className="tier">{formatTierLevel(language, row.tier)}</span></td><td><b className="probability">{row.probability}%</b></td></tr>;
+          return <tr key={`${row.source_block_index}-${row.candidate_index}-${index}`}><OptionIdentityCell title={localized.title} tags={row.tags} language={language} optionTags={optionTags} /><OptionValueCell value={localized.display} /><OptionTagsCell tags={row.tags} language={language} optionTags={optionTags} /><td><ProgressBadge label={formatTierLevel(language, row.tier)} /></td><td><b className="probability">{row.probability}%</b></td></tr>;
         })}</tbody></table></div>
       </section>) : <div className="empty">{uiText(language, "common.noResults")}</div>}
     </main>

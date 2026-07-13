@@ -4,7 +4,8 @@ import { Icon } from "./components/Icon";
 import { OpenViewer } from "./components/OpenViewer";
 import { PageHeader } from "./components/PageHeader";
 import { Empty } from "./components/common/ExplorerPrimitives";
-import { InstandardOptionOpenViewer } from "./components/instandard/InstandardOptionOpenViewer";
+import { InstandardOpenViewer } from "./components/instandard/InstandardOpenViewer";
+import { InstandardOptionViewer } from "./components/instandard/InstandardOptionViewer";
 import { InstandardTierViewer } from "./components/instandard/InstandardTierViewer";
 import {
   instandardModes,
@@ -158,7 +159,10 @@ function App() {
             setResources({
               source: rawSource,
               openRows: prepareGeneralOpenRows(csv, optionTags),
-              instandardOpenRows: prepareInstandardOpenRows(instandardOpenCsv),
+              instandardOpenRows: prepareInstandardOpenRows(
+                instandardOpenCsv,
+                optionTags,
+              ),
               optionLocales: {
                 ko: koreanBaseOptions,
                 ja: japaneseBaseOptions,
@@ -284,13 +288,21 @@ function App() {
       />
     );
   }
-  if (
-    view === "instandard" &&
-    (instandardMode === "option" || instandardMode === "open")
-  ) {
+  if (view === "instandard" && instandardMode === "option") {
     return (
-      <InstandardOptionOpenViewer
-        mode={instandardMode}
+      <InstandardOptionViewer
+        source={resources.source}
+        language={language}
+        optionLocales={resources.optionLocales}
+        equipmentGroups={resources.equipmentGroups}
+        optionTags={resources.optionTags}
+        controls={headerControls}
+      />
+    );
+  }
+  if (view === "instandard" && instandardMode === "open") {
+    return (
+      <InstandardOpenViewer
         source={resources.source}
         openRows={resources.instandardOpenRows}
         language={language}
