@@ -3,6 +3,8 @@ export type Language = "ko" | "ja";
 const KO_UI_MESSAGES = {
   "app.title": "Red Stone 장비 옵션 탐색기",
   "app.description": "확인할 옵션 시스템을 선택하세요.",
+  "footer.notice": "본 사이트는 개인이 운영하는 비공식 장비 검색 사이트입니다. 게임 내 이미지, 명칭 및 데이터 등의 권리는 L&K Co., Ltd.에 귀속됩니다.",
+  "footer.english": "This is an unofficial site. All game assets, images, and data are property of © L&K Co., Ltd. No copyright infringement intended.",
   "common.home": "메인",
   "common.search": "검색",
   "common.reset": "초기화",
@@ -105,6 +107,8 @@ export type UiMessageKey = keyof typeof KO_UI_MESSAGES;
 const JA_UI_MESSAGES: Record<UiMessageKey, string> = {
   "app.title": "Red Stone 装備オプション検索",
   "app.description": "確認するオプションシステムを選択してください。",
+  "footer.notice": "当サイトは個人が運営する非公式の装備検索サイトです。ゲーム内の画像・名称・データ等の権利は、L&K Co., Ltd.に帰属します。",
+  "footer.english": "This is an unofficial site. All game assets, images, and data are property of © L&K Co., Ltd. No copyright infringement intended.",
   "common.home": "メイン",
   "common.search": "検索",
   "common.reset": "リセット",

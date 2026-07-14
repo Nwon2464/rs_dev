@@ -231,7 +231,7 @@ function App() {
   );
 
   if (view === "home") {
-    return <Home language={language} controls={headerControls} />;
+    return <><Home language={language} controls={headerControls} /><Footer language={language} /></>;
   }
   if (loadError) {
     return (
@@ -245,6 +245,7 @@ function App() {
         <main>
           <Empty language={language} />
         </main>
+        <Footer language={language} />
       </>
     );
   }
@@ -260,12 +261,13 @@ function App() {
         <main>
           <div className="empty">{uiText(language, "loading.progress")}</div>
         </main>
+        <Footer language={language} />
       </>
     );
   }
   if (view === "open") {
     return (
-      <OpenViewer
+      <><OpenViewer
         rows={resources.openRows}
         language={language}
         optionLocales={resources.optionLocales}
@@ -273,36 +275,36 @@ function App() {
         openMetadata={resources.openMetadata}
         optionTags={resources.optionTags}
         themeButton={headerControls}
-      />
+      /><Footer language={language} /></>
     );
   }
   if (view === "instandard" && instandardMode === "tier") {
     return (
-      <InstandardTierViewer
+      <><InstandardTierViewer
         source={resources.source}
         language={language}
         optionLocales={resources.optionLocales}
         equipmentGroups={resources.equipmentGroups}
         optionTags={resources.optionTags}
         controls={headerControls}
-      />
+      /><Footer language={language} /></>
     );
   }
   if (view === "instandard" && instandardMode === "option") {
     return (
-      <InstandardOptionViewer
+      <><InstandardOptionViewer
         source={resources.source}
         language={language}
         optionLocales={resources.optionLocales}
         equipmentGroups={resources.equipmentGroups}
         optionTags={resources.optionTags}
         controls={headerControls}
-      />
+      /><Footer language={language} /></>
     );
   }
   if (view === "instandard" && instandardMode === "open") {
     return (
-      <InstandardOpenViewer
+      <><InstandardOpenViewer
         source={resources.source}
         openRows={resources.instandardOpenRows}
         language={language}
@@ -311,7 +313,7 @@ function App() {
         openMetadata={resources.openMetadata}
         optionTags={resources.optionTags}
         controls={headerControls}
-      />
+      /><Footer language={language} /></>
     );
   }
   return null;
@@ -384,6 +386,15 @@ function Home({
         </div>
       </main>
     </>
+  );
+}
+
+function Footer({ language }: { language: Language }) {
+  return (
+    <footer className="site-footer">
+      <p>{uiText(language, "footer.notice")}</p>
+      <p>{uiText(language, "footer.english")}</p>
+    </footer>
   );
 }
 

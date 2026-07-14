@@ -201,3 +201,6 @@
 @media (max-width:700px) { .tag-filter-groups { grid-template-columns:1fr; } }
 @media (max-width:700px) { .top,main { padding-left:12px; padding-right:12px; } .top p { display:none; } .top { min-height:62px; } .mode-tab { min-height:38px; padding:7px 4px; font-size:11px; } .mode-tab .app-icon { display:none; } td { padding:8px 10px; } td:first-child { width:48%; } .open-table,.instandard-open-table,.instandard-option-results { min-width:720px; } .instandard-option-results td:first-child { width:auto; } .range-button,.probability-warning { align-items:flex-start; flex-direction:column; } }
 @media (max-width:700px) { .header-actions { flex-wrap:wrap; justify-content:flex-end; } }
+.site-footer { max-width:1500px; margin:0 auto; padding:0 20px 24px; color:var(--muted); font-size:10px; line-height:1.45; text-align:center; }
+.site-footer p { margin:0; }
+.site-footer p + p { margin-top:2px; }
