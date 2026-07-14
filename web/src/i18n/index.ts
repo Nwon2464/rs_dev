@@ -3,8 +3,8 @@ export type Language = "ko" | "ja";
 const KO_UI_MESSAGES = {
   "app.title": "Red Stone 장비 옵션 탐색기",
   "app.description": "확인할 옵션 시스템을 선택하세요.",
-  "footer.notice": "본 사이트는 개인이 운영하는 비공식 장비 검색 사이트입니다. 게임 내 이미지, 명칭 및 데이터 등의 권리는 L&K Co., Ltd.에 귀속됩니다.",
-  "footer.english": "This is an unofficial site. All game assets, images, and data are property of © L&K Co., Ltd. No copyright infringement intended.",
+  "footer.notice": "본 사이트는 개인이 운영하는 비공식 장비 검색 사이트입니다. 본 사이트는 어떠한 상업적 이익도 취하지 않으며, 게임 내 이미지, 명칭 및 데이터 등의 모든 권리는 L&K Co., Ltd.에 귀속됩니다.",
+  "footer.english": "This is an unofficial, non-profit equipment search site. All game assets, images, and data are property of © L&K Co., Ltd. No copyright infringement intended.",
   "common.home": "메인",
   "common.search": "검색",
   "common.reset": "초기화",
