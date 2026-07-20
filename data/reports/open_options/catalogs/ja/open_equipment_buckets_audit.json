@@ -1,7 +1,7 @@
 {
-  "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
+  "japanese_llt_source": "/home/nwon/projects/rs_dev/after/language/japanese.llt",
   "equipment_groups_source": "equipment_groups_audit.json",
-  "csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/general/open_option_rows.csv",
+  "csv_source": "/home/nwon/projects/rs_dev/data/processed/open_options/general/open_option_rows.csv",
   "summary": {
     "actual_bucket_count": 11,
     "direct_single_group_count": 8,

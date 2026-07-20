@@ -12,8 +12,8 @@ SCREEN_ROWS = ((1, 15, 736, 300), (2, 13, 623, 25), (3, 1, 623, 20), (4, 17, 464
 
 
 def validate_instandard_open_rows(rows: list[InstandardOpenOptionRow]) -> dict[str, Any]:
-    if len(rows) != 12199:
-        raise ValueError(f"expected 12199 non-standard open rows, found {len(rows)}")
+    if len(rows) != 12202:
+        raise ValueError(f"expected 12202 non-standard open rows, found {len(rows)}")
     if len({row.item_group_id for row in rows}) != 34:
         raise ValueError("non-standard open rows do not cover 34 equipment groups")
     if len({row.bucket_group_ids for row in rows}) != 10:
@@ -26,7 +26,7 @@ def validate_instandard_open_rows(rows: list[InstandardOpenOptionRow]) -> dict[s
         for key, total in sums.items()
         if abs(total - 100.0) > 0.06
     }
-    expected = {(1, "burning", 4, 73, "88.8899989")}
+    expected: set[tuple[int, str, int, int, str]] = set()
     if anomalies != expected:
         raise ValueError(f"unexpected probability anomalies: {sorted(anomalies)}")
     cannon = [row for row in rows if row.item_group_id == 82 and row.converter_type == "burning"]

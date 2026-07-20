@@ -666,5 +666,5 @@
       "option_value_probability_hash": "60fb76a55f261f3c834a3fc67b35993e3dfd2b93482b2d72343e987bfbc11afa"
     }
   },
-  "output": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/general/open_option_rows.csv"
+  "output": "/home/nwon/projects/rs_dev/data/processed/open_options/general/open_option_rows.csv"
 }

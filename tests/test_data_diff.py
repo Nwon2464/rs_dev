@@ -9,7 +9,12 @@ import pytest
 
 import compare_data
 from rs_dev import data_diff
-from rs_dev.data_diff import compare_directories, render_report
+from rs_dev.data_diff import (
+    compare_directories,
+    render_markdown,
+    render_report,
+    report_to_dict,
+)
 
 
 def test_compares_dat_and_japanese_llt_by_recursive_relative_path(tmp_path: Path) -> None:
@@ -50,7 +55,7 @@ def test_reports_file_size_and_korean_summary(tmp_path: Path) -> None:
     assert "[수정] capa.dat (3 B → 6 B)" in output
 
 
-def test_cli_accepts_snapshot_paths_and_returns_zero_for_file_changes(tmp_path: Path) -> None:
+def test_cli_stops_when_required_files_are_missing(tmp_path: Path) -> None:
     before = tmp_path / "before"
     after = tmp_path / "after"
     before.mkdir()
@@ -66,17 +71,26 @@ def test_cli_accepts_snapshot_paths_and_returns_zero_for_file_changes(tmp_path: 
         text=True,
     )
 
-    assert result.returncode == 0
-    assert "[수정] unsupported.dat" in result.stdout
+    assert result.returncode == 1
+    assert "상태: 검사 중단" in result.stdout
+    assert "필수 파일이 없습니다" in result.stdout
+    assert "보고서 폴더를 만들지 않았습니다" in result.stdout
 
 
-def test_cli_returns_one_for_parse_error_without_losing_file_change(tmp_path: Path) -> None:
+def test_cli_returns_one_for_parse_error_without_creating_report(tmp_path: Path) -> None:
     before = tmp_path / "before"
     after = tmp_path / "after"
     before.mkdir()
     after.mkdir()
+    (before / "language").mkdir()
+    (after / "language").mkdir()
     (before / "capa.dat").write_bytes(b"old")
     (after / "capa.dat").write_bytes(b"new")
+    for name in ("item_option_open.dat", "InstandardEquip.dat", "simpleGameText.dat"):
+        (before / name).write_bytes(b"invalid")
+        (after / name).write_bytes(b"invalid")
+    (before / "language" / "japanese.llt").write_bytes(b"old")
+    (after / "language" / "japanese.llt").write_bytes(b"new")
     script = Path(__file__).resolve().parents[1] / "scripts" / "compare_data.py"
 
     result = subprocess.run(
@@ -87,8 +101,10 @@ def test_cli_returns_one_for_parse_error_without_losing_file_change(tmp_path: Pa
     )
 
     assert result.returncode == 1
-    assert "[수정] capa.dat" in result.stdout
-    assert "파일을 파싱할 수 없습니다: capa.dat" in result.stdout
+    assert "상태: 검사 중단" in result.stdout
+    assert "필수 파일을 파싱할 수 없습니다" in result.stdout
+    assert "capa.dat" in result.stdout
+    assert "보고서 폴더를 만들지 않았습니다" in result.stdout
 
 
 def test_cli_rejects_a_single_snapshot_path(tmp_path: Path) -> None:
@@ -232,13 +248,19 @@ def test_capa_record_diff_reports_add_remove_modified_fields_and_limit(
 
     assert (record_diff.before_count, record_diff.after_count) == (2, 12)
     assert record_diff.changes[0].record_id == "0"
-    assert record_diff.changes[0].fields == ("name", "help_text")
+    # help_text는 현재 웹에서 사용하지 않으므로 상세 비교에서 제외한다.
+    assert record_diff.changes[0].fields == ("name",)
     assert record_diff.changes[1].status == "삭제"
+    assert set(record_diff.changes[1].values[0].before) == {
+        "name", "description", "short_text"
+    }
+    assert "help_text" not in record_diff.changes[1].values[0].before
+    assert "record_offset" not in record_diff.changes[1].values[0].before
+    assert set(record_diff.changes[2].values[0].after) == {
+        "name", "description", "short_text"
+    }
     output = render_report(report)
-    assert "레코드: 2 → 12" in output
-    assert "추가 11, 삭제 1, 수정 1" in output
-    assert "수정 0: name, help_text" in output
-    assert "상세 변경 외 3건" in output
+    assert "웹 관련 레코드 변경: 13건" in output
 
 
 def test_simple_game_text_record_diff_uses_group_id_and_name(
@@ -404,13 +426,11 @@ def test_instandard_equip_diff_uses_collection_keys_and_nested_field_paths(
 
     record_diff = compare_directories(before, after).record_diffs[0]
 
-    assert (record_diff.before_count, record_diff.after_count) == (6, 6)
+    # 현재 웹에서 사용하는 두 컬렉션만 상세 비교 개수에 포함한다.
+    assert (record_diff.before_count, record_diff.after_count) == (2, 2)
     assert record_diff.collection_counts == (
         ("OptionData", 1, 1),
         ("OptionsByItemType", 1, 1),
-        ("MaterialData", 1, 1),
-        ("PrefixTagName", 2, 2),
-        ("DisJointData", 1, 1),
     )
     assert [(change.record_id, change.fields) for change in record_diff.changes] == [
         (
@@ -422,16 +442,12 @@ def test_instandard_equip_diff_uses_collection_keys_and_nested_field_paths(
              "TierData[3].TierValue[8][0]", "TierData[3].TierValue[9][0]"),
         ),
         ("OptionsByItemType:7", ("option_ids (-900)", "option_ids (+901)")),
-        ("MaterialData:5", ("GoldBarCost",)),
-        ("PrefixTagName:1", ("text",)),
-        ("DisJointData:0", ("ItemCountRange[1]",)),
     ]
     output = render_report(compare_directories(before, after))
     assert "OptionData: 1 → 1" in output
-    assert "수정 OptionData:63: TagName" in output
 
 
-def test_japanese_llt_diff_uses_composite_key_and_only_contract_fields(
+def test_japanese_llt_uses_hash_only_and_is_not_parsed(
     tmp_path: Path, monkeypatch
 ) -> None:
     before = tmp_path / "before"
@@ -451,22 +467,11 @@ def test_japanese_llt_diff_uses_composite_key_and_only_contract_fields(
             kind=kind,
         )
 
-    monkeypatch.setattr(
-        data_diff,
-        "parse_japanese_llt",
-        lambda path: [record(100003, "new", 3), record(100005, "added")]
-        if path.parent == after
-        else [record(100003, "old", 2), record(100004, "removed")],
-    )
+    report = compare_directories(before, after)
 
-    record_diff = compare_directories(before, after).record_diffs[0]
-
-    assert (record_diff.before_count, record_diff.after_count) == (2, 2)
-    assert [(change.status, change.record_id, change.fields) for change in record_diff.changes] == [
-        ("수정", "10/100003/0/0", ("text", "kind")),
-        ("삭제", "10/100004/0/0", ()),
-        ("추가", "10/100005/0/0", ()),
-    ]
+    assert not report.record_diffs
+    assert report.changes[0].status == "수정"
+    assert "상세 분석 제외" in render_report(report)
 
 
 def test_instandard_parse_error_keeps_file_level_change(tmp_path: Path, monkeypatch) -> None:
@@ -499,13 +504,6 @@ def test_instandard_parse_error_keeps_file_level_change(tmp_path: Path, monkeypa
         (
             "OptionsByItemType",
             lambda _option: [(7, [100]), (7, [101])],
-        ),
-        (
-            "MaterialData",
-            lambda _option: [
-                {"MaterialIdx": 5, "GoldBarCost": 10},
-                {"MaterialIdx": 5, "GoldBarCost": 20},
-            ],
         ),
     ],
 )
@@ -627,7 +625,7 @@ def test_instandard_added_or_removed_option_validates_duplicate_tier_keys(
     assert compare_data.main() == 1
 
 
-def test_japanese_llt_duplicate_key_fails_only_record_details(
+def test_japanese_llt_contents_are_not_parsed(
     tmp_path: Path, monkeypatch
 ) -> None:
     before = tmp_path / "before"
@@ -644,19 +642,13 @@ def test_japanese_llt_duplicate_key_fails_only_record_details(
         text="text",
         kind=2,
     )
-    monkeypatch.setattr(
-        data_diff,
-        "parse_japanese_llt",
-        lambda path: [record, record] if path.parent == after else [record],
-    )
-
     report = compare_directories(before, after)
 
     assert [(change.relative_path.name, change.status) for change in report.changes] == [
         ("japanese.llt", "수정")
     ]
     assert not report.record_diffs
-    assert any("중복 레코드 키: japanese.llt:" in warning for warning in report.warnings)
+    assert not report.warnings
 
 
 def test_missing_material_index_warns_and_other_files_continue(
@@ -690,12 +682,13 @@ def test_missing_material_index_warns_and_other_files_continue(
         "simpleGameText.dat",
     ]
     assert [diff.relative_path.name for diff in report.record_diffs] == [
-        "simpleGameText.dat"
+        "InstandardEquip.dat", "simpleGameText.dat"
     ]
-    assert any("MaterialIdx" in warning for warning in report.warnings)
+    assert not report.warnings
+    assert any("InstandardEquip.dat" in item for item in report.recommended_codex_checks)
 
 
-def test_material_field_added_with_none_is_reported_as_modified(
+def test_material_field_change_is_excluded_from_web_related_changes(
     tmp_path: Path, monkeypatch
 ) -> None:
     before = tmp_path / "before"
@@ -725,6 +718,114 @@ def test_material_field_added_with_none_is_reported_as_modified(
 
     record_diff = compare_directories(before, after).record_diffs[0]
 
-    assert [(change.status, change.record_id, change.fields) for change in record_diff.changes] == [
-        ("수정", "MaterialData:5", ("GoldBarCost",))
+    assert not record_diff.changes
+
+
+def test_structured_reports_include_values_byte_diff_scope_and_prompt(
+    tmp_path: Path, monkeypatch
+) -> None:
+    before = tmp_path / "before"
+    after = tmp_path / "after"
+    before.mkdir()
+    after.mkdir()
+    (before / "capa.dat").write_bytes(b"abcde")
+    (after / "capa.dat").write_bytes(b"axcye")
+    before_record = {
+        1: {"name": "이전", "description": "설명", "short_text": "짧게", "help_text": "옛 도움말"}
+    }
+    after_record = {
+        1: {"name": "이후", "description": "설명", "short_text": "짧게", "help_text": "새 도움말"}
+    }
+    monkeypatch.setattr(
+        data_diff,
+        "parse_capa",
+        lambda path: before_record if path.parent == before else after_record,
+    )
+
+    report = compare_directories(before, after)
+    structured = report_to_dict(report)
+    markdown = render_markdown(report)
+
+    assert structured["inspection_scope"] == "한국어 웹 데이터"
+    assert structured["files"][0]["byte_comparison"] == {
+        "offset_mismatch_bytes": 2,
+        "changed_regions": 2,
+        "first_change_offset": 1,
+    }
+    assert structured["changes"][0]["evidence"] == [
+        {"record_id": "1", "field_path": "name", "before": "이전", "after": "이후"}
     ]
+    assert "help_text" not in structured["changes"][0]["changed_fields"]
+    assert "동일 offset 기준 불일치 바이트: 2개" in markdown
+    assert "첫 변경 위치: 0x000001" in markdown
+    assert "Codex 추가 분석 요청문" in markdown
+
+
+def test_write_reports_never_overwrites_existing_folder(tmp_path: Path) -> None:
+    before = tmp_path / "before"
+    after = tmp_path / "after"
+    docs = tmp_path / "docs"
+    before.mkdir()
+    after.mkdir()
+    report = compare_directories(before, after)
+
+    first_markdown, first_json = compare_data.write_reports(report, docs)
+    second_markdown, second_json = compare_data.write_reports(report, docs)
+
+    assert first_markdown.parent != second_markdown.parent
+    assert first_markdown.read_text(encoding="utf-8").startswith("# 게임 데이터")
+    assert first_json.is_file()
+    assert second_markdown.is_file()
+    assert second_json.is_file()
+
+
+def test_write_reports_does_not_create_folder_when_json_serialization_fails(
+    tmp_path: Path, monkeypatch
+) -> None:
+    before = tmp_path / "before"
+    after = tmp_path / "after"
+    docs = tmp_path / "docs"
+    before.mkdir()
+    after.mkdir()
+    report = compare_directories(before, after)
+    monkeypatch.setattr(compare_data, "report_to_dict", lambda _report: {"bad": object()})
+
+    with pytest.raises(TypeError):
+        compare_data.write_reports(report, docs)
+
+    assert not docs.exists()
+
+
+def test_complete_input_mode_stops_at_first_parse_failure(
+    tmp_path: Path, monkeypatch
+) -> None:
+    before = tmp_path / "before"
+    after = tmp_path / "after"
+    for root in (before, after):
+        (root / "language").mkdir(parents=True)
+        for relative_path in data_diff.REQUIRED_FILES:
+            (root / relative_path).write_bytes(b"data")
+
+    calls: list[str] = []
+    monkeypatch.setattr(data_diff, "parse_capa", lambda path: calls.append("capa") or {})
+
+    def fail_item_groups(path: Path):
+        calls.append("simpleGameText")
+        raise ValueError("broken dependency")
+
+    monkeypatch.setattr(data_diff, "parse_item_groups", fail_item_groups)
+    monkeypatch.setattr(
+        data_diff,
+        "parse_item_option_open",
+        lambda path: calls.append("item_option_open") or [],
+    )
+
+    report = compare_directories(
+        before, after, require_complete_inputs=True
+    )
+
+    assert report.fatal_error
+    assert report.status == "검사 중단"
+    assert calls == ["capa", "capa", "simpleGameText"]
+    assert not report.changes
+    assert not report.record_diffs

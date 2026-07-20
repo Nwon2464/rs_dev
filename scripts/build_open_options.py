@@ -17,7 +17,10 @@ from rs_dev.open_options.catalogs.pipeline import (  # noqa: E402
     build_auxiliary_catalogs,
     build_japanese_catalog_audits,
 )
-from rs_dev.open_options.locales.pipeline import build_locale_catalogs  # noqa: E402
+from rs_dev.open_options.locales.pipeline import (  # noqa: E402
+    DEFAULT_LLT,
+    build_locale_catalogs,
+)
 from rs_dev.open_options.instandard.pipeline import build_instandard  # noqa: E402
 
 
@@ -27,7 +30,7 @@ def main() -> None:
     parser.add_argument(
         "--llt",
         type=Path,
-        default=Path("/mnt/c/game/Red Stone/Data/language/japanese.llt"),
+        default=DEFAULT_LLT,
     )
     args = parser.parse_args()
     general = build_general_open_options(data_dir=args.data_dir)

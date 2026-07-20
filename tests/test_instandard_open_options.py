@@ -33,17 +33,44 @@ def test_normalized_catalog_preserves_assignments_and_tiers() -> None:
 
 def test_four_converter_views_match_migration_baseline() -> None:
     rows = _rows()
-    assert len(rows) == 12199
+    assert len(rows) == 12202
     assert {row.converter_type for row in rows} == {"normal", "improved", "fake", "burning"}
     report = json.loads((ROOT / "data/reports/open_options/instandard/converter_validation.json").read_text(encoding="utf-8"))
     assert report["migration_comparison"]["matches"] is True
-    assert report["probability_anomalies"] == [{
-        "item_group_id": 1,
-        "converter_type": "burning",
-        "open_slot": 4,
-        "source_block_index": 73,
-        "sum": "88.8899989",
-    }]
+    assert report["probability_anomalies"] == []
+
+
+def test_updated_open_option_rows_are_renderable() -> None:
+    rows = _rows()
+    helmet_burning = [
+        row
+        for row in rows
+        if row.item_group_id == 1
+        and row.converter_type == "burning"
+        and row.open_slot == 4
+    ]
+    assert [
+        (row.candidate_index, row.option_id, row.value_0, row.tier)
+        for row in helmet_burning[-4:]
+    ] == [
+        (24, 723, 13, 4),
+        (25, 754, 5, 2),
+        (26, 754, 6, 3),
+        (27, 754, 8, 4),
+    ]
+    assert abs(sum(float(row.probability) for row in helmet_burning) - 100) <= 0.06
+
+    crown_fake = [
+        row
+        for row in rows
+        if row.item_group_id == 29
+        and row.converter_type == "fake"
+        and row.open_slot == 4
+        and row.candidate_index == 20
+    ]
+    assert [(row.option_id, row.value_0, row.tier) for row in crown_fake] == [
+        (688, 14, 2),
+    ]
 
 
 def test_screen_confirmed_cannon_rows_are_preserved() -> None:

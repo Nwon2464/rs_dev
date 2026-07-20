@@ -38,7 +38,7 @@ from rs_dev.open_options.templates.bindings import load_value_bindings
 
 
 ROOT = Path(__file__).resolve().parents[4]
-DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
+DEFAULT_DATA_DIR = ROOT / "after"
 DEFAULT_INTERMEDIATE = ROOT / "data/intermediate/open_options/instandard"
 DEFAULT_OUTPUT_ROOT = ROOT / "data/processed/open_options/instandard"
 DEFAULT_REPORT_ROOT = ROOT / "data/reports/open_options/instandard"

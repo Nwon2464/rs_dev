@@ -1,21 +1,13 @@
 {
-  "row_count": 12199,
+  "row_count": 12202,
   "equipment_group_count": 34,
   "signature_count": 10,
-  "probability_anomalies": [
-    {
-      "item_group_id": 1,
-      "converter_type": "burning",
-      "open_slot": 4,
-      "source_block_index": 73,
-      "sum": "88.8899989"
-    }
-  ],
+  "probability_anomalies": [],
   "converter_row_counts": {
     "normal": 3260,
     "improved": 3260,
     "fake": 2341,
-    "burning": 3338
+    "burning": 3341
   },
   "migration_comparison": {
     "matches": true,
@@ -1112,7 +1104,7 @@
       "active_tier_roll_count": 7640,
       "inactive_tier_roll_count": 360,
       "converter_row_counts": {
-        "burning": 3338,
+        "burning": 3341,
         "fake": 2341,
         "improved": 3260,
         "normal": 3260
@@ -1201,7 +1193,7 @@
         "1|burning|1|73": 100.0,
         "1|burning|2|73": 100.000001,
         "1|burning|3|73": 100.0,
-        "1|burning|4|73": 88.8899989,
+        "1|burning|4|73": 99.9999988,
         "1|fake|1|70": 100.0,
         "1|fake|2|70": 100.0,
         "1|fake|3|70": 100.0,
@@ -1667,8 +1659,8 @@
         922,
         1045
       ],
-      "open_row_count": 12199,
-      "open_row_hash": "4e0100810962a6cae07911ece4cf1ebaa079b3128fd6f3adf33dddbe1c373b25"
+      "open_row_count": 12202,
+      "open_row_hash": "d055c12bb2e305bcf46037b11061291aff649dccc24a7775accd62bf5d19e0e9"
     }
   }
 }

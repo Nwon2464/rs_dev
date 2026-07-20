@@ -6,3 +6,7 @@ __pycache__/
 
 web/tsconfig.tsbuildinfo
 data/intermediate/open_options/
+
+# Local game-data snapshots. Generated CSV/JSON outputs are tracked instead.
+before/
+after/

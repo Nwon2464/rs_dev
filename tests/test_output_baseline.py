@@ -4,8 +4,32 @@ import csv
 import json
 from pathlib import Path
 
+from rs_dev.open_options.catalogs.pipeline import (
+    DEFAULT_DATA_DIR as CATALOG_DATA_DIR,
+    DEFAULT_LLT as CATALOG_LLT,
+)
+from rs_dev.open_options.general.pipeline import DEFAULT_DATA_DIR as GENERAL_DATA_DIR
+from rs_dev.open_options.instandard.pipeline import (
+    DEFAULT_DATA_DIR as INSTANDARD_DATA_DIR,
+)
+from rs_dev.open_options.locales.pipeline import (
+    DEFAULT_DATA_DIR as LOCALE_DATA_DIR,
+    DEFAULT_LLT as LOCALE_LLT,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_all_web_data_builders_default_to_after_snapshot() -> None:
+    after = ROOT / "after"
+    assert {
+        GENERAL_DATA_DIR,
+        INSTANDARD_DATA_DIR,
+        LOCALE_DATA_DIR,
+        CATALOG_DATA_DIR,
+    } == {after}
+    assert {LOCALE_LLT, CATALOG_LLT} == {after / "language/japanese.llt"}
 
 
 def test_general_migration_baseline_and_association_audit() -> None:

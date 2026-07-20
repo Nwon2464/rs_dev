@@ -1,7 +1,7 @@
 {
-  "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
-  "general_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/general/open_option_rows.csv",
-  "instandard_csv_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/instandard/open_option_rows.csv",
+  "japanese_llt_source": "/home/nwon/projects/rs_dev/after/language/japanese.llt",
+  "general_csv_source": "/home/nwon/projects/rs_dev/data/processed/open_options/general/open_option_rows.csv",
+  "instandard_csv_source": "/home/nwon/projects/rs_dev/data/processed/open_options/instandard/open_option_rows.csv",
   "current_ui_source": "not used by production catalog build",
   "summary": {
     "section_count": 171,
@@ -179,7 +179,7 @@
       "description": "以前の解放オプション変換器にRED STONEの力がさらに込められている装置。解放済みのアイテムに使用すると、アイテムの解放オプションをランダムに変換できる。やや実験的だが、通常の解放オプション変換器や解放オプション変換器・改よりは良い結果が期待できる。\n\n<c:LTRED>※ 最低1個以上のオプションが解放済みのアイテムのみ変換可能。<n>\n<c:LTRED>※ 解放済みではないオプションは変換不可。<n>\n<c:LTRED>※ Nxユニーク以外のアイテム、遺物、リング、補助武器、投擲機、爪は変換不可。<n>\n<c:LTRED>※ 壊れたアイテムは変換不可。<n>\n<c:LTRED>※ ULT等級以外のアイテムは変換不可。<n>",
       "usage_counts": {
         "general": 815,
-        "instandard": 3338
+        "instandard": 3341
       },
       "evidence": [
         "section 67 text_id 13498 is the item name",

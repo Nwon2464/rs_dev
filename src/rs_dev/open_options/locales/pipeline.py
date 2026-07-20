@@ -15,8 +15,8 @@ from rs_dev.parsers import parse_capa, parse_japanese_llt
 
 
 ROOT = Path(__file__).resolve().parents[4]
-DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
-DEFAULT_LLT = Path("/mnt/c/game/Red Stone/Data/language/japanese.llt")
+DEFAULT_DATA_DIR = ROOT / "after"
+DEFAULT_LLT = DEFAULT_DATA_DIR / "language/japanese.llt"
 DEFAULT_GENERAL_ROWS = ROOT / "data/processed/open_options/general/open_option_rows.csv"
 DEFAULT_INSTANDARD_ROWS = ROOT / "data/processed/open_options/instandard/open_option_rows.csv"
 DEFAULT_INSTANDARD_CATALOG = ROOT / "data/processed/open_options/instandard/catalog.json"

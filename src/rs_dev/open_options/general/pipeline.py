@@ -30,7 +30,7 @@ from rs_dev.parsers import parse_item_groups, parse_item_option_open
 
 
 ROOT = Path(__file__).resolve().parents[4]
-DEFAULT_DATA_DIR = Path("/mnt/c/game/Red Stone/Data")
+DEFAULT_DATA_DIR = ROOT / "after"
 DEFAULT_INTERMEDIATE = ROOT / "data/intermediate/open_options/general"
 DEFAULT_OUTPUT = ROOT / "data/processed/open_options/general/open_option_rows.csv"
 DEFAULT_LEGACY = ROOT / "data/processed/equipment_converter_type_options.csv"

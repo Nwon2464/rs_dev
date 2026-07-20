@@ -1,7 +1,7 @@
 {
-  "japanese_llt_source": "/mnt/c/game/Red Stone/Data/language/japanese.llt",
-  "korean_group_source": "/mnt/c/game/Red Stone/Data/simpleGameText.dat",
-  "current_ui_source": "/home/nwon/projects/rs_dev-japanese-ui/data/processed/open_options/instandard/catalog.json",
+  "japanese_llt_source": "/home/nwon/projects/rs_dev/after/language/japanese.llt",
+  "korean_group_source": "/home/nwon/projects/rs_dev/after/simpleGameText.dat",
+  "current_ui_source": "/home/nwon/projects/rs_dev/data/processed/open_options/instandard/catalog.json",
   "likely_section_id": 163,
   "summary": {
     "section_count": 171,
@@ -139,32 +139,32 @@
     },
     {
       "section_id": 9,
-      "record_count": 36,
-      "unique_text_id_count": 36,
+      "record_count": 38,
+      "unique_text_id_count": 38,
       "text_id_min": 1,
-      "text_id_max": 36,
-      "item_group_id_coverage": 36,
+      "text_id_max": 38,
+      "item_group_id_coverage": 38,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 36
+        "kind0:0:0": 38
       },
       "short_noun_text_ratio": 1.0,
       "hint_matches": []
     },
     {
       "section_id": 10,
-      "record_count": 1280,
-      "unique_text_id_count": 1280,
+      "record_count": 1282,
+      "unique_text_id_count": 1282,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 1280
+        "kind0:0:0": 1282
       },
-      "short_noun_text_ratio": 0.92109375,
+      "short_noun_text_ratio": 0.9212168486739469,
       "hint_matches": [
         {
           "text_id": 61,
@@ -176,8 +176,8 @@
     },
     {
       "section_id": 11,
-      "record_count": 623,
-      "unique_text_id_count": 127,
+      "record_count": 611,
+      "unique_text_id_count": 124,
       "text_id_min": 0,
       "text_id_max": 100207,
       "item_group_id_coverage": 9,
@@ -213,7 +213,7 @@
         "kinds[0]:2-variant-combinations": 22,
         "kinds[0]:3-variant-combinations": 11,
         "kinds[0]:30-variant-combinations": 1,
-        "kinds[0]:4-variant-combinations": 23,
+        "kinds[0]:4-variant-combinations": 20,
         "kinds[0]:46-variant-combinations": 1,
         "kinds[0]:5-variant-combinations": 9,
         "kinds[0]:6-variant-combinations": 6,
@@ -222,15 +222,15 @@
         "kinds[0]:8-variant-combinations": 5,
         "kinds[0]:9-variant-combinations": 2
       },
-      "short_noun_text_ratio": 0.09951845906902086,
+      "short_noun_text_ratio": 0.10147299509001637,
       "hint_matches": []
     },
     {
       "section_id": 12,
-      "record_count": 182519,
-      "unique_text_id_count": 1204,
+      "record_count": 182523,
+      "unique_text_id_count": 1206,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [
@@ -408,7 +408,7 @@
         "kinds[0]:195-variant-combinations": 1,
         "kinds[0]:197-variant-combinations": 5,
         "kinds[0]:199-variant-combinations": 1,
-        "kinds[0]:2-variant-combinations": 20,
+        "kinds[0]:2-variant-combinations": 22,
         "kinds[0]:20-variant-combinations": 4,
         "kinds[0]:200-variant-combinations": 6,
         "kinds[0]:201-variant-combinations": 2,
@@ -771,10 +771,10 @@
     },
     {
       "section_id": 13,
-      "record_count": 70296,
-      "unique_text_id_count": 722,
+      "record_count": 70314,
+      "unique_text_id_count": 724,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 39,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [
@@ -978,7 +978,7 @@
         "kinds[0]:851-variant-combinations": 1,
         "kinds[0]:86-variant-combinations": 5,
         "kinds[0]:87-variant-combinations": 1,
-        "kinds[0]:9-variant-combinations": 13,
+        "kinds[0]:9-variant-combinations": 15,
         "kinds[0]:90-variant-combinations": 2,
         "kinds[0]:91-variant-combinations": 1,
         "kinds[0]:914-variant-combinations": 1,
@@ -988,7 +988,7 @@
         "kinds[0]:96-variant-combinations": 1,
         "kinds[0]:97-variant-combinations": 2
       },
-      "short_noun_text_ratio": 0.1529390007966314,
+      "short_noun_text_ratio": 0.15292829308530306,
       "hint_matches": [
         {
           "text_id": 0,
@@ -1138,10 +1138,10 @@
     },
     {
       "section_id": 14,
-      "record_count": 63351,
-      "unique_text_id_count": 706,
+      "record_count": 63373,
+      "unique_text_id_count": 708,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 35,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [
@@ -1188,7 +1188,7 @@
         "kinds[0]:10-variant-combinations": 21,
         "kinds[0]:102-variant-combinations": 1,
         "kinds[0]:109-variant-combinations": 1,
-        "kinds[0]:11-variant-combinations": 16,
+        "kinds[0]:11-variant-combinations": 18,
         "kinds[0]:112-variant-combinations": 4,
         "kinds[0]:118-variant-combinations": 1,
         "kinds[0]:12-variant-combinations": 13,
@@ -1342,7 +1342,7 @@
         "kinds[0]:95-variant-combinations": 1,
         "kinds[0]:99-variant-combinations": 1
       },
-      "short_noun_text_ratio": 0.33607993559691246,
+      "short_noun_text_ratio": 0.33602638347561264,
       "hint_matches": [
         {
           "text_id": 0,
@@ -1744,10 +1744,10 @@
     },
     {
       "section_id": 16,
-      "record_count": 14718,
-      "unique_text_id_count": 1210,
+      "record_count": 14722,
+      "unique_text_id_count": 1212,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [
@@ -1848,7 +1848,7 @@
         "kinds[0]:17-variant-combinations": 9,
         "kinds[0]:18-variant-combinations": 16,
         "kinds[0]:19-variant-combinations": 14,
-        "kinds[0]:2-variant-combinations": 64,
+        "kinds[0]:2-variant-combinations": 66,
         "kinds[0]:20-variant-combinations": 16,
         "kinds[0]:21-variant-combinations": 15,
         "kinds[0]:22-variant-combinations": 24,
@@ -3625,7 +3625,7 @@
     },
     {
       "section_id": 48,
-      "record_count": 24,
+      "record_count": 25,
       "unique_text_id_count": 3,
       "text_id_min": 0,
       "text_id_max": 2,
@@ -3637,8 +3637,7 @@
         2
       ],
       "variant_structure": {
-        "kinds[0]:7-variant-combinations": 1,
-        "kinds[0]:8-variant-combinations": 1,
+        "kinds[0]:8-variant-combinations": 2,
         "kinds[0]:9-variant-combinations": 1
       },
       "short_noun_text_ratio": 1.0,
@@ -3646,7 +3645,7 @@
     },
     {
       "section_id": 49,
-      "record_count": 24,
+      "record_count": 25,
       "unique_text_id_count": 3,
       "text_id_min": 0,
       "text_id_max": 2,
@@ -3658,11 +3657,10 @@
         2
       ],
       "variant_structure": {
-        "kinds[0]:7-variant-combinations": 1,
-        "kinds[0]:8-variant-combinations": 1,
+        "kinds[0]:8-variant-combinations": 2,
         "kinds[0]:9-variant-combinations": 1
       },
-      "short_noun_text_ratio": 0.16666666666666666,
+      "short_noun_text_ratio": 0.16,
       "hint_matches": []
     },
     {
@@ -3682,17 +3680,17 @@
     },
     {
       "section_id": 51,
-      "record_count": 1827,
-      "unique_text_id_count": 1827,
+      "record_count": 1830,
+      "unique_text_id_count": 1830,
       "text_id_min": 0,
-      "text_id_max": 1826,
+      "text_id_max": 1829,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 1827
+        "kind0:0:0": 1830
       },
-      "short_noun_text_ratio": 0.9720853858784894,
+      "short_noun_text_ratio": 0.9721311475409836,
       "hint_matches": []
     },
     {
@@ -4057,15 +4055,15 @@
     },
     {
       "section_id": 64,
-      "record_count": 173,
-      "unique_text_id_count": 173,
+      "record_count": 175,
+      "unique_text_id_count": 175,
       "text_id_min": 0,
-      "text_id_max": 172,
+      "text_id_max": 174,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 173
+        "kind0:0:0": 175
       },
       "short_noun_text_ratio": 1.0,
       "hint_matches": []
@@ -4115,17 +4113,17 @@
     },
     {
       "section_id": 67,
-      "record_count": 14436,
-      "unique_text_id_count": 14436,
+      "record_count": 14441,
+      "unique_text_id_count": 14441,
       "text_id_min": 0,
-      "text_id_max": 14435,
+      "text_id_max": 14440,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 14436
+        "kind0:0:0": 14441
       },
-      "short_noun_text_ratio": 0.9963978941535051,
+      "short_noun_text_ratio": 0.9963991413337027,
       "hint_matches": [
         {
           "text_id": 48,
@@ -4179,17 +4177,17 @@
     },
     {
       "section_id": 68,
-      "record_count": 14436,
-      "unique_text_id_count": 14436,
+      "record_count": 14441,
+      "unique_text_id_count": 14441,
       "text_id_min": 0,
-      "text_id_max": 14435,
+      "text_id_max": 14440,
       "item_group_id_coverage": 84,
       "has_all_item_group_ids": true,
       "duplicate_item_group_ids": [],
       "variant_structure": {
-        "kind0:0:0": 14436
+        "kind0:0:0": 14441
       },
-      "short_noun_text_ratio": 0.16922970351898034,
+      "short_noun_text_ratio": 0.16944809916210787,
       "hint_matches": [
         {
           "text_id": 48,
@@ -4874,7 +4872,7 @@
       "variant_structure": {
         "kind0:0:0": 2311
       },
-      "short_noun_text_ratio": 0.9956728688879273,
+      "short_noun_text_ratio": 0.9969710082215492,
       "hint_matches": []
     },
     {
@@ -4889,7 +4887,7 @@
       "variant_structure": {
         "kind0:0:0": 2130
       },
-      "short_noun_text_ratio": 0.24741784037558687,
+      "short_noun_text_ratio": 0.24788732394366197,
       "hint_matches": [
         {
           "text_id": 16,
@@ -5869,7 +5867,7 @@
       "variant_structure": {
         "kind0:0:0": 2383
       },
-      "short_noun_text_ratio": 0.9974821653378095,
+      "short_noun_text_ratio": 1.0,
       "hint_matches": [
         {
           "text_id": 36,
@@ -5899,10 +5897,10 @@
     },
     {
       "section_id": 130,
-      "record_count": 197,
-      "unique_text_id_count": 46,
+      "record_count": 201,
+      "unique_text_id_count": 47,
       "text_id_min": 2,
-      "text_id_max": 86,
+      "text_id_max": 87,
       "item_group_id_coverage": 43,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [
@@ -5948,7 +5946,7 @@
         "kinds[0]:2-variant-combinations": 7,
         "kinds[0]:29-variant-combinations": 1,
         "kinds[0]:3-variant-combinations": 4,
-        "kinds[0]:4-variant-combinations": 10,
+        "kinds[0]:4-variant-combinations": 11,
         "kinds[0]:5-variant-combinations": 1,
         "kinds[0]:6-variant-combinations": 2,
         "kinds[0]:7-variant-combinations": 2,
@@ -5992,10 +5990,10 @@
     },
     {
       "section_id": 132,
-      "record_count": 719,
-      "unique_text_id_count": 68,
+      "record_count": 724,
+      "unique_text_id_count": 69,
       "text_id_min": 1,
-      "text_id_max": 85,
+      "text_id_max": 87,
       "item_group_id_coverage": 66,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [
@@ -6076,14 +6074,14 @@
         "kinds[0]:41-variant-combinations": 1,
         "kinds[0]:42-variant-combinations": 1,
         "kinds[0]:44-variant-combinations": 1,
-        "kinds[0]:5-variant-combinations": 2,
+        "kinds[0]:5-variant-combinations": 3,
         "kinds[0]:6-variant-combinations": 1,
         "kinds[0]:7-variant-combinations": 1,
         "kinds[0]:8-variant-combinations": 3,
         "kinds[0]:80-variant-combinations": 1,
         "kinds[0]:9-variant-combinations": 1
       },
-      "short_noun_text_ratio": 0.9068150208623088,
+      "short_noun_text_ratio": 0.9074585635359116,
       "hint_matches": []
     },
     {
@@ -6341,10 +6339,10 @@
     },
     {
       "section_id": 149,
-      "record_count": 38852,
-      "unique_text_id_count": 713,
+      "record_count": 38858,
+      "unique_text_id_count": 715,
       "text_id_min": 0,
-      "text_id_max": 100207,
+      "text_id_max": 100209,
       "item_group_id_coverage": 66,
       "has_all_item_group_ids": false,
       "duplicate_item_group_ids": [
@@ -6522,7 +6520,7 @@
         "kinds[0]:28-variant-combinations": 1,
         "kinds[0]:280-variant-combinations": 1,
         "kinds[0]:29-variant-combinations": 4,
-        "kinds[0]:3-variant-combinations": 48,
+        "kinds[0]:3-variant-combinations": 50,
         "kinds[0]:30-variant-combinations": 5,
         "kinds[0]:305-variant-combinations": 1,
         "kinds[0]:31-variant-combinations": 4,
@@ -6581,7 +6579,7 @@
         "kinds[0]:98-variant-combinations": 9,
         "kinds[0]:99-variant-combinations": 9
       },
-      "short_noun_text_ratio": 0.025352620199732317,
+      "short_noun_text_ratio": 0.025451644449019508,
       "hint_matches": [
         {
           "text_id": 0,

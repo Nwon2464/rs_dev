@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 const webRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const root = resolve(webRoot, "..");
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
+const python = process.platform === "win32"
+  ? resolve(root, ".venv", "Scripts", "python.exe")
+  : resolve(root, ".venv", "bin", "python");
 
 function run(command, args, cwd) {
   const result = spawnSync(command, args, { cwd, stdio: "inherit" });
@@ -13,7 +16,7 @@ function run(command, args, cwd) {
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
-run("python3", ["scripts/build_open_options.py"], root);
+run(python, ["scripts/build_open_options.py"], root);
 
 const publicData = resolve(webRoot, "public", "data");
 const openOptionsData = resolve(publicData, "open_options");
