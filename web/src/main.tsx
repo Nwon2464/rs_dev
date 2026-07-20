@@ -431,8 +431,10 @@ function Footer({
           <time dateTime={updatedDate}>{formattedUpdatedDate}</time>
         </p>
       )}
-      <p>{uiText(language, "footer.notice")}</p>
-      <p>{uiText(language, "footer.english")}</p>
+      <div className="footer-disclosure">
+        <p>{uiText(language, "footer.notice")}</p>
+        <p>{uiText(language, "footer.english")}</p>
+      </div>
     </footer>
   );
 }

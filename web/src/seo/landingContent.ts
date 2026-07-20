@@ -1,35 +1,24 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import type { SeoRoute } from "./routes";
+import siteMetadata from "./siteMetadata.json";
 
 export type LandingContent = {
   updatedDate: string;
   formattedDate: string;
 };
 
-const CHANGELOG_PATH = resolve(process.cwd(), "..", "CHANGELOG.md");
-
-async function latestChangelogDate(): Promise<string> {
-  const changelog = await readFile(CHANGELOG_PATH, "utf8");
-  const headings = [...changelog.matchAll(
-    /^## (?:Unreleased — )?(\d{4}-\d{2}-\d{2})\s*$/gm,
-  )];
-  const dates = headings
-    .filter((heading, index) => {
-      const bodyStart = (heading.index ?? 0) + heading[0].length;
-      const bodyEnd = headings[index + 1]?.index ?? changelog.length;
-      return /^### 게임 데이터 변경\s*$/m.test(
-        changelog.slice(bodyStart, bodyEnd),
-      );
-    })
-    .map((heading) => heading[1])
-    .sort((left, right) => right.localeCompare(left));
-  if (!dates.length) {
+function dataUpdateDate(): string {
+  const date = siteMetadata.last_data_update;
+  const parsed = new Date(`${date}T00:00:00Z`);
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+    Number.isNaN(parsed.valueOf()) ||
+    parsed.toISOString().slice(0, 10) !== date
+  ) {
     throw new Error(
-      "CHANGELOG.md에서 '게임 데이터 변경' 항목의 YYYY-MM-DD 갱신일을 찾을 수 없습니다.",
+      "siteMetadata.json의 last_data_update를 YYYY-MM-DD 형식으로 입력해야 합니다.",
     );
   }
-  return dates[0];
+  return date;
 }
 
 function formatDate(date: string, language: SeoRoute["language"]): string {
@@ -42,7 +31,7 @@ function formatDate(date: string, language: SeoRoute["language"]): string {
 export async function loadLandingContent(
   route: SeoRoute,
 ): Promise<LandingContent> {
-  const updatedDate = await latestChangelogDate();
+  const updatedDate = dataUpdateDate();
   return {
     updatedDate,
     formattedDate: formatDate(updatedDate, route.language),
