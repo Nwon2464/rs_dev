@@ -5,6 +5,7 @@ __pycache__/
 *.egg-info/
 
 web/tsconfig.tsbuildinfo
+web/.astro/
 data/intermediate/open_options/
 
 # Local game-data snapshots. Generated CSV/JSON outputs are tracked instead.

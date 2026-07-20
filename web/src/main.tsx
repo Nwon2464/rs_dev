@@ -33,9 +33,10 @@ import {
   type Language,
   type UiMessageKey,
 } from "./i18n";
+import { instandardUrl, openOptionsUrl, pageUrl } from "./siteUrls";
 import "./styles.css";
 
-type View = "home" | "instandard" | "open";
+export type View = "home" | "instandard" | "open";
 type Theme = "light" | "dark";
 
 type Resources = {
@@ -49,25 +50,44 @@ type Resources = {
   optionTags: OptionTagData;
 };
 
-function App() {
-  const params = new URLSearchParams(window.location.search);
+export function App({
+  initialView,
+  initialMode = null,
+  initialLanguage,
+  staticTitle,
+  staticDescription,
+}: {
+  initialView?: View;
+  initialMode?: InstandardMode | null;
+  initialLanguage?: Language;
+  staticTitle?: string;
+  staticDescription?: string;
+}) {
+  const params = new URLSearchParams(
+    typeof window === "undefined" ? "" : window.location.search,
+  );
   const requested = params.get("view");
-  const view: View =
-    requested === "open" || requested === "instandard" ? requested : "home";
+  const view: View = initialView ??
+    (requested === "open" || requested === "instandard" ? requested : "home");
   const requestedMode = params.get("mode");
-  const instandardMode: InstandardMode | null =
+  const queryMode: InstandardMode | null =
     requestedMode === "option" ||
     requestedMode === "open" ||
     requestedMode === "tier"
       ? requestedMode
       : null;
+  const instandardMode = initialMode ?? queryMode;
   const [theme, setTheme] = useState<Theme>(() =>
-    localStorage.getItem("redstone-ui-theme") === "light" ? "light" : "dark",
+    typeof localStorage !== "undefined" &&
+    localStorage.getItem("redstone-ui-theme") === "light"
+      ? "light"
+      : "dark",
   );
   const [language, setLanguage] = useState<Language>(() =>
-    loadLanguage(localStorage),
+    initialLanguage ??
+    (typeof localStorage === "undefined" ? "ja" : loadLanguage(localStorage)),
   );
-  const [resources, setResources] = useState<Resources | null>(null);
+  const [resources, setResources] = useState<Partial<Resources> | null>(null);
   const [loadError, setLoadError] = useState<UiMessageKey | null>(null);
 
   useEffect(() => {
@@ -81,100 +101,99 @@ function App() {
   }, [language]);
 
   useEffect(() => {
+    if (view === "home") return;
     let cancelled = false;
     const base = import.meta.env.BASE_URL;
-    Promise.all([
-      fetch(`${base}data/open_options/instandard/catalog.json`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.dataset");
-          return response.json() as Promise<InstandardCatalog>;
-        },
-      ),
-      fetch(`${base}data/open_options/general/open_option_rows.csv`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.openCsv");
-          return response.text();
-        },
-      ),
-      fetch(`${base}data/open_options/instandard/open_option_rows.csv`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.instandardOpenCsv");
-          return response.text();
-        },
-      ),
-      fetch(`${base}data/open_options/i18n/ko/base_options.json`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.japaneseOptions");
-          return response.json() as Promise<OptionLocales["ko"]>;
-        },
-      ),
-      fetch(`${base}data/open_options/i18n/ja/base_options.json`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.japaneseOptions");
-          return response.json() as Promise<OptionLocales["ja"]>;
-        },
-      ),
-      fetch(`${base}data/open_options/catalogs/equipment_groups.json`).then(
-        (response) => {
-          if (!response.ok) {
-            throw new Error("error.japaneseEquipmentGroups");
-          }
-          return response.json() as Promise<EquipmentGroups>;
-        },
-      ),
-      fetch(
-        `${base}data/open_options/catalogs/open_equipment_buckets.json`,
-      ).then((response) => {
-        if (!response.ok) {
-          throw new Error("error.japaneseOpenEquipmentBuckets");
-        }
-        return response.json() as Promise<OpenEquipmentBuckets>;
-      }),
-      fetch(`${base}data/open_options/catalogs/open_metadata.json`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.japaneseOpenMetadata");
-          return response.json() as Promise<OpenMetadata>;
-        },
-      ),
-      fetch(`${base}data/open_options/catalogs/option_tags.json`).then(
-        (response) => {
-          if (!response.ok) throw new Error("error.optionTags");
-          return response.json() as Promise<OptionTagData>;
-        },
-      ),
-    ])
-      .then(
-        ([
-          rawSource,
-          csv,
-          instandardOpenCsv,
-          koreanBaseOptions,
-          japaneseBaseOptions,
-          equipmentGroups,
+    const json = async <T,>(path: string, error: UiMessageKey): Promise<T> => {
+      const response = await fetch(`${base}${path}`);
+      if (!response.ok) throw new Error(error);
+      return response.json() as Promise<T>;
+    };
+    const text = async (path: string, error: UiMessageKey): Promise<string> => {
+      const response = await fetch(`${base}${path}`);
+      if (!response.ok) throw new Error(error);
+      return response.text();
+    };
+    const load = async (): Promise<Partial<Resources>> => {
+      const [koreanBaseOptions, japaneseBaseOptions, optionTags] =
+        await Promise.all([
+          json<OptionLocales["ko"]>(
+            "data/open_options/i18n/ko/base_options.json",
+            "error.japaneseOptions",
+          ),
+          json<OptionLocales["ja"]>(
+            "data/open_options/i18n/ja/base_options.json",
+            "error.japaneseOptions",
+          ),
+          json<OptionTagData>(
+            "data/open_options/catalogs/option_tags.json",
+            "error.optionTags",
+          ),
+        ]);
+      const common = {
+        optionLocales: { ko: koreanBaseOptions, ja: japaneseBaseOptions },
+        optionTags,
+      };
+      if (view === "open") {
+        const [csv, openEquipmentBuckets, openMetadata] = await Promise.all([
+          text(
+            "data/open_options/general/open_option_rows.csv",
+            "error.openCsv",
+          ),
+          json<OpenEquipmentBuckets>(
+            "data/open_options/catalogs/open_equipment_buckets.json",
+            "error.japaneseOpenEquipmentBuckets",
+          ),
+          json<OpenMetadata>(
+            "data/open_options/catalogs/open_metadata.json",
+            "error.japaneseOpenMetadata",
+          ),
+        ]);
+        return {
+          ...common,
+          openRows: prepareGeneralOpenRows(csv, optionTags),
           openEquipmentBuckets,
           openMetadata,
+        };
+      }
+      const [source, equipmentGroups] = await Promise.all([
+        json<InstandardCatalog>(
+          "data/open_options/instandard/catalog.json",
+          "error.dataset",
+        ),
+        json<EquipmentGroups>(
+          "data/open_options/catalogs/equipment_groups.json",
+          "error.japaneseEquipmentGroups",
+        ),
+      ]);
+      if (instandardMode !== "open") {
+        return { ...common, source, equipmentGroups };
+      }
+      const [instandardOpenCsv, openMetadata] = await Promise.all([
+        text(
+          "data/open_options/instandard/open_option_rows.csv",
+          "error.instandardOpenCsv",
+        ),
+        json<OpenMetadata>(
+          "data/open_options/catalogs/open_metadata.json",
+          "error.japaneseOpenMetadata",
+        ),
+      ]);
+      return {
+        ...common,
+        source,
+        equipmentGroups,
+        instandardOpenRows: prepareInstandardOpenRows(
+          instandardOpenCsv,
           optionTags,
-        ]) => {
-          if (!cancelled) {
-            setResources({
-              source: rawSource,
-              openRows: prepareGeneralOpenRows(csv, optionTags),
-              instandardOpenRows: prepareInstandardOpenRows(
-                instandardOpenCsv,
-                optionTags,
-              ),
-              optionLocales: {
-                ko: koreanBaseOptions,
-                ja: japaneseBaseOptions,
-              },
-              equipmentGroups,
-              openEquipmentBuckets,
-              openMetadata,
-              optionTags,
-            });
-          }
-        },
-      )
+        ),
+        openMetadata,
+      };
+    };
+    load()
+      .then((loaded) => {
+        if (!cancelled) setResources(loaded);
+      })
       .catch((error: unknown) => {
         if (!cancelled) {
           setLoadError(
@@ -187,7 +206,7 @@ function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [instandardMode, view]);
 
   const languageSelector = (
     <div
@@ -199,7 +218,10 @@ function App() {
         type="button"
         className={language === "ko" ? "active" : ""}
         aria-pressed={language === "ko"}
-        onClick={() => setLanguage("ko")}
+        onClick={() => {
+          setLanguage("ko");
+          window.location.assign(pageUrl("ko", view, instandardMode));
+        }}
       >
         한국어
       </button>
@@ -207,7 +229,10 @@ function App() {
         type="button"
         className={language === "ja" ? "active" : ""}
         aria-pressed={language === "ja"}
-        onClick={() => setLanguage("ja")}
+        onClick={() => {
+          setLanguage("ja");
+          window.location.assign(pageUrl("ja", view, instandardMode));
+        }}
       >
         日本語
       </button>
@@ -254,8 +279,8 @@ function App() {
       <>
         <PageHeader
           language={language}
-          title={uiText(language, "loading.title")}
-          description={uiText(language, "loading.description")}
+          title={staticTitle ?? uiText(language, "loading.title")}
+          description={staticDescription ?? uiText(language, "loading.description")}
           controls={headerControls}
         />
         <main>
@@ -268,12 +293,12 @@ function App() {
   if (view === "open") {
     return (
       <><OpenViewer
-        rows={resources.openRows}
+        rows={resources.openRows!}
         language={language}
-        optionLocales={resources.optionLocales}
-        openEquipmentBuckets={resources.openEquipmentBuckets}
-        openMetadata={resources.openMetadata}
-        optionTags={resources.optionTags}
+        optionLocales={resources.optionLocales!}
+        openEquipmentBuckets={resources.openEquipmentBuckets!}
+        openMetadata={resources.openMetadata!}
+        optionTags={resources.optionTags!}
         themeButton={headerControls}
       /><Footer language={language} /></>
     );
@@ -281,11 +306,11 @@ function App() {
   if (view === "instandard" && instandardMode === "tier") {
     return (
       <><InstandardTierViewer
-        source={resources.source}
+        source={resources.source!}
         language={language}
-        optionLocales={resources.optionLocales}
-        equipmentGroups={resources.equipmentGroups}
-        optionTags={resources.optionTags}
+        optionLocales={resources.optionLocales!}
+        equipmentGroups={resources.equipmentGroups!}
+        optionTags={resources.optionTags!}
         controls={headerControls}
       /><Footer language={language} /></>
     );
@@ -293,11 +318,11 @@ function App() {
   if (view === "instandard" && instandardMode === "option") {
     return (
       <><InstandardOptionViewer
-        source={resources.source}
+        source={resources.source!}
         language={language}
-        optionLocales={resources.optionLocales}
-        equipmentGroups={resources.equipmentGroups}
-        optionTags={resources.optionTags}
+        optionLocales={resources.optionLocales!}
+        equipmentGroups={resources.equipmentGroups!}
+        optionTags={resources.optionTags!}
         controls={headerControls}
       /><Footer language={language} /></>
     );
@@ -305,13 +330,13 @@ function App() {
   if (view === "instandard" && instandardMode === "open") {
     return (
       <><InstandardOpenViewer
-        source={resources.source}
-        openRows={resources.instandardOpenRows}
+        source={resources.source!}
+        openRows={resources.instandardOpenRows!}
         language={language}
-        optionLocales={resources.optionLocales}
-        equipmentGroups={resources.equipmentGroups}
-        openMetadata={resources.openMetadata}
-        optionTags={resources.optionTags}
+        optionLocales={resources.optionLocales!}
+        equipmentGroups={resources.equipmentGroups!}
+        openMetadata={resources.openMetadata!}
+        optionTags={resources.optionTags!}
         controls={headerControls}
       /><Footer language={language} /></>
     );
@@ -337,7 +362,10 @@ function Home({
       />
       <main className="home-main">
         <div className="home-landing-stack">
-          <a className="home-open-card feature-card--open" href="?view=open">
+          <a
+            className="home-open-card feature-card--open"
+            href={openOptionsUrl(language)}
+          >
             <div className="home-wide-card-copy">
               <Icon className="app-icon" id="feature-open-option" size={38} />
               <div>
@@ -368,7 +396,7 @@ function Home({
               {instandardModes.map((item) => (
                 <a
                   className={`instandard-feature-card home-instandard-feature-card feature-card--${item.className}`}
-                  href={`?view=instandard&mode=${item.mode}`}
+                  href={instandardUrl(language, item.mode)}
                   key={item.mode}
                 >
                   <Icon
@@ -398,4 +426,7 @@ function Footer({ language }: { language: Language }) {
   );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+if (typeof document !== "undefined") {
+  const root = document.getElementById("root");
+  if (root) createRoot(root).render(<App />);
+}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { uiText, type Language } from "../i18n";
+import { homeUrl } from "../siteUrls";
 
 export function PageHeader({
   language,
@@ -23,7 +24,7 @@ export function PageHeader({
         </div>
         <div className="header-actions">
           {home && (
-            <a className="home" href="?">
+            <a className="home" href={homeUrl(language)}>
               ← {uiText(language, "common.home")}
             </a>
           )}

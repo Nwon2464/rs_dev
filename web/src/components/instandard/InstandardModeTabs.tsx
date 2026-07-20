@@ -2,6 +2,7 @@ import { Icon } from "../Icon";
 import { featureIconId } from "../iconMap";
 import { uiText, type Language } from "../../i18n";
 import { instandardModes, type InstandardMode } from "./modes";
+import { instandardUrl } from "../../siteUrls";
 
 export function InstandardModeTabs({
   mode,
@@ -20,7 +21,7 @@ export function InstandardModeTabs({
           className={`mode-tab mode-tab--${item.className} ${
             mode === item.mode ? "active" : ""
           }`}
-          href={`?view=instandard&mode=${item.mode}`}
+          href={instandardUrl(language, item.mode)}
           aria-current={mode === item.mode ? "page" : undefined}
           key={item.mode}
         >

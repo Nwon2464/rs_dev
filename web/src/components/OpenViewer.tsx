@@ -24,6 +24,7 @@ import type {
   OptionLocales,
   OptionTagData,
 } from "../domain/openOptions/types";
+import { homeUrl } from "../siteUrls";
 
 type Props = {
   rows: GeneralOpenOptionRow[];
@@ -126,7 +127,7 @@ export function OpenViewer({ rows, language, optionLocales, openEquipmentBuckets
 }
 
 function Header({ language, title, description, themeButton }: { language: Language; title: string; description: string; themeButton: ReactNode }) {
-  return <header><div className="top"><div><h1>{title}</h1><p>{description}</p></div><div className="header-actions"><a className="home" href="?">← {uiText(language, "common.home")}</a>{themeButton}</div></div></header>;
+  return <header><div className="top"><div><h1>{title}</h1><p>{description}</p></div><div className="header-actions"><a className="home" href={homeUrl(language)}>← {uiText(language, "common.home")}</a>{themeButton}</div></div></header>;
 }
 function FilterGroup({ number, title, children }: { number: string; title: string; children: ReactNode }) { return <section className="filter-group"><h2><span>{number}</span>{title}</h2><div className="chip-grid">{children}</div></section>; }
 function Chip({ active, children, onClick }: { active: boolean; children: ReactNode; onClick: () => void }) { return <button className={`chip ${active ? "active" : ""}`} aria-pressed={active} onClick={onClick}>{children}</button>; }
