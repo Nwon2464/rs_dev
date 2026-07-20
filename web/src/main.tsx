@@ -53,12 +53,16 @@ export function App({
   initialLanguage = "ja",
   staticTitle,
   staticDescription,
+  dataUpdatedDate,
+  formattedDataUpdatedDate,
 }: {
   initialView?: View;
   initialMode?: InstandardMode | null;
   initialLanguage?: Language;
   staticTitle?: string;
   staticDescription?: string;
+  dataUpdatedDate?: string;
+  formattedDataUpdatedDate?: string;
 }) {
   const view = initialView;
   const instandardMode = initialMode;
@@ -234,9 +238,16 @@ export function App({
       {themeButton}
     </>
   );
+  const footer = (
+    <Footer
+      language={language}
+      updatedDate={dataUpdatedDate}
+      formattedUpdatedDate={formattedDataUpdatedDate}
+    />
+  );
 
   if (view === "home") {
-    return <><Home language={language} controls={headerControls} /><Footer language={language} /></>;
+    return <><Home language={language} controls={headerControls} />{footer}</>;
   }
   if (loadError) {
     return (
@@ -250,7 +261,7 @@ export function App({
         <main>
           <Empty language={language} />
         </main>
-        <Footer language={language} />
+        {footer}
       </>
     );
   }
@@ -266,7 +277,7 @@ export function App({
         <main>
           <div className="empty">{uiText(language, "loading.progress")}</div>
         </main>
-        <Footer language={language} />
+        {footer}
       </>
     );
   }
@@ -280,7 +291,7 @@ export function App({
         openMetadata={resources.openMetadata!}
         optionTags={resources.optionTags!}
         themeButton={headerControls}
-      /><Footer language={language} /></>
+      />{footer}</>
     );
   }
   if (view === "instandard" && instandardMode === "tier") {
@@ -292,7 +303,7 @@ export function App({
         equipmentGroups={resources.equipmentGroups!}
         optionTags={resources.optionTags!}
         controls={headerControls}
-      /><Footer language={language} /></>
+      />{footer}</>
     );
   }
   if (view === "instandard" && instandardMode === "option") {
@@ -304,7 +315,7 @@ export function App({
         equipmentGroups={resources.equipmentGroups!}
         optionTags={resources.optionTags!}
         controls={headerControls}
-      /><Footer language={language} /></>
+      />{footer}</>
     );
   }
   if (view === "instandard" && instandardMode === "open") {
@@ -318,7 +329,7 @@ export function App({
         openMetadata={resources.openMetadata!}
         optionTags={resources.optionTags!}
         controls={headerControls}
-      /><Footer language={language} /></>
+      />{footer}</>
     );
   }
   return null;
@@ -397,9 +408,29 @@ function Home({
   );
 }
 
-function Footer({ language }: { language: Language }) {
+function Footer({
+  language,
+  updatedDate,
+  formattedUpdatedDate,
+}: {
+  language: Language;
+  updatedDate?: string;
+  formattedUpdatedDate?: string;
+}) {
+  const dataBasis = language === "ja"
+    ? "日本クライアント基準"
+    : "일본 클라이언트 기준";
+  const updatedLabel = language === "ja"
+    ? "最終データ更新"
+    : "마지막 데이터 갱신";
   return (
     <footer className="site-footer">
+      {updatedDate && formattedUpdatedDate && (
+        <p className="footer-data-basis">
+          {dataBasis} · {updatedLabel}{" "}
+          <time dateTime={updatedDate}>{formattedUpdatedDate}</time>
+        </p>
+      )}
       <p>{uiText(language, "footer.notice")}</p>
       <p>{uiText(language, "footer.english")}</p>
     </footer>
