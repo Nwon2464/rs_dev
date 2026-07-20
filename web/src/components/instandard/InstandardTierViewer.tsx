@@ -28,6 +28,7 @@ import {
   ResultsHead,
   TagFilterChips,
 } from "../common/ExplorerPrimitives";
+import { OptionTitle } from "../common/OptionTitle";
 import { equipmentIconId, featureIconId } from "../iconMap";
 import { InstandardModeTabs } from "./InstandardModeTabs";
 
@@ -263,6 +264,12 @@ export function InstandardTierViewer({
                     optionLocales,
                     source,
                   );
+                  const optionTitle = localizedInstandardOptionTitle(
+                    option,
+                    language,
+                    optionLocales,
+                    source,
+                  );
                   return (
                     <article
                       className={`tier-option-accordion ${
@@ -277,14 +284,7 @@ export function InstandardTierViewer({
                         aria-controls={contentId}
                         onClick={() => toggleOption(option.option_id)}
                       >
-                        <strong>
-                          {localizedInstandardOptionTitle(
-                            option,
-                            language,
-                            optionLocales,
-                            source,
-                          )}
-                        </strong>
+                        <OptionTitle title={optionTitle} />
                         <div className="option-tag-badges">
                           {option.canonical_tags.map((optionTag) => (
                             <span key={optionTag}>

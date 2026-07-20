@@ -243,6 +243,7 @@ export function App({
       language={language}
       updatedDate={dataUpdatedDate}
       formattedUpdatedDate={formattedDataUpdatedDate}
+      centered={view === "home"}
     />
   );
 
@@ -412,10 +413,12 @@ function Footer({
   language,
   updatedDate,
   formattedUpdatedDate,
+  centered = false,
 }: {
   language: Language;
   updatedDate?: string;
   formattedUpdatedDate?: string;
+  centered?: boolean;
 }) {
   const dataBasis = language === "ja"
     ? "日本クライアント基準"
@@ -424,7 +427,7 @@ function Footer({
     ? "最終データ更新"
     : "마지막 데이터 갱신";
   return (
-    <footer className="site-footer">
+    <footer className={`site-footer${centered ? " site-footer--centered" : ""}`}>
       {updatedDate && formattedUpdatedDate && (
         <p className="footer-data-basis">
           {dataBasis} · {updatedLabel}{" "}
