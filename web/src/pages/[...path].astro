@@ -5,6 +5,7 @@ import {
   translatedRoute,
   type SeoRoute,
 } from "../seo/routes";
+import { loadLandingContent } from "../seo/landingContent";
 
 export function getStaticPaths() {
   return SEO_ROUTES.map((route) => ({
@@ -18,11 +19,20 @@ const translated = translatedRoute(route);
 const canonical = new URL(route.publicPath, Astro.site);
 const alternate = new URL(translated.publicPath, Astro.site);
 const japanese = route.language === "ja" ? canonical : alternate;
-const appView = route.view === "home" ? undefined : route.view;
-const dataBasis =
-  route.language === "ja"
-    ? "日本クライアントのデータを基準にしています。"
-    : "일본 클라이언트 데이터를 기준으로 합니다.";
+const landing = await loadLandingContent(route);
+const labels = route.language === "ja"
+  ? {
+      aria: "データと機能の案内",
+      basis: "日本クライアント基準",
+      updated: "最終データ更新",
+      examples: "代表オプション",
+    }
+  : {
+      aria: "데이터 및 기능 안내",
+      basis: "일본 클라이언트 기준",
+      updated: "마지막 데이터 갱신",
+      examples: "대표 옵션",
+    };
 ---
 
 <!doctype html>
@@ -59,10 +69,26 @@ const dataBasis =
     </script>
   </head>
   <body>
-    <p class="data-basis">{dataBasis}</p>
+    <aside class="landing-summary" aria-label={labels.aria}>
+      <p>
+        <span>{labels.basis}</span>
+        <span aria-hidden="true">·</span>
+        <span>{labels.updated} <time datetime={landing.updatedDate}>{landing.formattedDate}</time></span>
+      </p>
+      <p>
+        <span>{route.featureSummary}</span>
+        {landing.representativeOptions.length > 0 && (
+          <>
+            <span aria-hidden="true">·</span>
+            <strong>{labels.examples}</strong>
+            <span>{landing.representativeOptions.join(" · ")}</span>
+          </>
+        )}
+      </p>
+    </aside>
     <App
       client:load
-      initialView={appView}
+      initialView={route.view}
       initialMode={route.mode}
       initialLanguage={route.language}
       staticTitle={route.heading}
@@ -72,14 +98,25 @@ const dataBasis =
 </html>
 
 <style is:global>
-  .data-basis {
+  .landing-summary {
     box-sizing: border-box;
     margin: 0;
-    padding: 0.45rem max(1rem, calc((100% - 1180px) / 2));
+    padding: 0.45rem max(1rem, calc((100% - 1460px) / 2));
     border-bottom: 1px solid var(--line, #293144);
     color: var(--muted, #aab1c2);
     background: var(--panel, #151a25);
     font-size: 0.78rem;
-    text-align: right;
+  }
+  .landing-summary p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.45rem;
+    margin: 0;
+  }
+  .landing-summary p + p {
+    margin-top: 0.15rem;
+  }
+  .landing-summary strong {
+    color: inherit;
   }
 </style>

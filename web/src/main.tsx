@@ -1,5 +1,4 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { createRoot } from "react-dom/client";
 import { Icon } from "./components/Icon";
 import { OpenViewer } from "./components/OpenViewer";
 import { PageHeader } from "./components/PageHeader";
@@ -27,7 +26,6 @@ import type {
   OptionTagData,
 } from "./domain/openOptions/types";
 import {
-  loadLanguage,
   saveLanguage,
   uiText,
   type Language,
@@ -37,7 +35,6 @@ import { instandardUrl, openOptionsUrl, pageUrl } from "./siteUrls";
 import "./styles.css";
 
 export type View = "home" | "instandard" | "open";
-type Theme = "light" | "dark";
 
 type Resources = {
   source: InstandardCatalog;
@@ -51,9 +48,9 @@ type Resources = {
 };
 
 export function App({
-  initialView,
+  initialView = "home",
   initialMode = null,
-  initialLanguage,
+  initialLanguage = "ja",
   staticTitle,
   staticDescription,
 }: {
@@ -63,37 +60,11 @@ export function App({
   staticTitle?: string;
   staticDescription?: string;
 }) {
-  const params = new URLSearchParams(
-    typeof window === "undefined" ? "" : window.location.search,
-  );
-  const requested = params.get("view");
-  const view: View = initialView ??
-    (requested === "open" || requested === "instandard" ? requested : "home");
-  const requestedMode = params.get("mode");
-  const queryMode: InstandardMode | null =
-    requestedMode === "option" ||
-    requestedMode === "open" ||
-    requestedMode === "tier"
-      ? requestedMode
-      : null;
-  const instandardMode = initialMode ?? queryMode;
-  const [theme, setTheme] = useState<Theme>(() =>
-    typeof localStorage !== "undefined" &&
-    localStorage.getItem("redstone-ui-theme") === "light"
-      ? "light"
-      : "dark",
-  );
-  const [language, setLanguage] = useState<Language>(() =>
-    initialLanguage ??
-    (typeof localStorage === "undefined" ? "ja" : loadLanguage(localStorage)),
-  );
+  const view = initialView;
+  const instandardMode = initialMode;
+  const language = initialLanguage;
   const [resources, setResources] = useState<Partial<Resources> | null>(null);
   const [loadError, setLoadError] = useState<UiMessageKey | null>(null);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("redstone-ui-theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -219,7 +190,6 @@ export function App({
         className={language === "ko" ? "active" : ""}
         aria-pressed={language === "ko"}
         onClick={() => {
-          setLanguage("ko");
           window.location.assign(pageUrl("ko", view, instandardMode));
         }}
       >
@@ -230,7 +200,6 @@ export function App({
         className={language === "ja" ? "active" : ""}
         aria-pressed={language === "ja"}
         onClick={() => {
-          setLanguage("ja");
           window.location.assign(pageUrl("ja", view, instandardMode));
         }}
       >
@@ -241,11 +210,22 @@ export function App({
   const themeButton = (
     <button
       className="theme"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => {
+        const current =
+          document.documentElement.dataset.theme === "light"
+            ? "light"
+            : "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem("redstone-ui-theme", next);
+      }}
     >
-      {theme === "dark"
-        ? `☀ ${uiText(language, "theme.light")}`
-        : `☾ ${uiText(language, "theme.dark")}`}
+      <span className="theme-action-dark">
+        ☀ {uiText(language, "theme.light")}
+      </span>
+      <span className="theme-action-light">
+        ☾ {uiText(language, "theme.dark")}
+      </span>
     </button>
   );
   const headerControls = (
@@ -424,9 +404,4 @@ function Footer({ language }: { language: Language }) {
       <p>{uiText(language, "footer.english")}</p>
     </footer>
   );
-}
-
-if (typeof document !== "undefined") {
-  const root = document.getElementById("root");
-  if (root) createRoot(root).render(<App />);
 }
