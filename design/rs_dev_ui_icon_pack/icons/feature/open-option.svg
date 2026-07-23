@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <title>비규격 개방옵션</title>
+  <path d="m4.5 7.4 7.5-4 7.5 4-7.5 4-7.5-4Z"/>
+  <path d="M4.5 7.4v8.8l7.5 4.1 7.5-4.1V7.4"/>
+  <path d="M12 11.4v8.9"/>
+  <path d="m8.1 5.5 7.7 4.1"/>
+</svg>

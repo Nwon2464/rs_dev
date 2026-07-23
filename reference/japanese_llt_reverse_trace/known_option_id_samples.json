@@ -1,0 +1,167 @@
+[
+  {
+    "option_id": 0,
+    "japanese_baseop": "防御力 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 63,
+    "japanese_baseop": "力 +[0]",
+    "japanese_op_same_numeric_id": "睡眠攻撃 [+0]％([1]秒)"
+  },
+  {
+    "option_id": 64,
+    "japanese_baseop": "知恵 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 65,
+    "japanese_baseop": "知識 +[0]",
+    "japanese_op_same_numeric_id": "優先ターゲット攻撃 [+0]％([1]秒)"
+  },
+  {
+    "option_id": 66,
+    "japanese_baseop": "健康 +[0]",
+    "japanese_op_same_numeric_id": "AI低下攻撃 [+0]％([1]秒)"
+  },
+  {
+    "option_id": 67,
+    "japanese_baseop": "敏捷 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 68,
+    "japanese_baseop": "カリスマ +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 69,
+    "japanese_baseop": "運 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 70,
+    "japanese_baseop": "物理致命打確率(％) +[0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 72,
+    "japanese_baseop": "物理命中率 +[0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 109,
+    "japanese_baseop": "全スキルレベル +[0]",
+    "japanese_op_same_numeric_id": "<c:LTYELLOW>ブラー<n>"
+  },
+  {
+    "option_id": 188,
+    "japanese_baseop": "敵の火の抵抗(％) -[0%]",
+    "japanese_op_same_numeric_id": "座っている時[0]％で、すべての低下系状態治療"
+  },
+  {
+    "option_id": 194,
+    "japanese_baseop": "敵の魔法の抵抗(％) -[0%]",
+    "japanese_op_same_numeric_id": "自然型ミニペットスキル発動確率 [+0]％"
+  },
+  {
+    "option_id": 460,
+    "japanese_baseop": "物理攻撃力増加 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 461,
+    "japanese_baseop": "魔法致命打確率(％) +[0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 464,
+    "japanese_baseop": "物理ダブルクリティカルダメージ増加 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 574,
+    "japanese_baseop": "スキルクールタイム減少 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 578,
+    "japanese_baseop": "魔法アイテムドロップ確率(％) +[0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 579,
+    "japanese_baseop": "ユニークアイテムドロップ確率(％) +[0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 623,
+    "japanese_baseop": "敵物理致命打抵抗 (％) 減少 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 703,
+    "japanese_baseop": "限界突破称号の物理ダメージ制限 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 704,
+    "japanese_baseop": "限界突破称号の物理ダメージ制限の超過量適用(％) 増加 [0％]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 705,
+    "japanese_baseop": "限界突破称号の魔法ダメージ制限 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 706,
+    "japanese_baseop": "限界突破称号の魔法ダメージ制限の超過量適用(％) 増加 [0％]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 721,
+    "japanese_baseop": "武器最小攻撃力 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 722,
+    "japanese_baseop": "武器最大攻撃力 +[0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 723,
+    "japanese_baseop": "魔法強打確率(％) +[0％]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 736,
+    "japanese_baseop": "このアイテムの着用レベル [-0]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 752,
+    "japanese_baseop": "魔法致命打ダメージ増加 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 754,
+    "japanese_baseop": "魔法強打ダメージ増加 [0%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 922,
+    "japanese_baseop": "限界突破称号の物理ダメージ制限超過量適用(％) 増加 [0.1%]、魔法ダメージ制限超過量適用(％) 増加 [1.1%]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 1045,
+    "japanese_baseop": "限界突破称号の物理ダメージ制限 +[0]、魔法ダメージ制限 +[1]",
+    "japanese_op_same_numeric_id": null
+  },
+  {
+    "option_id": 1068,
+    "japanese_baseop": "最大CP +[0]",
+    "japanese_op_same_numeric_id": null
+  }
+]

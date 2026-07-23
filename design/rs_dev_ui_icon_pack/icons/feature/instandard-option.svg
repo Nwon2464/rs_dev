@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <title>비규격 옵션</title>
+  <path d="M12 2.8 19 5.7v5.5c0 4.7-2.7 7.8-7 10-4.3-2.2-7-5.3-7-10V5.7L12 2.8Z"/>
+  <path d="m12 7.2 3.2 3.2L12 13.6l-3.2-3.2L12 7.2Z"/>
+</svg>

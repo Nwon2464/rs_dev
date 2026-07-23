@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <title>티어별 옵션</title>
+  <path d="m12 3 8 4-8 4-8-4 8-4Z"/>
+  <path d="m4 11 8 4 8-4"/>
+  <path d="m4 15 8 4 8-4"/>
+</svg>

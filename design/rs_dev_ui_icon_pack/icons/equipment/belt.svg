@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <title>벨트</title>
+  <path d="M3 8h18v8H3z"/><rect x="9" y="7" width="6" height="10" rx="1"/><path d="M5 11h4M15 11h4"/>
+</svg>

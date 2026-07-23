@@ -1,0 +1,69 @@
+{
+  "source_file": "japanese(1).llt",
+  "source_size": 27219328,
+  "sha256": "91a98e7a6b8b58c9cd4c813d92e9f39f8b442ff11895fb7f9096930c89e24bc2",
+  "header": {
+    "offset": 16,
+    "n0": 1366,
+    "unknown": 12,
+    "key_length": 326
+  },
+  "parse": {
+    "consumed_bytes": 27219328,
+    "file_bytes": 27219328,
+    "complete_consumption": true,
+    "total_rows": 492092,
+    "kind_counts": {
+      "0": 8411,
+      "1": 1
+    }
+  },
+  "sections": {
+    "22_baseop": {
+      "count": 1053,
+      "min_id": 0,
+      "max_id": 1076,
+      "missing_ids": [
+        449,
+        454,
+        759,
+        760,
+        774,
+        784,
+        823,
+        824,
+        849,
+        850,
+        851,
+        898,
+        899,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        957,
+        970,
+        974,
+        1029,
+        1062
+      ]
+    },
+    "23_op": {
+      "count": 261,
+      "min_id": 7,
+      "max_id": 366
+    },
+    "67_item_name": {
+      "count": 14436,
+      "min_id": 0,
+      "max_id": 14435
+    },
+    "68_item_text": {
+      "count": 14436,
+      "min_id": 0,
+      "max_id": 14435
+    }
+  }
+}

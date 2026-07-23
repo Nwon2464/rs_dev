@@ -11,7 +11,3 @@ data/intermediate/open_options/
 # Personal notes kept only in the local workspace.
 /CHANGELOG.md
 /SEO_SSG_PLAN.md
-
-# Local game-data snapshots. Generated CSV/JSON outputs are tracked instead.
-before/
-after/
